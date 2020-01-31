@@ -60,14 +60,7 @@ public class MainController implements Initializable {
     private HBox book_info;
     @FXML
     private HBox member_info;
-    @FXML
-    private TextField bookIDInput;
-    @FXML
-    private Text bookName;
-    @FXML
-    private Text bookAuthor;
-    @FXML
-    private Text bookStatus;
+
     @FXML
     private TextField memberIDInput;
     @FXML
@@ -134,48 +127,9 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void loadBookInfo(ActionEvent event) {
-        clearBookCache();
-        enableDisableGraph(false);
-
-        String id = bookIDInput.getText();
-        ResultSet rs = DataHelper.getBookInfoWithIssueData(id);
-        Boolean flag = false;
-        try {
-            if (rs.next()) {
-                String bName = rs.getString("title");
-                String bAuthor = rs.getString("author");
-                Boolean bStatus = rs.getBoolean("isAvail");
-                Timestamp issuedOn = rs.getTimestamp("issueTime");
-
-                bookName.setText(bName);
-                bookAuthor.setText(bAuthor);
-                String status = (bStatus) ? BOOK_AVAILABLE : String.format("Issued on %s", LibraryAssistantUtil.getDateString(new Date(issuedOn.getTime())));
-                if (!bStatus) {
-                    bookStatus.getStyleClass().add("not-available");
-                } else {
-                    bookStatus.getStyleClass().remove("not-available");
-                }
-                bookStatus.setText(status);
-
-                flag = true;
-            }
-
-            if (!flag) {
-                bookName.setText(NO_SUCH_BOOK_AVAILABLE);
-            } else {
-                memberIDInput.requestFocus();
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    void clearBookCache() {
-        bookName.setText("");
-        bookAuthor.setText("");
-        bookStatus.setText("");
+    private void loadTaskInfo(ActionEvent event) {
+        String taskId = taskID.getText();
+        DataHelper.loadTaskList(taskId, null);
     }
 
     void clearMemberCache() {
@@ -344,14 +298,6 @@ public class MainController implements Initializable {
             bookChart.setOpacity(0);
             memberChart.setOpacity(0);
         }
-    }
-
-    private boolean checkForIssueValidity() {
-        bookIDInput.fireEvent(new ActionEvent());
-        memberIDInput.fireEvent(new ActionEvent());
-        return bookIDInput.getText().isEmpty() || memberIDInput.getText().isEmpty()
-                || memberName.getText().isEmpty() || bookName.getText().isEmpty()
-                || bookName.getText().equals(NO_SUCH_BOOK_AVAILABLE) || memberName.getText().equals(NO_SUCH_MEMBER_AVAILABLE);
     }
 
     @FXML

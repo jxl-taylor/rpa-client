@@ -28,8 +28,8 @@ public class ToolbarController implements Initializable {
     }
 
     @FXML
-    private void loadAddBook(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "Add New Book", null);
+    private void loadAddTask(ActionEvent event) {
+        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
     }
 
     @FXML

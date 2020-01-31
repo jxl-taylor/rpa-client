@@ -8,6 +8,7 @@ import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -38,12 +40,12 @@ public class TaskAddController implements Initializable {
 	private AnchorPane mainContainer;
 
 	private DatabaseHandler databaseHandler;
-	private Boolean isInEditMode = Boolean.FALSE;
+	private SimpleBooleanProperty isInEditMode = new SimpleBooleanProperty();
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		databaseHandler = DatabaseHandler.getInstance();
-		id.setVisible(false);
+		id.visibleProperty().bind(isInEditMode);
 	}
 
 	@FXML
@@ -56,18 +58,18 @@ public class TaskAddController implements Initializable {
 			return;
 		}
 
-		if (isInEditMode) {
-			id.setVisible(true);
+		if (isInEditMode.getValue()) {
 			handleEditOperation();
 			return;
 		}
-		id.setText(UUID.randomUUID().toString());
+		id.setText(UUID.randomUUID().toString().replace("-", ""));
 
 		Task task = new Task(id.getText(), name.getText(), desp.getText(), Boolean.FALSE, 0, 0, 0);
 		boolean result = DataHelper.insertNewTask(task);
 		if (result) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
 			clearEntries();
+			DataHelper.loadTaskList();
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增失败", "请检查输入");
 		}
@@ -84,7 +86,7 @@ public class TaskAddController implements Initializable {
 		name.setText(task.getName());
 		desp.setText(task.getDesp());
 		id.setEditable(false);
-		isInEditMode = Boolean.TRUE;
+		isInEditMode.setValue(Boolean.TRUE);
 	}
 
 	private void clearEntries() {

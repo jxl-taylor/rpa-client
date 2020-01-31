@@ -4,11 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.mr.rpa.assistant.data.model.Book;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.ui.listmember.MemberListController;
+import com.mr.rpa.assistant.ui.listtask.TaskListController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +26,12 @@ import org.apache.logging.log4j.Logger;
 public class DataHelper {
 
     private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
+
+    private static ObservableList<TaskListController.Task> list = FXCollections.observableArrayList();
+
+    public static ObservableList<TaskListController.Task> getList() {
+        return list;
+    }
 
     public static boolean insertNewBook(Book book) {
         try {
@@ -40,15 +52,13 @@ public class DataHelper {
     public static boolean insertNewTask(Task task) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO TASK(id,name,desp,running,status,successCount,failCount ) VALUES(?,?,?,?,?,?,?)");
+                    "INSERT INTO TASK(id,name,desp,running,status) VALUES(?,?,?,?,?)");
             int i = 1;
             statement.setString(i++, task.getId());
             statement.setString(i++, task.getName());
             statement.setString(i++, task.getDesp());
             statement.setBoolean(i++, task.getRunning());
             statement.setInt(i++, task.getStatus());
-            statement.setInt(i++, task.getSuccessCount());
-            statement.setInt(i++, task.getFailCount());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);
@@ -161,5 +171,48 @@ public class DataHelper {
             LOGGER.log(Level.ERROR, "{}", ex);
         }
         return null;
+    }
+
+    public static List<TaskListController.Task> loadTaskList() {
+        return loadTaskList(null, null);
+    }
+
+    public static List<TaskListController.Task> loadTaskList(String taskId, String taskName) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM TASK WHERE 1=1");
+        if(StringUtils.isNotBlank(taskId)){
+            sql.append(String.format(" AND ID = '%s'" , taskId));
+        }
+
+        if(StringUtils.isNotBlank(taskName)){
+            sql.append(String.format(" AND NAME = '%s'" , taskName));
+        }
+        return loadTask(sql.toString());
+    }
+
+    private static List<TaskListController.Task> loadTask(String sql) {
+        list.clear();
+        DatabaseHandler handler = DatabaseHandler.getInstance();
+        ResultSet rs = handler.execQuery(sql);
+        try {
+            while (rs.next()) {
+
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                String desp = rs.getString("desp");
+                Boolean running = rs.getBoolean("running");
+                Integer status = rs.getInt("status");
+
+                //TODO count
+                list.add(new TaskListController.Task(id, name, desp, running, status,0, 0));
+
+            }
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public static void removeTask(TaskListController.Task selectedForDeletion) {
+        list.remove(selectedForDeletion);
     }
 }

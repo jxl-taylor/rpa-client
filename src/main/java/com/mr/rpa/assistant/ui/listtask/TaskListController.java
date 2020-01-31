@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.ui.listtask;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
@@ -35,8 +36,6 @@ import java.util.logging.Logger;
 
 public class TaskListController implements Initializable {
 
-	ObservableList<Task> list = FXCollections.observableArrayList();
-
 	@FXML
 	private StackPane rootPane;
 	@FXML
@@ -62,6 +61,7 @@ public class TaskListController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		initCol();
 		loadData();
+		tableView.setItems(DataHelper.getList());
 	}
 
 	private Stage getStage() {
@@ -79,29 +79,7 @@ public class TaskListController implements Initializable {
 	}
 
 	private void loadData() {
-		list.clear();
-
-		DatabaseHandler handler = DatabaseHandler.getInstance();
-		String qu = "SELECT * FROM TASK";
-		ResultSet rs = handler.execQuery(qu);
-		try {
-			while (rs.next()) {
-
-				String id = rs.getString("id");
-				String name = rs.getString("name");
-				String desp = rs.getString("desp");
-				Boolean running = rs.getBoolean("running");
-				Integer status = rs.getInt("status");
-
-				//TODO count
-				list.add(new Task(id, name, desp, running, status,0, 0));
-
-			}
-		} catch (SQLException ex) {
-			Logger.getLogger(TaskListController.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
-		tableView.setItems(list);
+		DataHelper.loadTaskList();
 	}
 
 	@FXML
@@ -120,7 +98,7 @@ public class TaskListController implements Initializable {
 			Boolean result = DatabaseHandler.getInstance().deleteTask(selectedForDeletion);
 			if (result) {
 				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
-				list.remove(selectedForDeletion);
+				DataHelper.removeTask(selectedForDeletion);
 			} else {
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
 			}
