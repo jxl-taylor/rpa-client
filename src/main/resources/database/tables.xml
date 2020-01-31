@@ -5,4 +5,6 @@
     <table-entry name="MEMBER" col-data="id varchar(200) primary key,name varchar(200),mobile varchar(20),email varchar(100)"/>
     <table-entry name="ISSUE" col-data="bookID varchar(200) primary key,memberID varchar(200),issueTime timestamp default CURRENT_TIMESTAMP,renew_count integer default 0,FOREIGN KEY (bookID) REFERENCES BOOK(id),FOREIGN KEY (memberID) REFERENCES MEMBER(id)"/>
     <table-entry name="MAIL_SERVER_INFO" col-data="server_name varchar(255),server_port integer,user_email varchar(1024),user_password varchar(1024),ssl_enabled boolean"/>
+    <table-entry name="TASK" col-data="id varchar(200) primary key,name varchar(200),desp varchar(200),running boolean default false,status integer default 0"/>
+    <table-entry name="TASK_LOG" col-data="id varchar(200) primary key,task_id varchar(200),status integer default 0,error varchar(200),startTime timestamp default CURRENT_TIMESTAMP,endTime timestamp"/>
 </tables>

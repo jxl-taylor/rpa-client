@@ -106,13 +106,16 @@ public class MainController implements Initializable, BookReturnCallback {
     @FXML
     private JFXButton renewButton;
     @FXML
+    private JFXButton renewButton1;
+    @FXML
     private JFXButton submissionButton;
+    @FXML
+    private JFXButton submissionButton1;
     @FXML
     private HBox submissionDataContainer;
     @FXML
-    private StackPane bookInfoContainer;
-    @FXML
-    private StackPane memberInfoContainer;
+    private HBox submissionDataContainer1;
+
     @FXML
     private Tab bookIssueTab;
     @FXML
@@ -493,22 +496,9 @@ public class MainController implements Initializable, BookReturnCallback {
     }
 
     private void clearIssueEntries() {
-        bookIDInput.clear();
-        memberIDInput.clear();
-        bookName.setText("");
-        bookAuthor.setText("");
-        bookStatus.setText("");
-        memberMobile.setText("");
-        memberName.setText("");
-        enableDisableGraph(true);
     }
 
     private void initGraphs() {
-        bookChart = new PieChart(databaseHandler.getBookGraphStatistics());
-        memberChart = new PieChart(databaseHandler.getMemberGraphStatistics());
-        bookInfoContainer.getChildren().add(bookChart);
-        memberInfoContainer.getChildren().add(memberChart);
-
         bookIssueTab.setOnSelectionChanged((Event event) -> {
             clearIssueEntries();
             if (bookIssueTab.isSelected()) {
