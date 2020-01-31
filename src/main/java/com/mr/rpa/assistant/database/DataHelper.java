@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import com.mr.rpa.assistant.data.model.Book;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
+import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.ui.listmember.MemberListController;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +30,25 @@ public class DataHelper {
             statement.setString(3, book.getAuthor());
             statement.setString(4, book.getPublisher());
             statement.setBoolean(5, book.getAvailability());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
+    public static boolean insertNewTask(Task task) {
+        try {
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
+                    "INSERT INTO TASK(id,name,desp,running,status,successCount,failCount ) VALUES(?,?,?,?,?,?,?)");
+            int i = 1;
+            statement.setString(i++, task.getId());
+            statement.setString(i++, task.getName());
+            statement.setString(i++, task.getDesp());
+            statement.setBoolean(i++, task.getRunning());
+            statement.setInt(i++, task.getStatus());
+            statement.setInt(i++, task.getSuccessCount());
+            statement.setInt(i++, task.getFailCount());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);

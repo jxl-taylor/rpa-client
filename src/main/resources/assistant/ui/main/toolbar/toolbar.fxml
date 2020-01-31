@@ -11,7 +11,7 @@
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadAddBook"
                    prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="添加任务" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="BOOK" size="25"/>
+                <FontAwesomeIconView glyphName="TASK" size="25"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="223.0" mnemonicParsing="false" onAction="#loadSettings"

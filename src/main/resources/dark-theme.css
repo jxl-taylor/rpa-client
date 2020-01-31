@@ -1,4 +1,4 @@
-/* 
+/*
     Created on : 11 Nov, 2017, 4:42:53 AM
     Author     : afsal villan
 */
@@ -44,6 +44,14 @@
     -fx-text-fill: derive(-fx-secondary, 20%);
 }
 
+.text-area
+{
+    -fx-text-fill: -fx-primarytext;
+    -fx-font-size : 12pt;
+    -jfx-focus-color: -fx-secondary;
+    -fx-text-fill: derive(-fx-secondary, 20%);
+}
+
 /*Login Screen Specific*/
 
 
@@ -66,7 +74,7 @@
 
 .tab-label{
     -fx-text-fill: -fx-secondary;
-    -fx-font-size: 10pt; 
+    -fx-font-size: 10pt;
 }
 
 
@@ -197,7 +205,7 @@
 /*TableView Default*/
 .table-view{
     -fx-background-color: derive(-fx-primary, 10%);
-    -fx-font-size: 16px; 
+    -fx-font-size: 16px;
     -fx-border-color: derive(-fx-secondary, -60%);
 }
 .table-view:focused{
@@ -228,7 +236,7 @@
     -fx-table-cell-border-color: transparent;
 }
 .table-column{
-    -fx-alignment: CENTER;  
+    -fx-alignment: CENTER;
 }
 .table-row-cell:even{
     -fx-background-color: derive(-fx-primary, 10%);
@@ -246,13 +254,13 @@
 }
 .table-view > .virtual-flow > .scroll-bar:vertical,
 .table-view > .virtual-flow > .scroll-bar:vertical > .track,
-.table-view > .virtual-flow > .scroll-bar:vertical > .track-background, 
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
 .table-view > .virtual-flow > .scroll-bar:horizontal,
 .table-view > .virtual-flow > .scroll-bar:horizontal > .track,
 .table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
     -fx-background-color: transparent;
 }
-.table-view > .virtual-flow > .scroll-bar > .increment-button, 
+.table-view > .virtual-flow > .scroll-bar > .increment-button,
 .table-view > .virtual-flow > .scroll-bar > .decrement-button {
     -fx-text-fill: white;
 }
@@ -283,7 +291,7 @@
     -fx-font-size: 12pt;
 }
 .jfx-layout-body, .jfx-layout-actions{
-    -fx-background-color: -fx-primary;   
+    -fx-background-color: -fx-primary;
 }
 .jfx-layout-body .label
 {
@@ -293,7 +301,7 @@
 
 
 /*Dashboard label*/
-.not-available 
+.not-available
 {
     -fx-background-radius: 5px;
     -fx-fill: derive(blue, 80%);
@@ -303,7 +311,7 @@
 /*Checkbox*/
 
 .checkbox-main{
-    -fx-text-fill: -fx-secondary; 
+    -fx-text-fill: -fx-secondary;
     -jfx-checked-color: -fx-primary;
     -fx-font-size: 10pt;
 }

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import com.mr.rpa.assistant.ui.listbook.BookListController;
+import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.listmember.MemberListController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -154,6 +155,22 @@ public final class DatabaseHandler {
         return false;
     }
 
+    public boolean deleteTask(TaskListController.Task task) {
+        try {
+            String deleteStatement = "DELETE FROM TASK WHERE ID = ?";
+            PreparedStatement stmt = conn.prepareStatement(deleteStatement);
+            stmt.setString(1, task.getId());
+            int res = stmt.executeUpdate();
+            if (res == 1) {
+                return true;
+            }
+        }
+        catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
     public boolean isBookAlreadyIssued(BookListController.Book book) {
         try {
             String checkstmt = "SELECT COUNT(*) FROM ISSUE WHERE bookid=?";
@@ -214,6 +231,22 @@ public final class DatabaseHandler {
             stmt.setString(2, book.getAuthor());
             stmt.setString(3, book.getPublisher());
             stmt.setString(4, book.getId());
+            int res = stmt.executeUpdate();
+            return (res > 0);
+        }
+        catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
+    public boolean updateTask(TaskListController.Task task) {
+        try {
+            String update = "UPDATE TASK SET NAME=?, DESP=? WHERE ID=?";
+            PreparedStatement stmt = conn.prepareStatement(update);
+            stmt.setString(1, task.getName());
+            stmt.setString(2, task.getDesp());
+            stmt.setString(3, task.getId());
             int res = stmt.executeUpdate();
             return (res > 0);
         }

@@ -35,16 +35,7 @@
                                        <bottom>
                                           <HBox alignment="CENTER" prefHeight="69.0" prefWidth="557.0" BorderPane.alignment="CENTER">
                                              <children>
-                                                <JFXButton fx:id="renewButton1" disable="true" onAction="#loadRenewOp" prefWidth="150.0" text="Renew">
-                                                   <HBox.margin>
-                                                      <Insets right="20.0" />
-                                                   </HBox.margin>
-                                                </JFXButton>
-                                                <JFXButton fx:id="submissionButton1" disable="true" onAction="#loadSubmissionOp" prefWidth="150.0" text="Submission">
-                                                   <HBox.margin>
-                                                      <Insets right="20.0" />
-                                                   </HBox.margin>
-                                                </JFXButton>
+
                                              </children>
                                           </HBox>
                                        </bottom>
@@ -73,7 +64,7 @@
                                  <children>
                                     <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <top>
-                                          <JFXTextField fx:id="bookID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadBookInfo" prefHeight="32.0" prefWidth="274.0" promptText="Enter BOOK ID" BorderPane.alignment="CENTER">
+                                          <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadBookInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务名" BorderPane.alignment="CENTER">
                                              <BorderPane.margin>
                                                 <Insets top="30.0" />
                                              </BorderPane.margin>
@@ -82,25 +73,15 @@
                                        <bottom>
                                           <HBox alignment="CENTER" prefHeight="69.0" prefWidth="557.0" BorderPane.alignment="CENTER">
                                              <children>
-                                                <JFXButton fx:id="renewButton" disable="true" onAction="#loadRenewOp" prefWidth="150.0" text="Renew">
-                                                   <HBox.margin>
-                                                      <Insets right="20.0" />
-                                                   </HBox.margin>
-                                                </JFXButton>
-                                                <JFXButton fx:id="submissionButton" disable="true" onAction="#loadSubmissionOp" prefWidth="150.0" text="Submission">
-                                                   <HBox.margin>
-                                                      <Insets right="20.0" />
-                                                   </HBox.margin>
-                                                </JFXButton>
                                              </children>
                                           </HBox>
                                        </bottom>
                                        <center>
-                                          <HBox fx:id="submissionDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
+                                          <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
                                              <children>
                                                 <VBox alignment="TOP_CENTER" >
                                                    <children>
-                                                      <fx:include source="/assistant/ui/listbook/book_list.fxml" />
+                                                      <fx:include source="/assistant/ui/listtask/task_list.fxml" />
                                                    </children>
                                                 </VBox>
                                                  </children>

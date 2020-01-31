@@ -40,12 +40,11 @@ import javafx.stage.Stage;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.ui.callback.BookReturnCallback;
 import com.mr.rpa.assistant.ui.issuedlist.IssuedListController;
 import com.mr.rpa.assistant.ui.main.toolbar.ToolbarController;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 
-public class MainController implements Initializable, BookReturnCallback {
+public class MainController implements Initializable {
 
     private static final String BOOK_NOT_AVAILABLE = "Not Available";
     private static final String NO_SUCH_BOOK_AVAILABLE = "No Such Book Available";
@@ -76,7 +75,7 @@ public class MainController implements Initializable, BookReturnCallback {
     @FXML
     private Text memberMobile;
     @FXML
-    private JFXTextField bookID;
+    private JFXTextField taskID;
     @FXML
     private StackPane rootPane;
     @FXML
@@ -112,7 +111,7 @@ public class MainController implements Initializable, BookReturnCallback {
     @FXML
     private JFXButton submissionButton1;
     @FXML
-    private HBox submissionDataContainer;
+    private HBox taskDataContainer;
     @FXML
     private HBox submissionDataContainer1;
 
@@ -214,179 +213,6 @@ public class MainController implements Initializable, BookReturnCallback {
         }
     }
 
-    @FXML
-    private void loadIssueOperation(ActionEvent event) {
-        if (checkForIssueValidity()) {
-            JFXButton btn = new JFXButton("Okay!");
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Invalid Input", null);
-            return;
-        }
-        if (bookStatus.getText().equals(BOOK_NOT_AVAILABLE)) {
-            JFXButton btn = new JFXButton("Okay!");
-            JFXButton viewDetails = new JFXButton("View Details");
-            viewDetails.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
-                String bookToBeLoaded = bookIDInput.getText();
-                bookID.setText(bookToBeLoaded);
-                bookID.fireEvent(new ActionEvent());
-                mainTabPane.getSelectionModel().select(renewTab);
-            });
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn, viewDetails), "Already issued book", "This book is already issued. Cant process issue request");
-            return;
-        }
-
-        String memberID = memberIDInput.getText();
-        String bookID = bookIDInput.getText();
-
-        JFXButton yesButton = new JFXButton("YES");
-        yesButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event1) -> {
-            String str = "INSERT INTO ISSUE(memberID,bookID) VALUES ("
-                    + "'" + memberID + "',"
-                    + "'" + bookID + "')";
-            String str2 = "UPDATE BOOK SET isAvail = false WHERE id = '" + bookID + "'";
-            System.out.println(str + " and " + str2);
-
-            if (databaseHandler.execAction(str) && databaseHandler.execAction(str2)) {
-                JFXButton button = new JFXButton("Done!");
-                button.setOnAction((actionEvent) -> {
-                    bookIDInput.requestFocus();
-                });
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(button), "Book Issue Complete", null);
-                refreshGraphs();
-            } else {
-                JFXButton button = new JFXButton("Okay.I'll Check");
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(button), "Issue Operation Failed", null);
-            }
-            clearIssueEntries();
-        });
-        JFXButton noButton = new JFXButton("NO");
-        noButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event1) -> {
-            JFXButton button = new JFXButton("That's Okay");
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(button), "Issue Cancelled", null);
-            clearIssueEntries();
-        });
-        AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(yesButton, noButton), "Confirm Issue",
-                String.format("Are you sure want to issue the book '%s' to '%s' ?", bookName.getText(), memberName.getText()));
-    }
-
-    @FXML
-    private void loadBookInfo2(ActionEvent event) {
-        clearEntries();
-        ObservableList<String> issueData = FXCollections.observableArrayList();
-        isReadyForSubmission = false;
-
-        try {
-            String id = bookID.getText();
-            String myQuery = "SELECT ISSUE.bookID, ISSUE.memberID, ISSUE.issueTime, ISSUE.renew_count,\n"
-                    + "MEMBER.name, MEMBER.mobile, MEMBER.email,\n"
-                    + "BOOK.title, BOOK.author, BOOK.publisher\n"
-                    + "FROM ISSUE\n"
-                    + "LEFT JOIN MEMBER\n"
-                    + "ON ISSUE.memberID=MEMBER.ID\n"
-                    + "LEFT JOIN BOOK\n"
-                    + "ON ISSUE.bookID=BOOK.ID\n"
-                    + "WHERE ISSUE.bookID='" + id + "'";
-            ResultSet rs = databaseHandler.execQuery(myQuery);
-            if (rs.next()) {
-                memberNameHolder.setText(rs.getString("name"));
-                memberContactHolder.setText(rs.getString("mobile"));
-                memberEmailHolder.setText(rs.getString("email"));
-
-                bookNameHolder.setText(rs.getString("title"));
-                bookAuthorHolder.setText(rs.getString("author"));
-                bookPublisherHolder.setText(rs.getString("publisher"));
-
-                Timestamp mIssueTime = rs.getTimestamp("issueTime");
-                Date dateOfIssue = new Date(mIssueTime.getTime());
-                issueDateHolder.setText(LibraryAssistantUtil.formatDateTimeString(dateOfIssue));
-                Long timeElapsed = System.currentTimeMillis() - mIssueTime.getTime();
-                Long days = TimeUnit.DAYS.convert(timeElapsed, TimeUnit.MILLISECONDS) + 1;
-                String daysElapsed = String.format("Used %d days", days);
-                numberDaysHolder.setText(daysElapsed);
-                Float fine = LibraryAssistantUtil.getFineAmount(days.intValue());
-                if (fine > 0) {
-                    fineInfoHolder.setText(String.format("Fine : %.2f", LibraryAssistantUtil.getFineAmount(days.intValue())));
-                } else {
-                    fineInfoHolder.setText("");
-                }
-
-                isReadyForSubmission = true;
-                disableEnableControls(true);
-                submissionDataContainer.setOpacity(1);
-            } else {
-                JFXButton button = new JFXButton("Okay.I'll Check");
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(button), "No such Book Exists in Issue Database", null);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @FXML
-    private void loadSubmissionOp(ActionEvent event) {
-        if (!isReadyForSubmission) {
-            JFXButton btn = new JFXButton("Okay!");
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Please select a book to submit", "Cant simply submit a null book :-)");
-            return;
-        }
-
-        JFXButton yesButton = new JFXButton("YES, Please");
-        yesButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent ev) -> {
-            String id = bookID.getText();
-            String ac1 = "DELETE FROM ISSUE WHERE BOOKID = '" + id + "'";
-            String ac2 = "UPDATE BOOK SET ISAVAIL = TRUE WHERE ID = '" + id + "'";
-
-            if (databaseHandler.execAction(ac1) && databaseHandler.execAction(ac2)) {
-                JFXButton btn = new JFXButton("Done!");
-                btn.setOnAction((actionEvent) -> {
-                    bookID.requestFocus();
-                });
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Book has been submitted", null);
-                disableEnableControls(false);
-                submissionDataContainer.setOpacity(0);
-            } else {
-                JFXButton btn = new JFXButton("Okay.I'll Check");
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Submission Has Been Failed", null);
-            }
-        });
-        JFXButton noButton = new JFXButton("No, Cancel");
-        noButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent ev) -> {
-            JFXButton btn = new JFXButton("Okay!");
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Submission Operation cancelled", null);
-        });
-
-        AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(yesButton, noButton), "Confirm Submission Operation", "Are you sure want to return the book ?");
-    }
-
-    @FXML
-    private void loadRenewOp(ActionEvent event) {
-        if (!isReadyForSubmission) {
-            JFXButton btn = new JFXButton("Okay!");
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Please select a book to renew", null);
-            return;
-        }
-        JFXButton yesButton = new JFXButton("YES, Please");
-        yesButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event1) -> {
-            String ac = "UPDATE ISSUE SET issueTime = CURRENT_TIMESTAMP, renew_count = renew_count+1 WHERE BOOKID = '" + bookID.getText() + "'";
-            System.out.println(ac);
-            if (databaseHandler.execAction(ac)) {
-                JFXButton btn = new JFXButton("Alright!");
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Book Has Been Renewed", null);
-                disableEnableControls(false);
-                submissionDataContainer.setOpacity(0);
-            } else {
-                JFXButton btn = new JFXButton("Okay!");
-                AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Renew Has Been Failed", null);
-            }
-        });
-        JFXButton noButton = new JFXButton("No, Don't!");
-        noButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event1) -> {
-            JFXButton btn = new JFXButton("Okay!");
-            AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(btn), "Renew Operation cancelled", null);
-        });
-        AlertMaker.showMaterialDialog(rootPane, rootAnchorPane, Arrays.asList(yesButton, noButton), "Confirm Renew Operation", "Are you sure want to renew the book ?");
-    }
-
     private Stage getStage() {
         return (Stage) rootPane.getScene().getWindow();
     }
@@ -431,7 +257,6 @@ public class MainController implements Initializable, BookReturnCallback {
         Object controller = LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/issuedlist/issued_list.fxml"), "Issued Book List", null);
         if (controller != null) {
             IssuedListController cont = (IssuedListController) controller;
-            cont.setBookReturnCallback(this);
         }
     }
 
@@ -447,7 +272,6 @@ public class MainController implements Initializable, BookReturnCallback {
             VBox toolbar = loader.load();
             drawer.setSidePane(toolbar);
             ToolbarController controller = loader.getController();
-            controller.setBookReturnCallback(this);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -482,7 +306,7 @@ public class MainController implements Initializable, BookReturnCallback {
         fineInfoHolder.setText("");
 
         disableEnableControls(false);
-        submissionDataContainer.setOpacity(0);
+        taskDataContainer.setOpacity(0);
     }
 
     private void disableEnableControls(Boolean enableFlag) {
@@ -530,21 +354,10 @@ public class MainController implements Initializable, BookReturnCallback {
                 || bookName.getText().equals(NO_SUCH_BOOK_AVAILABLE) || memberName.getText().equals(NO_SUCH_MEMBER_AVAILABLE);
     }
 
-    @Override
-    public void loadBookReturn(String bookID) {
-        this.bookID.setText(bookID);
-        mainTabPane.getSelectionModel().select(renewTab);
-        loadBookInfo2(null);
-        getStage().toFront();
-        if (drawer.isOpened()) {
-            drawer.close();
-        }
-    }
-
     @FXML
     private void handleIssueButtonKeyPress(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
-            loadIssueOperation(null);
+
         }
     }
 
