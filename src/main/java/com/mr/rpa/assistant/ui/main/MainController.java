@@ -37,12 +37,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.issuedlist.IssuedListController;
 import com.mr.rpa.assistant.ui.main.toolbar.ToolbarController;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import org.apache.commons.lang3.StringUtils;
 
 public class MainController implements Initializable {
 
@@ -53,20 +53,20 @@ public class MainController implements Initializable {
 
     private Boolean isReadyForSubmission = false;
     private DatabaseHandler databaseHandler;
-    private PieChart bookChart;
-    private PieChart memberChart;
+    @FXML
+    private PieChart totalTaskChart;
+    @FXML
+    private PieChart totalTaskLogChart;
+    @FXML
+    private PieChart taskChart;
 
     @FXML
-    private HBox book_info;
+    private HBox total_info;
     @FXML
-    private HBox member_info;
+    private HBox task_info;
 
     @FXML
-    private TextField memberIDInput;
-    @FXML
-    private Text memberName;
-    @FXML
-    private Text memberMobile;
+    private TextField taskIDInput;
     @FXML
     private JFXTextField taskID;
     @FXML
@@ -109,9 +109,9 @@ public class MainController implements Initializable {
     private HBox submissionDataContainer1;
 
     @FXML
-    private Tab bookIssueTab;
+    private Tab statisticTab;
     @FXML
-    private Tab renewTab;
+    private Tab taskTab;
     @FXML
     private JFXTabPane mainTabPane;
     @FXML
@@ -132,38 +132,13 @@ public class MainController implements Initializable {
         DataHelper.loadTaskList(taskId, null);
     }
 
-    void clearMemberCache() {
-        memberName.setText("");
-        memberMobile.setText("");
-    }
-
     @FXML
-    private void loadMemberInfo(ActionEvent event) {
-        clearMemberCache();
-        enableDisableGraph(false);
-
-        String id = memberIDInput.getText();
-        String qu = "SELECT * FROM MEMBER WHERE id = '" + id + "'";
-        ResultSet rs = databaseHandler.execQuery(qu);
-        Boolean flag = false;
-        try {
-            while (rs.next()) {
-                String mName = rs.getString("name");
-                String mMobile = rs.getString("mobile");
-
-                memberName.setText(mName);
-                memberMobile.setText(mMobile);
-
-                flag = true;
-            }
-
-            if (!flag) {
-                memberName.setText(NO_SUCH_MEMBER_AVAILABLE);
-            } else {
-                btnIssue.requestFocus();
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+    private void loadTaskStatistic(ActionEvent event) {
+        taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
+        if(StringUtils.isNotBlank(taskIDInput.getText())) {
+            enableDisableGraph(true);
+        }else {
+            enableDisableGraph(false);
         }
     }
 
@@ -273,30 +248,35 @@ public class MainController implements Initializable {
         }
     }
 
-    private void clearIssueEntries() {
+    private void clearTaskEntries() {
+        taskIDInput.setText("");
     }
 
     private void initGraphs() {
-        bookIssueTab.setOnSelectionChanged((Event event) -> {
-            clearIssueEntries();
-            if (bookIssueTab.isSelected()) {
+        totalTaskChart.setData(databaseHandler.getTotalTaskGraphStatistics());
+        totalTaskLogChart.setData(databaseHandler.getTotalTaskLogGraphStatistics());
+        taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
+        enableDisableGraph(false);
+        statisticTab.setOnSelectionChanged((Event event) -> {
+            clearTaskEntries();
+            if (statisticTab.isSelected()) {
                 refreshGraphs();
             }
         });
     }
 
     private void refreshGraphs() {
-        bookChart.setData(databaseHandler.getBookGraphStatistics());
-        memberChart.setData(databaseHandler.getMemberGraphStatistics());
+        enableDisableGraph(false);
+        taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
+        totalTaskChart.setData(databaseHandler.getTotalTaskGraphStatistics());
+        totalTaskLogChart.setData(databaseHandler.getTotalTaskLogGraphStatistics());
     }
 
     private void enableDisableGraph(Boolean status) {
         if (status) {
-            bookChart.setOpacity(1);
-            memberChart.setOpacity(1);
+            taskChart.setOpacity(1);
         } else {
-            bookChart.setOpacity(0);
-            memberChart.setOpacity(0);
+            taskChart.setOpacity(0);
         }
     }
 

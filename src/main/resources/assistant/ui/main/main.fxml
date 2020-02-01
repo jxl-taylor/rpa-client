@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.chart.PieChart?>
 <StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="1000.0" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.main.MainController">
    <children>
       <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true" styleClass="jfx-drawer" />
@@ -27,38 +28,7 @@
                <children>
                   <JFXTabPane fx:id="mainTabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <tabs>
-                        <Tab fx:id="bookIssueTab" closable="false" styleClass="tab-main" text="任务列表">
-                           <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <bottom>
-                                          <HBox alignment="CENTER" prefHeight="69.0" prefWidth="557.0" BorderPane.alignment="CENTER">
-                                             <children>
-
-                                             </children>
-                                          </HBox>
-                                       </bottom>
-                                       <center>
-                                          <HBox fx:id="submissionDataContainer1" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <VBox alignment="TOP_CENTER" >
-                                                   <children>
-
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                             <BorderPane.margin>
-                                                <Insets top="20.0" />
-                                             </BorderPane.margin>
-                                          </HBox>
-                                       </center>
-                                    </BorderPane>
-                                 </children>
-                              </AnchorPane>
-                           </content>
-                        </Tab>
-                        <Tab fx:id="renewTab" closable="false" styleClass="tab-main" text="运行日志">
+                        <Tab fx:id="taskTab" closable="false" styleClass="tab-main" text="任务列表">
                            <content>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
@@ -84,13 +54,72 @@
                                                       <fx:include source="/assistant/ui/listtask/task_list.fxml" />
                                                    </children>
                                                 </VBox>
-                                                 </children>
+                                             </children>
                                              <BorderPane.margin>
                                                 <Insets top="20.0" />
                                              </BorderPane.margin>
                                           </HBox>
                                        </center>
                                     </BorderPane>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="statisticTab" closable="false" styleClass="tab-main" text="统计信息">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <HBox fx:id="total_info" alignment="CENTER" prefHeight="200.0" prefWidth="1000.0">
+                                             <children>
+                                                <VBox alignment="CENTER" spacing="20.0">
+                                                   <HBox.margin>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                   </HBox.margin>
+                                                   <children>
+                                                      <PieChart fx:id="totalTaskChart"/>
+                                                   </children>
+                                                </VBox>
+                                                <VBox alignment="CENTER" spacing="20.0">
+                                                   <HBox.margin>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                   </HBox.margin>
+                                                   <children>
+                                                      <PieChart fx:id="totalTaskLogChart"/>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <HBox fx:id="task_info" alignment="CENTER" prefHeight="200.0" prefWidth="1000.0">
+                                             <children>
+                                                <VBox alignment="CENTER" spacing="20.0" prefWidth="450">
+                                                   <HBox.margin>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                   </HBox.margin>
+                                                   <children>
+                                                      <FontAwesomeIconView glyphName="USER" size="30" />
+                                                      <JFXTextField fx:id="taskIDInput" labelFloat="true" onAction="#loadTaskStatistic" prefWidth="230.0" promptText="任务编号" />
+                                                   </children>
+                                                </VBox>
+                                                <VBox alignment="CENTER" spacing="20.0">
+                                                   <HBox.margin>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                   </HBox.margin>
+                                                   <children>
+                                                      <PieChart fx:id="taskChart"/>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </AnchorPane>
                            </content>
