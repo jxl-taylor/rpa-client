@@ -17,7 +17,7 @@
    <children>
       <TabPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="414.0" prefWidth="400.0">
          <tabs>
-            <Tab closable="false" styleClass="settings-tab" text="Basic">
+            <Tab closable="false" styleClass="settings-tab" text="管理员">
                <content>
                   <AnchorPane id="AnchorPane" prefHeight="304.0" prefWidth="402.0" styleClass="custom-pane">
                      <children>
@@ -60,7 +60,7 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab closable="false" styleClass="settings-tab" text="Mail Server">
+            <Tab closable="false" styleClass="settings-tab" text="运行">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="custom-pane">
                      <children>
@@ -105,6 +105,33 @@
                   </AnchorPane>
                </content>
             </Tab>
+            <Tab closable="false" styleClass="settings-tab" text="控制中心">
+            <content>
+               <AnchorPane id="AnchorPane" prefHeight="304.0" prefWidth="402.0" styleClass="custom-pane">
+                  <children>
+
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+            <Tab closable="false" styleClass="settings-tab" text="数据库">
+            <content>
+               <AnchorPane id="AnchorPane" prefHeight="304.0" prefWidth="402.0" styleClass="custom-pane">
+                  <children>
+
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+            <Tab closable="false" styleClass="settings-tab" text="预警">
+            <content>
+               <AnchorPane id="AnchorPane" prefHeight="304.0" prefWidth="402.0" styleClass="custom-pane">
+                  <children>
+
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
             <Tab closable="false" styleClass="settings-tab" text="Export">
                <content>
                   <AnchorPane id="AnchorPane" prefHeight="304.0" prefWidth="402.0" styleClass="custom-pane">

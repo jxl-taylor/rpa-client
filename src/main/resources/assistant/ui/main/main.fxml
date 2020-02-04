@@ -1,135 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDrawer?>
 <?import com.jfoenix.controls.JFXHamburger?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
 <?import javafx.scene.chart.PieChart?>
 <StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="1000.0" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.main.MainController">
    <children>
-      <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true" styleClass="jfx-drawer" />
-      <AnchorPane fx:id="rootAnchorPane" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <JFXTabPane fx:id="mainTabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <tabs>
-                        <Tab fx:id="taskTab" closable="false" styleClass="tab-main" text="任务列表">
-                           <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <top>
-                                          <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务名" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets top="30.0" />
-                                             </BorderPane.margin>
-                                          </JFXTextField>
-                                       </top>
-                                       <bottom>
-                                          <HBox alignment="CENTER" prefHeight="69.0" prefWidth="557.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                             </children>
-                                          </HBox>
-                                       </bottom>
-                                       <center>
-                                          <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <VBox alignment="TOP_CENTER" >
-                                                   <children>
-                                                      <fx:include source="/assistant/ui/listtask/task_list.fxml" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                             <BorderPane.margin>
-                                                <Insets top="20.0" />
-                                             </BorderPane.margin>
-                                          </HBox>
-                                       </center>
-                                    </BorderPane>
-                                 </children>
-                              </AnchorPane>
-                           </content>
-                        </Tab>
-                        <Tab fx:id="statisticTab" closable="false" styleClass="tab-main" text="统计信息">
-                           <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <VBox prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <HBox fx:id="total_info" alignment="CENTER" prefHeight="200.0" prefWidth="1000.0">
-                                             <children>
-                                                <VBox alignment="CENTER" spacing="20.0">
-                                                   <HBox.margin>
-                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                                   </HBox.margin>
-                                                   <children>
-                                                      <PieChart fx:id="totalTaskChart"/>
-                                                   </children>
-                                                </VBox>
-                                                <VBox alignment="CENTER" spacing="20.0">
-                                                   <HBox.margin>
-                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                                   </HBox.margin>
-                                                   <children>
-                                                      <PieChart fx:id="totalTaskLogChart"/>
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                             <VBox.margin>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                             </VBox.margin>
-                                          </HBox>
-                                          <HBox fx:id="task_info" alignment="CENTER" prefHeight="200.0" prefWidth="1000.0">
-                                             <children>
-                                                <VBox alignment="CENTER" spacing="20.0" prefWidth="450">
-                                                   <HBox.margin>
-                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                                   </HBox.margin>
-                                                   <children>
-                                                      <FontAwesomeIconView glyphName="USER" size="30" />
-                                                      <JFXTextField fx:id="taskIDInput" labelFloat="true" onAction="#loadTaskStatistic" prefWidth="230.0" promptText="任务编号" />
-                                                   </children>
-                                                </VBox>
-                                                <VBox alignment="CENTER" spacing="20.0">
-                                                   <HBox.margin>
-                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                                   </HBox.margin>
-                                                   <children>
-                                                      <PieChart fx:id="taskChart"/>
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                             <VBox.margin>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                             </VBox.margin>
-                                          </HBox>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </AnchorPane>
-                           </content>
-                        </Tab>
-                     </tabs>
-                  </JFXTabPane>
-                  <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="75.0" />
-               </children>
-            </AnchorPane>
-         </children>
-      </AnchorPane>
+      <StackPane>
+         <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true" styleClass="jfx-drawer" />
+         <AnchorPane fx:id="rootAnchorPane" prefHeight="200.0" prefWidth="200.0">
+            <children>
+               <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                     <JFXTabPane fx:id="mainTabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <tabs>
+                           <Tab fx:id="taskTab" closable="false" styleClass="tab-main" text="任务列表">
+                              <content>
+                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <children>
+                                       <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <top>
+                                             <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务名" BorderPane.alignment="CENTER">
+                                                <BorderPane.margin>
+                                                   <Insets top="30.0" />
+                                                </BorderPane.margin>
+                                             </JFXTextField>
+                                          </top>
+                                          <bottom>
+                                             <HBox alignment="CENTER" prefHeight="69.0" prefWidth="557.0" BorderPane.alignment="CENTER">
+                                                <children>
+                                                </children>
+                                             </HBox>
+                                          </bottom>
+                                          <center>
+                                             <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
+                                                <children>
+                                                   <VBox alignment="TOP_CENTER" >
+                                                      <children>
+                                                         <fx:include source="/assistant/ui/listtask/task_list.fxml" />
+                                                      </children>
+                                                   </VBox>
+                                                </children>
+                                                <BorderPane.margin>
+                                                   <Insets top="20.0" />
+                                                </BorderPane.margin>
+                                             </HBox>
+                                          </center>
+                                       </BorderPane>
+                                    </children>
+                                 </AnchorPane>
+                              </content>
+                           </Tab>
+                           <Tab fx:id="statisticTab" closable="false" styleClass="tab-main" text="统计信息">
+                              <content>
+                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <children>
+                                       <VBox prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <children>
+                                             <HBox fx:id="total_info" alignment="CENTER" prefHeight="200.0" prefWidth="1000.0">
+                                                <children>
+                                                   <VBox alignment="CENTER" spacing="20.0">
+                                                      <HBox.margin>
+                                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                      </HBox.margin>
+                                                      <children>
+                                                         <PieChart fx:id="totalTaskChart"/>
+                                                      </children>
+                                                   </VBox>
+                                                   <VBox alignment="CENTER" spacing="20.0">
+                                                      <HBox.margin>
+                                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                      </HBox.margin>
+                                                      <children>
+                                                         <PieChart fx:id="totalTaskLogChart"/>
+                                                      </children>
+                                                   </VBox>
+                                                </children>
+                                                <VBox.margin>
+                                                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                </VBox.margin>
+                                             </HBox>
+                                             <HBox fx:id="task_info" alignment="CENTER" prefHeight="200.0" prefWidth="1000.0">
+                                                <children>
+                                                   <VBox alignment="CENTER" spacing="20.0" prefWidth="450">
+                                                      <HBox.margin>
+                                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                      </HBox.margin>
+                                                      <children>
+                                                         <FontAwesomeIconView glyphName="USER" size="30" />
+                                                         <JFXTextField fx:id="taskIDInput" labelFloat="true" onAction="#loadTaskStatistic" prefWidth="230.0" promptText="任务编号" />
+                                                      </children>
+                                                   </VBox>
+                                                   <VBox alignment="CENTER" spacing="20.0">
+                                                      <HBox.margin>
+                                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                      </HBox.margin>
+                                                      <children>
+                                                         <PieChart fx:id="taskChart"/>
+                                                      </children>
+                                                   </VBox>
+                                                </children>
+                                                <VBox.margin>
+                                                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                </VBox.margin>
+                                             </HBox>
+                                          </children>
+                                       </VBox>
+                                    </children>
+                                 </AnchorPane>
+                              </content>
+                           </Tab>
+                        </tabs>
+                     </JFXTabPane>
+                     <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="75.0" />
+                  </children>
+               </AnchorPane>
+            </children>
+         </AnchorPane>
+      </StackPane>
    </children>
 </StackPane>

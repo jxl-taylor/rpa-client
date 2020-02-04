@@ -20,8 +20,8 @@
                 <FontAwesomeIconView glyphName="COG" size="25"/>
             </graphic>
         </JFXButton>
-        <JFXButton contentDisplay="TOP" mnemonicParsing="false" onAction="#loadIssuedBookList" prefHeight="400.0"
-                   prefWidth="160.0" styleClass="toolbar-button" text="全屏/退出全屏" textAlignment="CENTER">
+        <JFXButton fx:id="loginButton" contentDisplay="TOP" mnemonicParsing="false" onAction="#loadIssuedBookList"
+                   prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="登录" textAlignment="CENTER">
             <graphic>
                 <FontAwesomeIconView glyphName="CHECK" size="25" textAlignment="CENTER"/>
             </graphic>

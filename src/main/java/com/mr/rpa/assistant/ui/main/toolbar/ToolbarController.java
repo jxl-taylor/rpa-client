@@ -2,20 +2,17 @@ package com.mr.rpa.assistant.ui.main.toolbar;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import com.mr.rpa.assistant.ui.callback.BookReturnCallback;
-import com.mr.rpa.assistant.ui.issuedlist.IssuedListController;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 
 public class ToolbarController implements Initializable {
 
-    private BookReturnCallback callback;
-
-    public void setBookReturnCallback(BookReturnCallback callback) {
-        this.callback = callback;
-    }
+    @FXML
+    private JFXButton loginButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -49,11 +46,8 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadIssuedBookList(ActionEvent event) {
-        Object controller = LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/issuedlist/issued_list.fxml"), "Issued Book List", null);
-        if (controller != null) {
-            IssuedListController cont = (IssuedListController) controller;
-            cont.setBookReturnCallback(callback);
-        }
+        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
+
     }
 
 }

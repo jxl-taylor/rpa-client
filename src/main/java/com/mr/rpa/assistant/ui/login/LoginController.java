@@ -2,19 +2,20 @@ package com.mr.rpa.assistant.ui.login;
 
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import java.io.IOException;
+
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import com.mr.rpa.assistant.ui.settings.Preferences;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -23,57 +24,54 @@ import org.apache.logging.log4j.Logger;
 
 public class LoginController implements Initializable {
 
-    private final static Logger LOGGER = LogManager.getLogger(LoginController.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(LoginController.class.getName());
 
-    @FXML
-    private JFXTextField username;
-    @FXML
-    private JFXPasswordField password;
+	@FXML
+	private AnchorPane loginPane;
 
-    Preferences preference;
+	@FXML
+	private JFXTextField username;
+	@FXML
+	private JFXPasswordField password;
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        preference = Preferences.getPreferences();
-    }
+	Preferences preference;
 
-    @FXML
-    private void handleLoginButtonAction(ActionEvent event) {
-        String uname = StringUtils.trimToEmpty(username.getText());
-        String pword = DigestUtils.shaHex(password.getText());
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
+		preference = Preferences.getPreferences();
+		password.addEventHandler(ActionEvent.ACTION, GlobalProperty.getInstance().getAfterLoginEventHandler());
+	}
 
-        if (uname.equals(preference.getUsername()) && pword.equals(preference.getPassword())) {
-            closeStage();
-            loadMain();
-            LOGGER.log(Level.INFO, "User successfully logged in {}", uname);
-        }
-        else {
-            username.getStyleClass().add("wrong-credentials");
-            password.getStyleClass().add("wrong-credentials");
-        }
-    }
+	@FXML
+	private void handleLoginButtonAction(ActionEvent event) {
+		String uname = StringUtils.trimToEmpty(username.getText());
+		String pword = DigestUtils.shaHex(password.getText());
 
-    @FXML
-    private void handleCancelButtonAction(ActionEvent event) {
-        System.exit(0);
-    }
+		if (uname.equals(preference.getUsername()) && pword.equals(preference.getPassword())) {
+			closeStage();
+			setAfterLogin();
+			LOGGER.log(Level.INFO, "User successfully logged in {}", uname);
+		} else {
+			username.getStyleClass().add("wrong-credentials");
+			password.getStyleClass().add("wrong-credentials");
+		}
+	}
 
-    private void closeStage() {
-        ((Stage) username.getScene().getWindow()).close();
-    }
+	private void setAfterLogin() {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.setTitle(username.getText());
+		StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				new ArrayList<>(), "登录", "登录成功");
+	}
 
-    void loadMain() {
-        try {
-            Parent parent = FXMLLoader.load(getClass().getClassLoader().getResource("assistant/ui/main/main.fxml"));
-            Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("MR-ROBOT");
-            stage.setScene(new Scene(parent));
-            stage.show();
-            LibraryAssistantUtil.setStageIcon(stage);
-        }
-        catch (IOException ex) {
-            LOGGER.log(Level.ERROR, "{}", ex);
-        }
-    }
+	@FXML
+	private void handleCancelButtonAction(ActionEvent event) {
+		closeStage();
+	}
 
+	private void closeStage() {
+		((Stage) username.getScene().getWindow()).close();
+	}
 }
