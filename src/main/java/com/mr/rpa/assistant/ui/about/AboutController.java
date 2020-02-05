@@ -20,14 +20,14 @@ import javafx.stage.Stage;
 
 public class AboutController implements Initializable {
 
-    private static final String LINKED_IN = "https://www.linkedin.com/in/muhammedafsalvillan/";
-    private static final String FACEBOOK = "http://facebook.com/afsalashyana";
-    private static final String WEBSITE = "http://www.genuinecoder.com";
-    private static final String YOUTUBE = "https://www.youtube.com/c/GenuineCoder";
+    private static final String WEIBO = "http://microrule.com/";
+    private static final String WEIXIN = "http://microrule.com/";
+    private static final String QQ = "http://microrule.com/";
+    private static final String WEBSITE = "http://microrule.com/";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        AlertMaker.showTrayMessage(String.format("Hello %s!", System.getProperty("user.name")), "Thanks for trying out Library Assistant");
+        //TODO
     }
 
     private void loadWebpage(String url) {
@@ -46,28 +46,28 @@ public class AboutController implements Initializable {
         Stage stage = new Stage();
         Scene scene = new Scene(new StackPane(browser));
         stage.setScene(scene);
-        stage.setTitle("Genuine Coder");
+        stage.setTitle("MR");
         stage.show();
         LibraryAssistantUtil.setStageIcon(stage);
     }
 
     @FXML
-    private void loadYoutubeChannel(ActionEvent event) {
-        loadWebpage(YOUTUBE);
-    }
-
-    @FXML
-    private void loadBlog(ActionEvent event) {
+    private void loadMainPage(ActionEvent event) {
         loadWebpage(WEBSITE);
     }
 
     @FXML
-    private void loadLinkedIN(ActionEvent event) {
-        loadWebpage(LINKED_IN);
+    private void loadWeiBo(ActionEvent event) {
+        loadWebpage(WEIBO);
     }
 
     @FXML
-    private void loadFacebook(ActionEvent event) {
-        loadWebpage(FACEBOOK);
+    private void loadWeiXin(ActionEvent event) {
+        loadWebpage(WEIBO);
+    }
+
+    @FXML
+    private void loadQQ(ActionEvent event) {
+        loadWebpage(QQ);
     }
 }

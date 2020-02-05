@@ -15,17 +15,22 @@
             <Image url="@/gc.png" />
          </image>
       </ImageView>
-      <Text fontSmoothingType="LCD" layoutX="87.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="about-text" text="Built with love and couple of lines of code" textAlignment="CENTER">
+      <Text fontSmoothingType="LCD" layoutX="287.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="about-text" text="邮箱：marketing@microrule.com" textAlignment="CENTER">
          <font>
-            <Font size="19.0" />
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <Text fontSmoothingType="LCD" layoutX="287.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="about-text" text="电话：180-0218-9699" textAlignment="CENTER">
+         <font>
+            <Font size="13.0" />
          </font>
       </Text>
       <VBox layoutX="231.0" layoutY="18.0" spacing="5.0">
          <children>
-            <JFXButton onAction="#loadYoutubeChannel" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="YouTube Channel" />
-            <JFXButton onAction="#loadBlog" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="Blog" />
-            <JFXButton onAction="#loadLinkedIN" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="Linked In" />
-            <JFXButton onAction="#loadFacebook" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="Personal Facebook Page" />
+            <JFXButton onAction="#loadMainPage" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="官网" />
+            <JFXButton onAction="#loadWeiBo" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="微博" />
+            <JFXButton onAction="#loadWeiXin" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="微信" />
+            <JFXButton onAction="#loadQQ" prefHeight="40.0" prefWidth="269.0" styleClass="about-button" text="QQ" />
          </children>
       </VBox>
    </children>

@@ -113,12 +113,16 @@ public class AlertMaker {
     }
 
     public static void showMaterialDialog(StackPane root, Node nodeToBeBlurred, List<JFXButton> controls, String header, String body) {
+        showMaterialDialog(root, nodeToBeBlurred, controls, header, body, true);
+    }
+
+        public static void showMaterialDialog(StackPane root, Node nodeToBeBlurred, List<JFXButton> controls, String header, String body, boolean overlayClose) {
         BoxBlur blur = new BoxBlur(3, 3, 3);
         if (controls.isEmpty()) {
-            controls.add(new JFXButton("Okay"));
+//            controls.add(new JFXButton("确定"));
         }
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
-        JFXDialog dialog = new JFXDialog(root, dialogLayout, JFXDialog.DialogTransition.TOP);
+        JFXDialog dialog = new JFXDialog(root, dialogLayout, JFXDialog.DialogTransition.TOP, overlayClose);
 
         controls.forEach(controlButton -> {
             controlButton.getStyleClass().add("dialog-button");
@@ -141,9 +145,9 @@ public class AlertMaker {
         try {
             SystemTray tray = SystemTray.getSystemTray();
             BufferedImage image = ImageIO.read(AlertMaker.class.getResource(LibraryAssistantUtil.ICON_IMAGE_LOC));
-            TrayIcon trayIcon = new TrayIcon(image, "Library Assistant");
+            TrayIcon trayIcon = new TrayIcon(image, "MR ROBOT");
             trayIcon.setImageAutoSize(true);
-            trayIcon.setToolTip("Library Assistant");
+            trayIcon.setToolTip("MR ROBOT");
             tray.add(trayIcon);
             trayIcon.displayMessage(title, message, MessageType.INFO);
             tray.remove(trayIcon);

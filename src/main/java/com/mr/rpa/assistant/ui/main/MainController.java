@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -118,6 +119,7 @@ public class MainController implements Initializable {
         initComponents();
 
         GlobalProperty.getInstance().setRootPane(rootPane);
+        AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈融机器人");
     }
 
     @FXML

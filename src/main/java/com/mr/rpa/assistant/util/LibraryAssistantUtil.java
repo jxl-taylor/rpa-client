@@ -54,6 +54,7 @@ public class LibraryAssistantUtil {
             stage.setScene(new Scene(parent));
             stage.show();
             setStageIcon(stage);
+            stage.setResizable(false);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

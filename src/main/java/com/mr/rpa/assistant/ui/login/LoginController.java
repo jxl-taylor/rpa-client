@@ -63,7 +63,7 @@ public class LoginController implements Initializable {
 		StackPane rootPane = GlobalProperty.getInstance().getRootPane();
 		AlertMaker.showMaterialDialog(rootPane,
 				rootPane.getChildren().get(0),
-				new ArrayList<>(), "登录", "登录成功");
+				new ArrayList<>(), "", "登录成功");
 	}
 
 	@FXML
@@ -72,6 +72,8 @@ public class LoginController implements Initializable {
 	}
 
 	private void closeStage() {
+		StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+		rootPane.getChildren().get(0).setEffect(null);
 		((Stage) username.getScene().getWindow()).close();
 	}
 }

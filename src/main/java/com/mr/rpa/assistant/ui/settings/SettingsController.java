@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.ui.settings;
 
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.settings.Preferences;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
@@ -21,6 +22,7 @@ import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.export.DatabaseExporter;
 import com.mr.rpa.assistant.ui.mail.TestMailController;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import javafx.stage.Window;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,110 +30,86 @@ import org.apache.logging.log4j.Logger;
 public class SettingsController implements Initializable {
 
     @FXML
-    private JFXTextField nDaysWithoutFine;
+    private JFXTextField adminUsername;
     @FXML
-    private JFXTextField finePerDay;
+    private JFXTextField mailServerName;
     @FXML
-    private JFXTextField username;
+    private JFXTextField mailSmtpPort;
     @FXML
-    private JFXPasswordField password;
-    @FXML
-    private JFXTextField serverName;
-    @FXML
-    private JFXTextField smtpPort;
-    @FXML
-    private JFXTextField emailAddress;
+    private JFXTextField mailEmailAddress;
 
     private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
     @FXML
-    private JFXPasswordField emailPassword;
+    private JFXPasswordField mailEmailPassword;
     @FXML
-    private JFXCheckBox sslCheckbox;
+    private JFXCheckBox mailSslCheckbox;
+    @FXML
+    private JFXTextField taskFilePath;
+    @FXML
+    private JFXTextField logPath;
+    @FXML
+    private JFXTextField controlServer;
+    @FXML
+    private JFXTextField dbPath;
+    @FXML
+    private JFXTextField miniteErrorLimit;
+    @FXML
+    private JFXTextField runningLimit;
     @FXML
     private JFXSpinner progressSpinner;
 
+    private SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initDefaultValues();
+        adminUsername.setText(sysConfig.getAdminUsername());
+        adminUsername.setEditable(false);
+        mailServerName.setText(sysConfig.getMailServerName());
+        mailSmtpPort.setText(sysConfig.getMailSmtpPort().toString());
+        mailEmailAddress.setText(sysConfig.getMailEmailAddress());
+        mailEmailPassword.setText(sysConfig.getMailEmailPassword());
+        mailSslCheckbox.setSelected(sysConfig.getMailSslCheckbox());
+
+        taskFilePath.setText(sysConfig.getTaskFilePath());
+        logPath.setText(sysConfig.getLogPath());
+        controlServer.setText(sysConfig.getControlServer());
+
+        dbPath.setText(sysConfig.getDbPath());
+        dbPath.setEditable(false);
+
+        miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
+        runningLimit.setText(sysConfig.getRunningLimit().toString());
+
     }
 
     @FXML
     private void handleSaveButtonAction(ActionEvent event) {
-        int ndays = Integer.parseInt(nDaysWithoutFine.getText());
-        float fine = Float.parseFloat(finePerDay.getText());
-        String uname = username.getText();
-        String pass = password.getText();
-
-        com.mr.rpa.assistant.ui.settings.Preferences preferences = com.mr.rpa.assistant.ui.settings.Preferences.getPreferences();
-        preferences.setnDaysWithoutFine(ndays);
-        preferences.setFinePerDay(fine);
-        preferences.setUsername(uname);
-        preferences.setPassword(pass);
-
-        com.mr.rpa.assistant.ui.settings.Preferences.writePreferenceToFile(preferences);
-    }
-
-    private Stage getStage() {
-        return ((Stage) nDaysWithoutFine.getScene().getWindow());
-    }
-
-    private void initDefaultValues() {
-        com.mr.rpa.assistant.ui.settings.Preferences preferences = Preferences.getPreferences();
-        nDaysWithoutFine.setText(String.valueOf(preferences.getnDaysWithoutFine()));
-        finePerDay.setText(String.valueOf(preferences.getFinePerDay()));
-        username.setText(String.valueOf(preferences.getUsername()));
-        String passHash = String.valueOf(preferences.getPassword());
-        password.setText(passHash.substring(0, Math.min(passHash.length(), 10)));
-        loadMailServerConfigurations();
+        sysConfig.setMailServerName(mailServerName.getText());
+        sysConfig.setMailSmtpPort(Integer.parseInt(mailSmtpPort.getText()));
+        sysConfig.setMailEmailAddress(mailEmailAddress.getText());
+        sysConfig.setMailEmailPassword(mailEmailPassword.getText());
+        sysConfig.setMailSslCheckbox(mailSslCheckbox.isSelected());
+        DatabaseHandler.getInstance().updateSysConfig();
+        AlertMaker.showSimpleAlert("保存", "基础配置修改成功");
     }
 
     @FXML
-    private void handleTestMailAction(ActionEvent event) {
-        MailServerInfo mailServerInfo = readMailSererInfo();
-        if (mailServerInfo != null) {
-            TestMailController controller = (TestMailController) LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/mail/test_mail.fxml"), "Test Email", null);
-            controller.setMailServerInfo(mailServerInfo);
-        }
+    private void handleSaverRunningAction(ActionEvent event) {
+       sysConfig.setTaskFilePath(taskFilePath.getText());
+       sysConfig.setLogPath(logPath.getText());
+       sysConfig.setControlServer(controlServer.getText());
+        DatabaseHandler.getInstance().updateSysConfig();
+        AlertMaker.showSimpleAlert("保存", "任务配置修改成功");
     }
 
     @FXML
-    private void saveMailServerConfuration(ActionEvent event) {
-        MailServerInfo mailServerInfo = readMailSererInfo();
-        if (mailServerInfo != null) {
-            if (DataHelper.updateMailServerInfo(mailServerInfo)) {
-                AlertMaker.showSimpleAlert("Success", "Saved successfully!");
-            } else {
-                AlertMaker.showErrorMessage("Failed", "Something went wrong!");
-            }
-        }
+    private void handleSaveAlertAction(ActionEvent event) {
+        sysConfig.setMiniteErrorLimit(Integer.parseInt(miniteErrorLimit.getText()));
+        sysConfig.setRunningLimit(Integer.parseInt( runningLimit.getText()));
+        DatabaseHandler.getInstance().updateSysConfig();
+        AlertMaker.showSimpleAlert("保存", "预警配置修改成功");
     }
 
-    private MailServerInfo readMailSererInfo() {
-        try {
-            MailServerInfo mailServerInfo
-                    = new MailServerInfo(serverName.getText(), Integer.parseInt(smtpPort.getText()), emailAddress.getText(), emailPassword.getText(), sslCheckbox.isSelected());
-            if (!mailServerInfo.validate() || !LibraryAssistantUtil.validateEmailAddress(emailAddress.getText())) {
-                throw new InvalidParameterException();
-            }
-            return mailServerInfo;
-        } catch (Exception exp) {
-            AlertMaker.showErrorMessage("Invalid Entries Found", "Correct input and try again");
-            LOGGER.log(Level.WARN, exp);
-        }
-        return null;
-    }
-
-    private void loadMailServerConfigurations() {
-        MailServerInfo mailServerInfo = DataHelper.loadMailServerInfo();
-        if (mailServerInfo != null) {
-            LOGGER.log(Level.INFO, "Mail server info loaded from DB");
-            serverName.setText(mailServerInfo.getMailServer());
-            smtpPort.setText(String.valueOf(mailServerInfo.getPort()));
-            emailAddress.setText(mailServerInfo.getEmailID());
-            emailPassword.setText(mailServerInfo.getPassword());
-            sslCheckbox.setSelected(mailServerInfo.getSslEnabled());
-        }
-    }
 
     @FXML
     private void handleDatabaseExportAction(ActionEvent event) {
@@ -145,5 +123,9 @@ public class SettingsController implements Initializable {
             progressSpinner.visibleProperty().bind(databaseExporter.runningProperty());
             new Thread(databaseExporter).start();
         }
+    }
+
+    private Stage getStage() {
+        return (Stage) taskFilePath.getScene().getWindow();
     }
 }

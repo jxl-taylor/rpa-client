@@ -7,14 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.listbook.BookListController;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.listmember.MemberListController;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
@@ -38,13 +37,15 @@ public final class DatabaseHandler {
 
 	private static DatabaseHandler handler = null;
 
-	private static final String DB_URL = "jdbc:derby:database;create=true";
+	private static final String DB_URL = String.format("jdbc:derby:%s;create=true",
+			GlobalProperty.getInstance().getSysConfig().getDbPath());
 	private static Connection conn = null;
 	private static Statement stmt = null;
 
 	static {
 		createConnection();
 		inflateDB();
+		DatabaseHandler.getInstance().initSysConfig();
 	}
 
 	private DatabaseHandler() {
@@ -354,5 +355,89 @@ public final class DatabaseHandler {
 
 	public Connection getConnection() {
 		return conn;
+	}
+
+	public boolean initSysConfig() {
+		try {
+			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+			ResultSet rs = execQuery("SELECT * FROM SYS_CONFIG");
+			if (rs.next()) {
+				sysConfig.setAdminUsername(rs.getString("admin_username"));
+				sysConfig.setAdminPassword(rs.getString("admin_password"));
+				sysConfig.setMailServerName(rs.getString("mail_server_name"));
+				sysConfig.setMailSmtpPort(rs.getInt("mail_server_port"));
+				sysConfig.setMailEmailAddress(rs.getString("mail_user_email"));
+				sysConfig.setMailEmailPassword(rs.getString("mail_user_password"));
+				sysConfig.setMailSslCheckbox(rs.getBoolean("mail_ssl_enabled"));
+				sysConfig.setTaskFilePath(rs.getString("task_file_path"));
+				sysConfig.setLogPath(rs.getString("log_path"));
+				sysConfig.setControlServer(rs.getString("control_server"));
+				sysConfig.setDbPath(rs.getString("db_path"));
+				sysConfig.setMiniteErrorLimit(rs.getInt("minite_error_limit"));
+				sysConfig.setRunningLimit(rs.getInt("running_limit"));
+				rs.close();
+				stmt.close();
+			} else {
+				insertSysConfig();
+			}
+			return true;
+		} catch (SQLException ex) {
+			LOGGER.log(Level.ERROR, "{}", ex);
+		}
+		return false;
+	}
+
+	public boolean updateSysConfig() {
+		try {
+			String deleteStatement = "DELETE FROM SYS_CONFIG";
+			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
+			stmt.executeUpdate();
+			insertSysConfig();
+			return true;
+		} catch (SQLException ex) {
+			LOGGER.log(Level.ERROR, "{}", ex);
+		}
+		return false;
+	}
+
+	private void insertSysConfig() throws SQLException {
+		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+		PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
+				"INSERT INTO SYS_CONFIG(id," +
+						"admin_username," +
+						"admin_password," +
+						"mail_server_name," +
+						"mail_server_port," +
+						"mail_user_email," +
+						"mail_user_password," +
+						"mail_ssl_enabled," +
+						"task_file_path," +
+						"log_path," +
+						"db_path," +
+						"control_server," +
+						"minite_error_limit," +
+						"running_limit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		int i = 1;
+		statement.setString(i++, UUID.randomUUID().toString());
+		//用户
+		statement.setString(i++, sysConfig.getAdminUsername());
+		statement.setString(i++, sysConfig.getAdminPassword());
+		//邮箱
+		statement.setString(i++, sysConfig.getMailServerName());
+		statement.setInt(i++, sysConfig.getMailSmtpPort());
+		statement.setString(i++, sysConfig.getMailEmailAddress());
+		statement.setString(i++, sysConfig.getMailEmailPassword());
+		statement.setBoolean(i++, sysConfig.getMailSslCheckbox());
+		//path
+		statement.setString(i++, sysConfig.getTaskFilePath());
+		statement.setString(i++, sysConfig.getLogPath());
+		statement.setString(i++, sysConfig.getDbPath());
+		//控制中心
+		statement.setString(i++, sysConfig.getControlServer());
+		//预警
+		statement.setInt(i++, sysConfig.getMiniteErrorLimit());
+		statement.setInt(i++, sysConfig.getRunningLimit());
+		statement.executeUpdate();
+		statement.close();
 	}
 }
