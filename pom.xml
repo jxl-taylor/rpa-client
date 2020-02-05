@@ -103,6 +103,8 @@
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-common</artifactId>
             <version>8.15</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/resources/fontawesomefx-commons-8.15.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/de.jensd/fontawesomefx-fontawesome -->
@@ -180,7 +182,28 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.5</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.mr.rpa.assistant.ui.main.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
