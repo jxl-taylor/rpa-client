@@ -143,6 +143,16 @@
     -fx-fill: -fx-primary;
 }
 
+/*Toolbar buttons*/
+.right-menu-button
+{
+    -fx-border-color: transparent;
+    -fx-background-color: derive(-fx-primary, 10%);
+    -fx-background-radius: 0px;
+    -fx-border-radius: 0px;
+}
+
+
 /*Text styling*/
 .main-text
 {

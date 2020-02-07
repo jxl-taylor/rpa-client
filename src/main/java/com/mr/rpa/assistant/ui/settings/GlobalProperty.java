@@ -4,17 +4,22 @@ import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.event.AfterLoginEventHandler;
+import com.mr.rpa.assistant.ui.main.MainController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
  * Created by feng on 2020/2/4 0004
  */
+@Data
 public class GlobalProperty {
 
 	private static GlobalProperty globalProperty = new GlobalProperty();
@@ -36,99 +41,30 @@ public class GlobalProperty {
 	private SimpleStringProperty emailPassword = new SimpleStringProperty();
 	private SimpleBooleanProperty sslEnabled = new SimpleBooleanProperty();
 
+	//右角菜单显示控制
+
+	private SimpleBooleanProperty taskPaneVisible = new SimpleBooleanProperty(true);
+
+	private SimpleBooleanProperty settingPaneVisible = new SimpleBooleanProperty(false);
+
+	private SimpleBooleanProperty myInfoPaneVisible = new SimpleBooleanProperty(false);
+
+	private MainController mainController;
+
 	private AfterLoginEventHandler afterLoginEventHandler;
 
 	private StackPane rootPane;
+
 	private List<JFXButton> exitBtns;
 
 	private SysConfig sysConfig = new SysConfig();
-
-	public String getTitle() {
-		return title.get();
-	}
-
-	public SimpleStringProperty titleProperty() {
-		return title;
-	}
-
-	public void setTitle(String username) {
-		this.title.set(String.format("MR-ROBOT（用户：%s）", username));
-	}
-
-	public String getStmpServerName() {
-		return stmpServerName.get();
-	}
-
-	public SimpleStringProperty stmpServerNameProperty() {
-		return stmpServerName;
-	}
-
-	public void setStmpServerName(String stmpServerName) {
-		this.stmpServerName.set(stmpServerName);
-	}
-
-	public String getStmpPort() {
-		return stmpPort.get();
-	}
-
-	public SimpleStringProperty stmpPortProperty() {
-		return stmpPort;
-	}
-
-	public void setStmpPort(String stmpPort) {
-		this.stmpPort.set(stmpPort);
-	}
-
-	public String getEmailUsername() {
-		return emailUsername.get();
-	}
-
-	public SimpleStringProperty emailUsernameProperty() {
-		return emailUsername;
-	}
-
-	public void setEmailUsername(String emailUsername) {
-		this.emailUsername.set(emailUsername);
-	}
-
-	public String getEmailPassword() {
-		return emailPassword.get();
-	}
-
-	public SimpleStringProperty emailPasswordProperty() {
-		return emailPassword;
-	}
-
-	public void setEmailPassword(String emailPassword) {
-		this.emailPassword.set(emailPassword);
-	}
-
-	public boolean isSslEnabled() {
-		return sslEnabled.get();
-	}
-
-	public SimpleBooleanProperty sslEnabledProperty() {
-		return sslEnabled;
-	}
-
-	public void setSslEnabled(boolean sslEnabled) {
-		this.sslEnabled.set(sslEnabled);
-	}
-
-	public AfterLoginEventHandler getAfterLoginEventHandler() {
-		return afterLoginEventHandler;
-	}
 
 	public void setAfterLoginEventHandler(VBox toolbar) {
 		this.afterLoginEventHandler = new AfterLoginEventHandler(toolbar);
 	}
 
-	public StackPane getRootPane() {
-		return rootPane;
-	}
-
-	public void setRootPane(StackPane rootPane) {
-		this.rootPane = rootPane;
+	public void setTitle(String username) {
+		this.title.set(String.format("MR-ROBOT（用户：%s）", username));
 	}
 
 	public List<JFXButton> getExitBtns() {
@@ -151,5 +87,9 @@ public class GlobalProperty {
 
 	public SysConfig getSysConfig() {
 		return sysConfig;
+	}
+
+	public void doAfterLogin(){
+		mainController.doAfterLogin();
 	}
 }

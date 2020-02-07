@@ -11,7 +11,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.database.DatabaseHandler;
@@ -21,8 +20,6 @@ import javafx.stage.WindowEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
 
 public class Main extends Application {
 
@@ -40,7 +37,7 @@ public class Main extends Application {
 
         stage.setScene(scene);
         stage.show();
-        stage.titleProperty().bind(GlobalProperty.getInstance().titleProperty());
+        stage.titleProperty().bind(GlobalProperty.getInstance().getTitle());
 
         LibraryAssistantUtil.setStageIcon(stage);
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {

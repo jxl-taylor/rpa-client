@@ -1,11 +1,9 @@
 package com.mr.rpa.assistant.ui.settings;
 
+import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.settings.Preferences;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXSpinner;
-import com.jfoenix.controls.JFXTextField;
+
 import java.io.File;
 import java.net.URL;
 import java.security.InvalidParameterException;
@@ -58,6 +56,9 @@ public class SettingsController implements Initializable {
     @FXML
     private JFXSpinner progressSpinner;
 
+    @FXML
+    private JFXTabPane settingTabPane;
+
     private SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 
     @Override
@@ -79,6 +80,12 @@ public class SettingsController implements Initializable {
 
         miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
         runningLimit.setText(sysConfig.getRunningLimit().toString());
+
+        initComponents();
+    }
+
+    private void initComponents() {
+        settingTabPane.tabMinWidthProperty().bind(settingTabPane.widthProperty().divide(settingTabPane.getTabs().size()).subtract(15));
 
     }
 

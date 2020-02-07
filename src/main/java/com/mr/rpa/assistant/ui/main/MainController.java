@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -22,29 +23,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.ui.issuedlist.IssuedListController;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import org.apache.commons.lang3.StringUtils;
 
 public class MainController implements Initializable {
 
-    private static final String BOOK_NOT_AVAILABLE = "Not Available";
-    private static final String NO_SUCH_BOOK_AVAILABLE = "No Such Book Available";
-    private static final String NO_SUCH_MEMBER_AVAILABLE = "No Such Member Available";
-    private static final String BOOK_AVAILABLE = "Available";
-
-    private Boolean isReadyForSubmission = false;
     private DatabaseHandler databaseHandler;
     @FXML
     private PieChart totalTaskChart;
@@ -65,41 +54,34 @@ public class MainController implements Initializable {
     @FXML
     private StackPane rootPane;
     @FXML
+    private AnchorPane taskPane;
+    @FXML
+    private AnchorPane settingPane;
+    @FXML
+    private AnchorPane myInfoPane;
+
+    @FXML
+    private HBox topMenu;
+    @FXML
+    private JFXButton taskShowButton;
+
+    @FXML
+    private JFXButton settingShowButton;
+
+    @FXML
+    private JFXButton myInfoShowButton;
+
+    @FXML
+    private JFXButton loginShowButton;
+
+    @FXML
     private JFXHamburger hamburger;
     @FXML
     private JFXDrawer drawer;
     @FXML
-    private Text memberNameHolder;
-    @FXML
-    private Text memberEmailHolder;
-    @FXML
-    private Text memberContactHolder;
-    @FXML
-    private Text bookNameHolder;
-    @FXML
-    private Text bookAuthorHolder;
-    @FXML
-    private Text bookPublisherHolder;
-    @FXML
-    private Text issueDateHolder;
-    @FXML
-    private Text numberDaysHolder;
-    @FXML
-    private Text fineInfoHolder;
-    @FXML
     private AnchorPane rootAnchorPane;
     @FXML
-    private JFXButton renewButton;
-    @FXML
-    private JFXButton renewButton1;
-    @FXML
-    private JFXButton submissionButton;
-    @FXML
-    private JFXButton submissionButton1;
-    @FXML
     private HBox taskDataContainer;
-    @FXML
-    private HBox submissionDataContainer1;
 
     @FXML
     private Tab statisticTab;
@@ -107,8 +89,6 @@ public class MainController implements Initializable {
     private Tab taskTab;
     @FXML
     private JFXTabPane mainTabPane;
-    @FXML
-    private JFXButton btnIssue;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -118,8 +98,38 @@ public class MainController implements Initializable {
         initGraphs();
         initComponents();
 
+        GlobalProperty.getInstance().setMainController(this);
+        initShowButtonAction();
         GlobalProperty.getInstance().setRootPane(rootPane);
         AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈融机器人");
+    }
+
+    private void initShowButtonAction() {
+        topMenu.getChildren().remove(myInfoShowButton);
+        GlobalProperty globalProperty = GlobalProperty.getInstance();
+        taskPane.visibleProperty().bind(globalProperty.getTaskPaneVisible());
+        settingPane.visibleProperty().bind(globalProperty.getSettingPaneVisible());
+        myInfoPane.visibleProperty().bind(globalProperty.getMyInfoPaneVisible());
+
+        loginShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+            LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
+
+        });
+        taskShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+            globalProperty.getTaskPaneVisible().setValue(true);
+            globalProperty.getSettingPaneVisible().setValue(false);
+            globalProperty.getMyInfoPaneVisible().setValue(false);
+        });
+        settingShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+            globalProperty.getTaskPaneVisible().setValue(false);
+            globalProperty.getSettingPaneVisible().setValue(true);
+            globalProperty.getMyInfoPaneVisible().setValue(false);
+        });
+        myInfoShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+            globalProperty.getTaskPaneVisible().setValue(false);
+            globalProperty.getSettingPaneVisible().setValue(false);
+            globalProperty.getMyInfoPaneVisible().setValue(true);
+        });
     }
 
     @FXML
@@ -136,59 +146,6 @@ public class MainController implements Initializable {
         }else {
             enableDisableGraph(false);
         }
-    }
-
-    private Stage getStage() {
-        return (Stage) rootPane.getScene().getWindow();
-    }
-
-    @FXML
-    private void handleMenuClose(ActionEvent event) {
-        getStage().close();
-    }
-
-    @FXML
-    private void handleMenuAddBook(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addbook/add_book.fxml"), "Add New Book", null);
-    }
-
-    @FXML
-    private void handleMenuAddMember(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addmember/member_add.fxml"), "Add New Member", null);
-    }
-
-    @FXML
-    private void handleMenuViewBook(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/listbook/book_list.fxml"), "Book List", null);
-    }
-
-    @FXML
-    private void handleAboutMenu(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/about.fxml"), "About Me", null);
-    }
-
-    @FXML
-    private void handleMenuSettings(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/settings/settings.fxml"), "Settings", null);
-    }
-
-    @FXML
-    private void handleMenuViewMemberList(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/listmember/member_list.fxml"), "Member List", null);
-    }
-
-    @FXML
-    private void handleIssuedList(ActionEvent event) {
-        Object controller = LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/issuedlist/issued_list.fxml"), "Issued Book List", null);
-        if (controller != null) {
-            IssuedListController cont = (IssuedListController) controller;
-        }
-    }
-
-    @FXML
-    private void handleMenuFullScreen(ActionEvent event) {
-        Stage stage = getStage();
-        stage.setFullScreen(!stage.isFullScreen());
     }
 
     private void initDrawer() {
@@ -215,33 +172,6 @@ public class MainController implements Initializable {
             task.setRate(task.getRate() * -1);
             task.play();
         });
-    }
-
-    private void clearEntries() {
-        memberNameHolder.setText("");
-        memberEmailHolder.setText("");
-        memberContactHolder.setText("");
-
-        bookNameHolder.setText("");
-        bookAuthorHolder.setText("");
-        bookPublisherHolder.setText("");
-
-        issueDateHolder.setText("");
-        numberDaysHolder.setText("");
-        fineInfoHolder.setText("");
-
-        disableEnableControls(false);
-        taskDataContainer.setOpacity(0);
-    }
-
-    private void disableEnableControls(Boolean enableFlag) {
-        if (enableFlag) {
-            renewButton.setDisable(false);
-            submissionButton.setDisable(false);
-        } else {
-            renewButton.setDisable(true);
-            submissionButton.setDisable(true);
-        }
     }
 
     private void clearTaskEntries() {
@@ -276,20 +206,14 @@ public class MainController implements Initializable {
         }
     }
 
-    @FXML
-    private void handleIssueButtonKeyPress(KeyEvent event) {
-        if (event.getCode() == KeyCode.ENTER) {
-
-        }
-    }
-
     private void initComponents() {
         mainTabPane.tabMinWidthProperty().bind(rootAnchorPane.widthProperty().divide(mainTabPane.getTabs().size()).subtract(15));
+
     }
 
-    @FXML
-    private void handleMenuOverdueNotification(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/notifoverdue/overdue_notification.fxml"), "Notify Users", null);
+    public void doAfterLogin(){
+        topMenu.getChildren().remove(loginShowButton);
+        topMenu.getChildren().add(myInfoShowButton);
     }
 
 }

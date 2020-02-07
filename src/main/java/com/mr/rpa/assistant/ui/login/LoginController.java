@@ -3,6 +3,10 @@ package com.mr.rpa.assistant.ui.login;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -12,6 +16,7 @@ import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -26,6 +31,8 @@ public class LoginController implements Initializable {
 
 	private final static Logger LOGGER = LogManager.getLogger(LoginController.class.getName());
 
+	private static final String RPA_CONTROL_CENTER = "http://microrule.com/";
+
 	@FXML
 	private AnchorPane loginPane;
 
@@ -33,7 +40,8 @@ public class LoginController implements Initializable {
 	private JFXTextField username;
 	@FXML
 	private JFXPasswordField password;
-
+	@FXML
+	private Hyperlink applyLink;
 	Preferences preference;
 
 	@Override
@@ -60,6 +68,7 @@ public class LoginController implements Initializable {
 	private void setAfterLogin() {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.setTitle(username.getText());
+		globalProperty.doAfterLogin();
 		StackPane rootPane = GlobalProperty.getInstance().getRootPane();
 		AlertMaker.showMaterialDialog(rootPane,
 				rootPane.getChildren().get(0),
@@ -71,6 +80,15 @@ public class LoginController implements Initializable {
 		closeStage();
 	}
 
+	@FXML
+	private void linkToApply(ActionEvent event){
+		try {
+			Desktop.getDesktop().browse(new URI(RPA_CONTROL_CENTER));
+			applyLink.setVisited(false);
+		} catch (IOException | URISyntaxException e1) {
+			e1.printStackTrace();
+		}
+	}
 	private void closeStage() {
 		StackPane rootPane = GlobalProperty.getInstance().getRootPane();
 		rootPane.getChildren().get(0).setEffect(null);
