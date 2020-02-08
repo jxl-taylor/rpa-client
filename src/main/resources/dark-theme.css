@@ -27,7 +27,7 @@
     -fx-border-color: -fx-secondary;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
-    -fx-font-size: 12pt;
+    -fx-font-size: 10pt;
 }
 
 .button:hover, .button:focused{
@@ -39,7 +39,7 @@
 .text-field
 {
     -fx-text-fill: -fx-primarytext;
-    -fx-font-size : 12pt;
+    -fx-font-size : 10pt;
     -jfx-focus-color: -fx-secondary;
     -fx-text-fill: derive(-fx-secondary, 20%);
 }
@@ -47,7 +47,7 @@
 .text-area
 {
     -fx-text-fill: -fx-primarytext;
-    -fx-font-size : 12pt;
+    -fx-font-size : 10pt;
     -jfx-focus-color: -fx-secondary;
     -fx-text-fill: derive(-fx-secondary, 20%);
 }
@@ -144,7 +144,7 @@
 }
 
 /*Toolbar buttons*/
-.right-menu-button
+.top-menu-button
 {
     -fx-border-color: transparent;
     -fx-background-color: derive(-fx-primary, 10%);
@@ -215,14 +215,14 @@
 /*TableView Default*/
 .table-view{
     -fx-background-color: derive(-fx-primary, 10%);
-    -fx-font-size: 16px;
+    -fx-font-size: 10pt;
     -fx-border-color: derive(-fx-secondary, -60%);
 }
 .table-view:focused{
     -fx-background-color: derive(-fx-primary, 20%);
 }
 .table-row-cell {
-    -fx-cell-size: 40px;
+    -fx-cell-size: 20px;
 }
 .table-view .column-header-background{
     -fx-background-color: -fx-primary;
@@ -378,4 +378,13 @@
 
 .colored-context-menu .menu-item:focused .label {
     -fx-text-fill: black;
+}
+
+.split-pane{
+    -fx-background-color: -fx-primary;
+}
+
+.split-pane *.split-pane-divider {
+    -fx-padding: 0 2 0 1;
+    -fx-background-color: -fx-secondary;
 }

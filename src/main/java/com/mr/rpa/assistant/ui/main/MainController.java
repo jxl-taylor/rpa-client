@@ -94,13 +94,16 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         databaseHandler = DatabaseHandler.getInstance();
 
+        GlobalProperty globalProperty = GlobalProperty.getInstance();
+        globalProperty.setRootPane(rootPane);
+        globalProperty.setMainController(this);
+
+        initShowButtonAction();
         initDrawer();
         initGraphs();
         initComponents();
 
-        GlobalProperty.getInstance().setMainController(this);
-        initShowButtonAction();
-        GlobalProperty.getInstance().setRootPane(rootPane);
+
         AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈融机器人");
     }
 
@@ -136,6 +139,12 @@ public class MainController implements Initializable {
     private void loadTaskInfo(ActionEvent event) {
         String taskId = taskID.getText();
         DataHelper.loadTaskList(taskId, null);
+    }
+
+    @FXML
+    private void loadAddTask(ActionEvent event) {
+        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
+
     }
 
     @FXML

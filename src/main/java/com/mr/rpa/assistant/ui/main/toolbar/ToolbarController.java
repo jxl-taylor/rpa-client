@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
@@ -55,7 +54,10 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadSettings(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/settings/settings.fxml"), "设置", null);
+        GlobalProperty globalProperty = GlobalProperty.getInstance();
+        globalProperty.getTaskPaneVisible().setValue(false);
+        globalProperty.getSettingPaneVisible().setValue(true);
+        globalProperty.getMyInfoPaneVisible().setValue(false);
     }
 
     @FXML

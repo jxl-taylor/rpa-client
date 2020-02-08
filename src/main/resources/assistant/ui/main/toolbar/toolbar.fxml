@@ -4,7 +4,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="445.0" prefWidth="154.0" styleClass="toolbar-container" stylesheets="@/dark-theme.css"
+<VBox prefHeight="445.0" prefWidth="154.0" stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mr.rpa.assistant.ui.main.toolbar.ToolbarController">
     <children>

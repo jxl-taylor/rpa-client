@@ -16,20 +16,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,10 +46,10 @@ public class TaskListController implements Initializable {
 	private TableColumn<Task, Boolean> runningCol;
 	@FXML
 	private TableColumn<Task, Integer> statusCol;
-    @FXML
-    private TableColumn<Task, Integer> successCountCol;
-    @FXML
-    private TableColumn<Task, Integer> failCountCol;
+	@FXML
+	private TableColumn<Task, Integer> successCountCol;
+	@FXML
+	private TableColumn<Task, Integer> failCountCol;
 	@FXML
 	private AnchorPane contentPane;
 
@@ -62,6 +58,15 @@ public class TaskListController implements Initializable {
 		initCol();
 		loadData();
 		tableView.setItems(DataHelper.getList());
+		tableView.setRowFactory(tv -> {
+			TableRow<Task> row = new TableRow<Task>();
+			row.setOnMouseClicked(event -> {
+				if (event.getClickCount() == 2 && (!row.isEmpty())) {
+					showEditOption(row.getItem());
+				}
+			});
+			return row;
+		});
 	}
 
 	private Stage getStage() {
@@ -74,8 +79,8 @@ public class TaskListController implements Initializable {
 		despCol.setCellValueFactory(new PropertyValueFactory<>("desp"));
 		runningCol.setCellValueFactory(new PropertyValueFactory<>("running"));
 		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-        successCountCol.setCellValueFactory(new PropertyValueFactory<>("successCount"));
-        failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
+		successCountCol.setCellValueFactory(new PropertyValueFactory<>("successCount"));
+		failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
 	}
 
 	private void loadData() {
@@ -111,8 +116,13 @@ public class TaskListController implements Initializable {
 	private void handleTaskEditOption(ActionEvent event) {
 		//Fetch the selected row
 		Task selectedForEdit = tableView.getSelectionModel().getSelectedItem();
+		showEditOption(selectedForEdit);
+	}
+
+	private void showEditOption(Task selectedForEdit){
+
 		if (selectedForEdit == null) {
-            AlertMaker.showErrorMessage("未选择任务", "请选择一个任务编辑.");
+			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务编辑.");
 			return;
 		}
 		try {
@@ -136,7 +146,6 @@ public class TaskListController implements Initializable {
 			Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
 	@FXML
 	private void handleRefresh(ActionEvent event) {
 		loadData();
