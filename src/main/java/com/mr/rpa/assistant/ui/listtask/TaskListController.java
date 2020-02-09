@@ -5,11 +5,10 @@ import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,11 +18,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.commons.lang3.StringUtils;
+import org.omg.CORBA.StringHolder;
 
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -31,9 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TaskListController implements Initializable {
-
-	@FXML
-	private StackPane rootPane;
 	@FXML
 	private TableView<Task> tableView;
 	@FXML
@@ -57,13 +53,16 @@ public class TaskListController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		initCol();
 		loadData();
-		tableView.setItems(DataHelper.getList());
+		tableView.setItems(DataHelper.getTaskList());
 		tableView.setRowFactory(tv -> {
 			TableRow<Task> row = new TableRow<Task>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					showEditOption(row.getItem());
 				}
+				//load task log
+				String taskId = GlobalProperty.getInstance().getSelectedTaskId().get();
+				loadLogData(taskId);
 			});
 			return row;
 		});
@@ -85,6 +84,10 @@ public class TaskListController implements Initializable {
 
 	private void loadData() {
 		DataHelper.loadTaskList();
+	}
+
+	private void loadLogData(String taskId) {
+		DataHelper.loadTaskLogList(taskId);
 	}
 
 	@FXML
@@ -146,6 +149,17 @@ public class TaskListController implements Initializable {
 			Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
+
+	@FXML
+	private void startTask(ActionEvent event) {
+		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+	}
+
+	@FXML
+	private void endTask(ActionEvent event) {
+		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+	}
+
 	@FXML
 	private void handleRefresh(ActionEvent event) {
 		loadData();

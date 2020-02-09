@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<VBox stylesheets="@/dark-theme.css"
+      xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mr.rpa.assistant.ui.main.log.TaskHistoryController">
+    <children>
+        <HBox alignment="TOP_LEFT" style="-fx-background-color: derive(#2A2E37, 10%)" stylesheets="@/dark-theme.css">
+            <children>
+                <JFXButton fx:id="historyButton" prefWidth="100.0" styleClass="top-menu-button" text="历史执行"/>
+            </children>
+        </HBox>
+
+        <HBox alignment="TOP_LEFT" spacing="20">
+            <children>
+                <ChoiceBox fx:id="logStatusChoice" maxWidth="274.0" minWidth="150.0" prefHeight="32.0" prefWidth="150.0" />
+                <JFXButton prefHeight="32.0" prefWidth="90.0" text="查询" />
+            </children>
+            <VBox.margin>
+                <Insets top="15.0" left="15.0" />
+            </VBox.margin>
+        </HBox>
+
+        <HBox alignment="CENTER">
+            <children>
+                <VBox alignment="TOP_CENTER">
+                    <children>
+
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

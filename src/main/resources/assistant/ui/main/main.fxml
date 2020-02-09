@@ -43,7 +43,7 @@
                                                 <content>
                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                       <children>
-                                                         <SplitPane orientation="VERTICAL" dividerPositions="0.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <SplitPane orientation="VERTICAL" dividerPositions="0.4" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                             <items>
                                                                <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                   <top>
@@ -66,7 +66,7 @@
                                                                            </VBox>
                                                                         </children>
                                                                         <BorderPane.margin>
-                                                                           <Insets top="15.0" left="15.0" />
+                                                                           <Insets top="20.0" left="15.0" />
                                                                         </BorderPane.margin>
                                                                      </HBox>
                                                                   </top>
@@ -97,20 +97,12 @@
                                                                         <items>
                                                                            <AnchorPane>
                                                                               <children>
-                                                                                 <HBox alignment="TOP_LEFT" style="-fx-background-color: derive(#2A2E37, 10%)" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                    <children>
-                                                                                       <JFXButton prefWidth="100.0" styleClass="top-menu-button" text="历史执行"/>
-                                                                                    </children>
-                                                                                 </HBox>
+                                                                                 <fx:include source="/assistant/ui/main/log/history.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                                                               </children>
                                                                            </AnchorPane>
                                                                            <AnchorPane>
                                                                               <children>
-                                                                                 <HBox alignment="TOP_LEFT" style="-fx-background-color: derive(#2A2E37, 10%)" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                    <children>
-                                                                                       <JFXButton prefWidth="100.0" styleClass="top-menu-button" text="日志查看"/>
-                                                                                    </children>
-                                                                                 </HBox>
+                                                                                 <fx:include source="/assistant/ui/main/log/log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                                                               </children>
                                                                            </AnchorPane>
                                                                         </items>
@@ -184,7 +176,7 @@
                                              </Tab>
                                           </tabs>
                                        </JFXTabPane>
-                                       <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="75.0"/>
+                                       <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="58.0"/>
                                     </children>
                                  </AnchorPane>
                               </children>
@@ -203,6 +195,37 @@
                                  <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                        <fx:include source="/assistant/ui/myinfo/myInfo.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                 </AnchorPane>
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane fx:id="taskHistoryPane">
+                              <children>
+                                 <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                       <SplitPane dividerPositions="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <items>
+                                             <AnchorPane>
+                                                <children>
+                                                   <fx:include source="/assistant/ui/main/log/history.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                                                </children>
+                                             </AnchorPane>
+                                             <AnchorPane>
+                                                <children>
+                                                   <fx:include source="/assistant/ui/main/log/log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                                                </children>
+                                             </AnchorPane>
+                                          </items>
+                                       </SplitPane>
+                                    </children>
+                                 </AnchorPane>
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane fx:id="taskLogPane">
+                              <children>
+                                 <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                       <fx:include source="/assistant/ui/main/log/log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                     </children>
                                  </AnchorPane>
                               </children>

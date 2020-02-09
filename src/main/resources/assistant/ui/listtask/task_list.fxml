@@ -8,14 +8,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171"
+<StackPane stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.listtask.TaskListController">
     <children>
         <AnchorPane id="AnchorPane" fx:id="contentPane" stylesheets="@/dark-theme.css">
             <children>
-                <TableView fx:id="tableView" layoutX="14.0" layoutY="14.0" prefHeight="10000.0" prefWidth="10000.0"
+                <TableView fx:id="tableView" layoutX="14.0" layoutY="14.0" maxHeight="350.0" prefWidth="10000.0"
                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="30.0">
+                           AnchorPane.topAnchor="15.0">
                     <columns>
                         <TableColumn fx:id="idCol" maxWidth="2500.0" minWidth="280.0" text="任务编号"/>
                         <TableColumn fx:id="nameCol" prefWidth="75.0" text="任务脚本"/>
@@ -31,6 +31,8 @@
                     <contextMenu>
                         <ContextMenu>
                             <items>
+                                <MenuItem mnemonicParsing="false" onAction="#startTask" text="开启任务"/>
+                                <MenuItem mnemonicParsing="false" onAction="#endTask" text="停止任务"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleRefresh" text="刷新"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskEditOption" text="编辑"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskDeleteOption" text="删除"/>

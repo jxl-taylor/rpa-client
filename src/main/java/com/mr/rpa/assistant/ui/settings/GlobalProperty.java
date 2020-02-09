@@ -11,8 +11,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -49,6 +47,10 @@ public class GlobalProperty {
 
 	private SimpleBooleanProperty myInfoPaneVisible = new SimpleBooleanProperty(false);
 
+	private SimpleBooleanProperty taskHistoryPaneVisible = new SimpleBooleanProperty(false);
+
+	private SimpleBooleanProperty taskLogPaneVisible = new SimpleBooleanProperty(false);
+
 	private MainController mainController;
 
 	private AfterLoginEventHandler afterLoginEventHandler;
@@ -56,6 +58,9 @@ public class GlobalProperty {
 	private StackPane rootPane;
 
 	private List<JFXButton> exitBtns;
+
+	//selectd Task
+	private SimpleStringProperty selectedTaskId = new SimpleStringProperty();
 
 	private SysConfig sysConfig = new SysConfig();
 

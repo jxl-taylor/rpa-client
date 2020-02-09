@@ -59,6 +59,10 @@ public class MainController implements Initializable {
     private AnchorPane settingPane;
     @FXML
     private AnchorPane myInfoPane;
+    @FXML
+    private AnchorPane taskHistoryPane;
+    @FXML
+    private AnchorPane taskLogPane;
 
     @FXML
     private HBox topMenu;
@@ -113,6 +117,8 @@ public class MainController implements Initializable {
         taskPane.visibleProperty().bind(globalProperty.getTaskPaneVisible());
         settingPane.visibleProperty().bind(globalProperty.getSettingPaneVisible());
         myInfoPane.visibleProperty().bind(globalProperty.getMyInfoPaneVisible());
+        taskHistoryPane.visibleProperty().bind(globalProperty.getTaskHistoryPaneVisible());
+        taskLogPane.visibleProperty().bind(globalProperty.getTaskLogPaneVisible());
 
         loginShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
             LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
@@ -122,16 +128,22 @@ public class MainController implements Initializable {
             globalProperty.getTaskPaneVisible().setValue(true);
             globalProperty.getSettingPaneVisible().setValue(false);
             globalProperty.getMyInfoPaneVisible().setValue(false);
+            globalProperty.getTaskLogPaneVisible().setValue(false);
+            globalProperty.getTaskLogPaneVisible().setValue(false);
         });
         settingShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
             globalProperty.getTaskPaneVisible().setValue(false);
             globalProperty.getSettingPaneVisible().setValue(true);
             globalProperty.getMyInfoPaneVisible().setValue(false);
+            globalProperty.getTaskLogPaneVisible().setValue(false);
+            globalProperty.getTaskLogPaneVisible().setValue(false);
         });
         myInfoShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
             globalProperty.getTaskPaneVisible().setValue(false);
             globalProperty.getSettingPaneVisible().setValue(false);
             globalProperty.getMyInfoPaneVisible().setValue(true);
+            globalProperty.getTaskLogPaneVisible().setValue(false);
+            globalProperty.getTaskLogPaneVisible().setValue(false);
         });
     }
 
