@@ -233,7 +233,6 @@ public class DataHelper {
 		ResultSet rs = handler.execQuery(sql);
 		try {
 			while (rs.next()) {
-
 				String id = rs.getString("id");
 				String name = rs.getString("name");
 				String desp = rs.getString("desp");

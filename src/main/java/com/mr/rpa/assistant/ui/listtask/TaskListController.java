@@ -1,10 +1,12 @@
 package com.mr.rpa.assistant.ui.listtask;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
+import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -18,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +28,7 @@ import org.omg.CORBA.StringHolder;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +50,9 @@ public class TaskListController implements Initializable {
 	private TableColumn<Task, Integer> successCountCol;
 	@FXML
 	private TableColumn<Task, Integer> failCountCol;
+	@FXML
+	private StackPane rootPane;
+
 	@FXML
 	private AnchorPane contentPane;
 
@@ -153,11 +160,28 @@ public class TaskListController implements Initializable {
 	@FXML
 	private void startTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		//todo for test
+		addLog(selectedTask);
+		DatabaseHandler.getInstance().updateTaskRunning(selectedTask.getId(), true);
+		loadData();
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
+}
+
+	private void addLog(Task task) {
+		TaskLog taskLog = new TaskLog(UUID.randomUUID().toString(), task.getId(), 0, "",
+				new Timestamp(System.currentTimeMillis()), null);
+		DataHelper.insertNewTaskLog(taskLog);
+		TaskLog taskLog2 = new TaskLog(UUID.randomUUID().toString(), task.getId(), 1, "",
+				new Timestamp(System.currentTimeMillis()), null);
+		DataHelper.insertNewTaskLog(taskLog2);
 	}
 
 	@FXML
 	private void endTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		DatabaseHandler.getInstance().updateTaskRunning(selectedTask.getId(), false);
+		loadData();
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
 	}
 
 	@FXML

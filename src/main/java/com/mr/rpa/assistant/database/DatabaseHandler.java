@@ -247,6 +247,26 @@ public final class DatabaseHandler {
 		return false;
 	}
 
+	/**
+	 * update task running
+	 * @param taskId
+	 * @param running
+	 * @return
+	 */
+	public boolean updateTaskRunning(String taskId, boolean running) {
+		try {
+			String update = "UPDATE TASK SET RUNNING=? WHERE ID=?";
+			PreparedStatement stmt = conn.prepareStatement(update);
+			stmt.setBoolean(1, running);
+			stmt.setString(2, taskId);
+			int res = stmt.executeUpdate();
+			return (res > 0);
+		} catch (SQLException ex) {
+			LOGGER.log(Level.ERROR, "{}", ex);
+		}
+		return false;
+	}
+
 	public boolean updateMember(MemberListController.Member member) {
 		try {
 			String update = "UPDATE MEMBER SET NAME=?, EMAIL=?, MOBILE=? WHERE ID=?";
