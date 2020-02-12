@@ -254,7 +254,9 @@ public class DataHelper {
         DatabaseHandler handler = DatabaseHandler.getInstance();
         ResultSet rs = handler.execQuery(sql);
         try {
+        	int i = 1;
             while (rs.next()) {
+            	Integer seq = i++;
                 String id = rs.getString("id");
                 String taskId = rs.getString("task_id");
                 Integer status = rs.getInt("status");
@@ -262,7 +264,7 @@ public class DataHelper {
                 java.util.Date startTime = rs.getTimestamp("startTime");
                 java.util.Date endTime = rs.getTimestamp("endTime");
 
-                taskLogList.add(new TaskLogListController.TaskLog(id, taskId, status, error, startTime, endTime));
+                taskLogList.add(new TaskLogListController.TaskLog(seq, taskId, status, error, startTime, endTime));
 
             }
         } catch (SQLException ex) {

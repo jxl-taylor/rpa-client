@@ -30,7 +30,7 @@
             <children>
                 <VBox alignment="TOP_CENTER">
                     <children>
-
+                        <fx:include source="/assistant/ui/main/log/task_log_list.fxml" />
                     </children>
                 </VBox>
             </children>

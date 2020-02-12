@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.ui.main.log;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -18,6 +19,9 @@ public class TaskLogController implements Initializable {
 	@FXML
 	private JFXButton logButton;
 
+	@FXML
+	private JFXTextArea logTextArea;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
@@ -27,5 +31,7 @@ public class TaskLogController implements Initializable {
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(visible);
 		});
+
+		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
 	}
 }

@@ -6,7 +6,6 @@ import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
-import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -67,8 +66,9 @@ public class TaskListController implements Initializable {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					showEditOption(row.getItem());
 				}
+				String taskId = row.getItem().getId();
+				GlobalProperty.getInstance().getSelectedTaskId().set(taskId);
 				//load task log
-				String taskId = GlobalProperty.getInstance().getSelectedTaskId().get();
 				loadLogData(taskId);
 			});
 			return row;

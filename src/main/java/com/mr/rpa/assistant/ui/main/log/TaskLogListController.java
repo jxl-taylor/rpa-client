@@ -1,13 +1,7 @@
 package com.mr.rpa.assistant.ui.main.log;
 
-import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DataHelper;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.ui.addtask.TaskAddController;
-import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.net.URL;
 import java.util.Date;
@@ -28,15 +23,15 @@ public class TaskLogListController implements Initializable {
 	@FXML
 	private TableView<TaskLog> tableView;
 	@FXML
-	private TableColumn<TaskLog, String> idCol;
+	private TableColumn<TaskLog, Integer> idCol;
 	@FXML
-	private TableColumn<TaskLog, Integer> statusCol;
+	private TableColumn<TaskLog, String> statusCol;
 	@FXML
 	private TableColumn<TaskLog, String> errorCol;
 	@FXML
-	private TableColumn<TaskLog, java.util.Date> startTime;
+	private TableColumn<TaskLog, String> startTime;
 	@FXML
-	private TableColumn<TaskLog, java.util.Date> endTime;
+	private TableColumn<TaskLog, String> endTime;
 	@FXML
 	private AnchorPane rootPane;
 
@@ -50,6 +45,8 @@ public class TaskLogListController implements Initializable {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					showLogDetail(row.getItem());
 				}
+				Integer taskId = row.getItem().getId();
+				GlobalProperty.getInstance().getSelectedLog().set(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
 			});
 			return row;
 		});
@@ -82,9 +79,10 @@ public class TaskLogListController implements Initializable {
 		TaskLog selectedForDetail = tableView.getSelectionModel().getSelectedItem();
 	}
 
-	private void showLogDetail(TaskLogListController.TaskLog selectedForEdit){
+	private void showLogDetail(TaskLogListController.TaskLog selectedForEdit) {
 
 	}
+
 	@FXML
 	private void handleRefresh(ActionEvent event) {
 		loadLogData();
@@ -97,23 +95,35 @@ public class TaskLogListController implements Initializable {
 
 	public static class TaskLog {
 
-		private final SimpleStringProperty id;
+		private final SimpleIntegerProperty id;
 		private final SimpleStringProperty taskId;
-		private final SimpleIntegerProperty status;
+		private final SimpleStringProperty status;
 		private final SimpleStringProperty error;
-		private final SimpleObjectProperty<java.util.Date> startTime;
-		private final SimpleObjectProperty<java.util.Date> endTime;
+		private final SimpleStringProperty startTime;
+		private final SimpleStringProperty endTime;
 
-		public TaskLog(String id, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
-			this.id = new SimpleStringProperty(id);
+		public TaskLog(Integer id, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
+			this.id = new SimpleIntegerProperty(id);
 			this.taskId = new SimpleStringProperty(taskId);
-			this.status = new SimpleIntegerProperty(status);
+			if (status == 0) {
+				this.status = new SimpleStringProperty("正在执行");
+			} else if (status == 1) {
+				this.status = new SimpleStringProperty("执行成功");
+			} else if (status == 2) {
+				this.status = new SimpleStringProperty("执行失败");
+			} else {
+				this.status = new SimpleStringProperty("未知状态");
+			}
 			this.error = new SimpleStringProperty(error);
-			this.startTime = new SimpleObjectProperty<>(startTime);
-			this.endTime = new SimpleObjectProperty<>(endTime);
+			this.startTime = new SimpleStringProperty(DateFormatUtils.format(startTime, "yyyy-MM-dd HH:mm:ss"));
+			if (endTime != null) {
+				this.endTime = new SimpleStringProperty(DateFormatUtils.format(endTime, "yyyy-MM-dd HH:mm:ss"));
+			} else {
+				this.endTime = new SimpleStringProperty();
+			}
 		}
 
-		public String getId() {
+		public Integer getId() {
 			return id.get();
 		}
 
@@ -121,7 +131,7 @@ public class TaskLogListController implements Initializable {
 			return taskId.get();
 		}
 
-		public int getStatus() {
+		public String getStatus() {
 			return status.get();
 		}
 
@@ -129,11 +139,11 @@ public class TaskLogListController implements Initializable {
 			return error.get();
 		}
 
-		public Date getStartTime() {
+		public String getStartTime() {
 			return startTime.get();
 		}
 
-		public Date getEndTime() {
+		public String getEndTime() {
 			return endTime.get();
 		}
 

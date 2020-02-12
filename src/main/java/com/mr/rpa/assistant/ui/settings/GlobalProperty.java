@@ -61,6 +61,8 @@ public class GlobalProperty {
 
 	//selectd Task
 	private SimpleStringProperty selectedTaskId = new SimpleStringProperty();
+	//selectd Task Log
+	private SimpleStringProperty selectedLog = new SimpleStringProperty();
 
 	private SysConfig sysConfig = new SysConfig();
 
