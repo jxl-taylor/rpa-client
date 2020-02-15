@@ -7,6 +7,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,6 +17,8 @@ import java.util.ResourceBundle;
  */
 public class TaskLogController implements Initializable {
 
+	@FXML
+	private VBox rootPane;
 	@FXML
 	private JFXButton logButton;
 
@@ -30,8 +33,12 @@ public class TaskLogController implements Initializable {
 			globalProperty.getTaskLogPaneVisible().set(!visible);
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(visible);
+			globalProperty.getLogAreaMinHeight().set(visible ? 150 : 540);
+			globalProperty.getMainController().refreshSplit();
 		});
 
 		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
+		logTextArea.minHeightProperty().bind(globalProperty.getLogAreaMinHeight());
+		globalProperty.getLogAreaMinHeight().set(150);
 	}
 }

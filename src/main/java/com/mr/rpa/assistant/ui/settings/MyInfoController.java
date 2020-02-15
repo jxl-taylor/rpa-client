@@ -3,8 +3,7 @@ package com.mr.rpa.assistant.ui.settings;
 import com.jfoenix.controls.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,7 +23,7 @@ public class MyInfoController implements Initializable {
 	@FXML
 	private JFXTextField duration;
 
-	private final static Logger LOGGER = LogManager.getLogger(MyInfoController.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(MyInfoController.class.getName());
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {

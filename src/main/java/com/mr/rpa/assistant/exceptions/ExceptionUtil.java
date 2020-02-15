@@ -1,8 +1,7 @@
 package com.mr.rpa.assistant.exceptions;
 
 import java.io.PrintStream;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -16,7 +15,7 @@ public class ExceptionUtil {
         System.setErr(createLoggingProxy(System.err));
     }
 
-    private final static Logger LOGGER = LogManager.getLogger(ExceptionUtil.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(ExceptionUtil.class);
 
     public static PrintStream createLoggingProxy(final PrintStream realPrintStream) {
         return new PrintStream(realPrintStream) {

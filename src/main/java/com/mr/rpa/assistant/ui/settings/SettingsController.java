@@ -14,16 +14,9 @@ import javafx.fxml.Initializable;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.data.model.MailServerInfo;
-import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.export.DatabaseExporter;
-import com.mr.rpa.assistant.ui.mail.TestMailController;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
-import javafx.stage.Window;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class SettingsController implements Initializable {
 
@@ -36,7 +29,7 @@ public class SettingsController implements Initializable {
     @FXML
     private JFXTextField mailEmailAddress;
 
-    private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class.getName());
     @FXML
     private JFXPasswordField mailEmailPassword;
     @FXML

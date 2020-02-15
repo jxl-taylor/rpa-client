@@ -9,9 +9,7 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.text.Text;
@@ -24,6 +22,7 @@ import com.mr.rpa.assistant.email.EmailUtil;
 import com.mr.rpa.assistant.ui.notifoverdue.NotificationItem;
 import com.mr.rpa.assistant.ui.settings.Preferences;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import org.apache.log4j.Logger;
 
 /**
  * FXML Controller class
@@ -31,6 +30,8 @@ import com.mr.rpa.assistant.util.LibraryAssistantUtil;
  * @author Villan
  */
 public class EmailSenderController implements Initializable {
+
+    private final static Logger LOGGER = Logger.getLogger(EmailSenderController.class);
 
     @FXML
     private JFXProgressBar progressBar;
@@ -49,7 +50,7 @@ public class EmailSenderController implements Initializable {
             }
             System.out.println(emailText);
         } catch (Exception ex) {
-            Logger.getLogger(EmailSenderController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(ex);
         }
     }
 

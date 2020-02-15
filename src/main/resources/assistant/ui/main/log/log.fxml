@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import com.jfoenix.controls.JFXTextArea?>
-<VBox stylesheets="@/dark-theme.css"
+<VBox fx:id="rootPane" stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mr.rpa.assistant.ui.main.log.TaskLogController">
     <children>
@@ -19,7 +19,7 @@
 
         <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
             <children>
-                <JFXTextArea fx:id="logTextArea" text="sssssssssssssssssssssssss" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"/>
+                <JFXTextArea fx:id="logTextArea" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" />
             </children>
             <VBox.margin>
                 <Insets top="5.0" left="5.0" />

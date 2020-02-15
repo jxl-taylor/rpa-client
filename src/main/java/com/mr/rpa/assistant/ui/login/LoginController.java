@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
@@ -23,13 +22,11 @@ import javafx.stage.Stage;
 import com.mr.rpa.assistant.ui.settings.Preferences;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class LoginController implements Initializable {
 
-	private final static Logger LOGGER = LogManager.getLogger(LoginController.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(LoginController.class);
 
 	private static final String RPA_CONTROL_CENTER = "http://microrule.com/";
 
@@ -58,7 +55,7 @@ public class LoginController implements Initializable {
 		if (uname.equals(preference.getUsername()) && pword.equals(preference.getPassword())) {
 			closeStage();
 			setAfterLogin();
-			LOGGER.log(Level.INFO, "User successfully logged in {}", uname);
+			LOGGER.info(String.format("User successfully logged in %s", uname));
 		} else {
 			username.getStyleClass().add("wrong-credentials");
 			password.getStyleClass().add("wrong-credentials");

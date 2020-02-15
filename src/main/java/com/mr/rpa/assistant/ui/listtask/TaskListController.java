@@ -63,13 +63,15 @@ public class TaskListController implements Initializable {
 		tableView.setRowFactory(tv -> {
 			TableRow<Task> row = new TableRow<Task>();
 			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					showEditOption(row.getItem());
+				if(!row.isEmpty()){
+					if (event.getClickCount() == 2) {
+						showEditOption(row.getItem());
+					}
+					String taskId = row.getItem().getId();
+					GlobalProperty.getInstance().getSelectedTaskId().set(taskId);
+					//load task log
+					loadLogData(taskId);
 				}
-				String taskId = row.getItem().getId();
-				GlobalProperty.getInstance().getSelectedTaskId().set(taskId);
-				//load task log
-				loadLogData(taskId);
 			});
 			return row;
 		});

@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.mr.rpa.assistant.data.model.Book;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.Task;
@@ -17,16 +15,14 @@ import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 /**
  * @author afsal
  */
 public class DataHelper {
 
-	private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class);
 
 	private static ObservableList<TaskListController.Task> taskList = FXCollections.observableArrayList();
 	private static ObservableList<TaskLogListController.TaskLog> taskLogList = FXCollections.observableArrayList();
@@ -50,7 +46,7 @@ public class DataHelper {
 			statement.setBoolean(5, book.getAvailability());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -67,7 +63,7 @@ public class DataHelper {
 			statement.setInt(i++, task.getStatus());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -85,7 +81,7 @@ public class DataHelper {
 			statement.setTimestamp(i++, taskLog.getEndTime());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -100,7 +96,7 @@ public class DataHelper {
 			statement.setString(4, member.getEmail());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -113,11 +109,11 @@ public class DataHelper {
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				System.out.println(count);
+				LOGGER.info(count);
 				return (count > 0);
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -134,7 +130,7 @@ public class DataHelper {
 				return (count > 0);
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -147,7 +143,7 @@ public class DataHelper {
 			ResultSet rs = stmt.executeQuery();
 			return rs;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return null;
 	}
@@ -157,7 +153,7 @@ public class DataHelper {
 			Statement statement = DatabaseHandler.getInstance().getConnection().createStatement();
 			statement.execute("DELETE FROM " + tableName + " WHERE TRUE");
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 	}
 
@@ -173,7 +169,7 @@ public class DataHelper {
 			statement.setBoolean(5, mailServerInfo.getSslEnabled());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -192,7 +188,7 @@ public class DataHelper {
 				return new MailServerInfo(mailServer, port, emailID, userPassword, sslEnabled);
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return null;
 	}

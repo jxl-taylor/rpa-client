@@ -6,6 +6,8 @@ import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.event.AfterLoginEventHandler;
 import com.mr.rpa.assistant.ui.main.MainController;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -63,6 +65,8 @@ public class GlobalProperty {
 	private SimpleStringProperty selectedTaskId = new SimpleStringProperty();
 	//selectd Task Log
 	private SimpleStringProperty selectedLog = new SimpleStringProperty();
+	//selectd Task Log height
+	private SimpleDoubleProperty logAreaMinHeight = new SimpleDoubleProperty();
 
 	private SysConfig sysConfig = new SysConfig();
 

@@ -3,6 +3,8 @@ package com.mr.rpa.assistant.email;
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.sun.mail.util.MailSSLSocketFactory;
+import org.apache.log4j.Logger;
+
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -10,21 +12,18 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @author Villan
  */
 public class EmailUtil {
 
-    private final static Logger LOGGER = LogManager.getLogger(EmailUtil.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(EmailUtil.class);
 
     public static void sendTestMail(MailServerInfo mailServerInfo, String recepient, GenericCallback callback) {
 
         Runnable emailSendTask = () -> {
-            LOGGER.log(Level.INFO, "Initiating email sending task. Sending to {}", recepient);
+            LOGGER.info(String.format("Initiating email sending task. Sending to %s", recepient));
             Properties props = new Properties();
             try {
                 MailSSLSocketFactory sf = new MailSSLSocketFactory();
@@ -52,10 +51,10 @@ public class EmailUtil {
                         + "\n\n This is a test mail from Library Assistant!");
 
                 Transport.send(message);
-                LOGGER.log(Level.INFO, "Everything seems fine");
+                LOGGER.info("Everything seems fine");
                 callback.taskCompleted(Boolean.TRUE);
             } catch (Throwable exp) {
-                LOGGER.log(Level.INFO, "Error occurred during sending email", exp);
+                LOGGER.error( "Error occurred during sending email", exp);
                 callback.taskCompleted(Boolean.FALSE);
             }
         };
@@ -66,7 +65,7 @@ public class EmailUtil {
     public static void sendMail(MailServerInfo mailServerInfo, String recepient, String content, String title, GenericCallback callback) {
 
         Runnable emailSendTask = () -> {
-            LOGGER.log(Level.INFO, "Initiating email sending task. Sending to {}", recepient);
+            LOGGER.info(String.format("Initiating email sending task. Sending to %s", recepient));
             Properties props = new Properties();
             try {
                 MailSSLSocketFactory sf = new MailSSLSocketFactory();
@@ -92,10 +91,10 @@ public class EmailUtil {
                 message.setContent(content, "text/html");
 
                 Transport.send(message);
-                LOGGER.log(Level.INFO, "Everything seems fine");
+                LOGGER.info("Everything seems fine");
                 callback.taskCompleted(Boolean.TRUE);
             } catch (Throwable exp) {
-                LOGGER.log(Level.INFO, "Error occurred during sending email", exp);
+                LOGGER.error("Error occurred during sending email", exp);
                 callback.taskCompleted(Boolean.FALSE);
             }
         };

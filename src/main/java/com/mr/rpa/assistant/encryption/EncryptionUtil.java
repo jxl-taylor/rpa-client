@@ -19,13 +19,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class EncryptionUtil {
 
-	private final static Logger LOGGER = LogManager.getLogger(EncryptionUtil.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(EncryptionUtil.class);
 	private static final String ENCRYPTION_ALGORITHM = "AES/CBC/PKCS5PADDING";
 	private static final String SECRET_KEY_SPEC = "AES";
 	private static final File KEY_STORE = new File("store/key.spec");
@@ -40,7 +38,7 @@ public class EncryptionUtil {
 			}
 			return encrypt(spec.getKey(), spec.getIV(), plainText);
 		} catch (Exception ex) {
-			LOGGER.log(Level.ERROR, "Encryption failure", ex);
+			LOGGER.error("Encryption failure", ex);
 		} finally {
 			LOCK.unlock();
 		}
@@ -56,7 +54,7 @@ public class EncryptionUtil {
 			}
 			return decrypt(spec.getKey(), spec.getIV(), cipherText);
 		} catch (Exception ex) {
-			LOGGER.log(Level.ERROR, "Encryption failure", ex);
+			LOGGER.error("Encryption failure", ex);
 		} finally {
 			LOCK.unlock();
 		}
@@ -99,13 +97,13 @@ public class EncryptionUtil {
 	public static void init() throws Exception {
 		CipherSpec spec = getCipherSpec();
 		if (spec == null || !spec.isValid()) {
-			LOGGER.log(Level.INFO, "Preparing new cipher setup");
+			LOGGER.info("Preparing new cipher setup");
 			byte[] key = generateSecureKey();
 			byte[] initVector = prepareIV();
 			spec = new CipherSpec(key, initVector);
 			writeKey(spec);
 		} else {
-			LOGGER.log(Level.INFO, "Encryption params are loaded.");
+			LOGGER.info("Encryption params are loaded.");
 		}
 	}
 
@@ -127,7 +125,7 @@ public class EncryptionUtil {
 	private static void writeKey(CipherSpec spec) throws Exception {
 		KEY_STORE.mkdirs();
 		if (KEY_STORE.exists()) {
-			LOGGER.log(Level.INFO, "Clearing existing encryption info");
+			LOGGER.info("Clearing existing encryption info");
 			KEY_STORE.delete();
 		} else {
 			KEY_STORE.createNewFile();
@@ -136,7 +134,7 @@ public class EncryptionUtil {
 			out.writeObject(spec);
 		}
 		if (KEY_STORE.exists()) {
-			LOGGER.log(Level.INFO, "Added new encryption setup");
+			LOGGER.info("Added new encryption setup");
 		}
 	}
 

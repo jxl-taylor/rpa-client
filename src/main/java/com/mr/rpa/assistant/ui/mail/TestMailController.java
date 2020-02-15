@@ -13,9 +13,7 @@ import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.email.EmailUtil;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 /**
  * FXML Controller class
@@ -24,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class TestMailController implements Initializable, GenericCallback {
 
-    private final static Logger LOGGER = LogManager.getLogger(TestMailController.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(TestMailController.class);
 
     @FXML
     private JFXTextField recepientAddressInput;
@@ -55,7 +53,7 @@ public class TestMailController implements Initializable, GenericCallback {
 
     @Override
     public Object taskCompleted(Object val) {
-        LOGGER.log(Level.INFO, "Callback received from Email Sender client {}", val);
+        LOGGER.info(String.format("Callback received from Email Sender client %s", val));
         boolean result = (boolean) val;
         Platform.runLater(() -> {
             if (result) {

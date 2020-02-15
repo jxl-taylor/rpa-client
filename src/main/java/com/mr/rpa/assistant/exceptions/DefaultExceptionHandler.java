@@ -1,20 +1,18 @@
 package com.mr.rpa.assistant.exceptions;
 
+import org.apache.log4j.Logger;
+
 import java.lang.Thread.UncaughtExceptionHandler;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
- *
  * @author afsal
  */
 public class DefaultExceptionHandler implements UncaughtExceptionHandler {
 
-    private final static Logger LOGGER = LogManager.getLogger(DefaultExceptionHandler.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(DefaultExceptionHandler.class);
 
-    @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
-        LOGGER.log(Level.ERROR, "Exception occurred {}", ex);
-    }
+	@Override
+	public void uncaughtException(Thread thread, Throwable ex) {
+		LOGGER.error("Exception occurred {}", ex);
+	}
 }

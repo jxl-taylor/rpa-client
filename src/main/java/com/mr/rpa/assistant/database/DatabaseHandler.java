@@ -23,9 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,7 +31,7 @@ import org.w3c.dom.NodeList;
 
 public final class DatabaseHandler {
 
-	private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class);
 
 	private static DatabaseHandler handler = null;
 
@@ -62,7 +60,7 @@ public final class DatabaseHandler {
 		List<String> tableData = new ArrayList<>();
 		try {
 			Set<String> loadedTables = getDBTables();
-			System.out.println("Already loaded tables " + loadedTables);
+			LOGGER.info("准备装载数据库表: " + loadedTables);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(DatabaseHandler.class.getClass().getResourceAsStream("/database/tables.xml"));
@@ -73,17 +71,19 @@ public final class DatabaseHandler {
 				String tableName = entry.getAttribute("name");
 				String query = entry.getAttribute("col-data");
 				if (!loadedTables.contains(tableName.toLowerCase())) {
-					tableData.add(String.format("CREATE TABLE %s (%s)", tableName, query));
+					String createSQL = String.format("CREATE TABLE %s (%s)", tableName, query);
+					tableData.add(createSQL);
+					LOGGER.info(String.format("创建表成功，SQL:[%s]", createSQL));
 				}
 			}
 			if (tableData.isEmpty()) {
-				System.out.println("Tables are already loaded");
+				LOGGER.info("数据库表已经载入");
 			} else {
-				System.out.println("Inflating new tables.");
+				LOGGER.info("开始创建表结构.");
 				createTables(tableData);
 			}
 		} catch (Exception ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("", ex);
 		}
 	}
 
@@ -92,7 +92,7 @@ public final class DatabaseHandler {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
 			conn = DriverManager.getConnection(DB_URL);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Cant load database", "Database Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "无法载入数据库", "数据库错误", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}
@@ -117,7 +117,7 @@ public final class DatabaseHandler {
 			stmt = conn.createStatement();
 			result = stmt.executeQuery(query);
 		} catch (SQLException ex) {
-			System.out.println("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
+			LOGGER.error("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
 			return null;
 		} finally {
 		}
@@ -131,7 +131,7 @@ public final class DatabaseHandler {
 			return true;
 		} catch (SQLException ex) {
 			JOptionPane.showMessageDialog(null, "Error:" + ex.getMessage(), "Error Occured", JOptionPane.ERROR_MESSAGE);
-			System.out.println("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
+			LOGGER.error("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
 			return false;
 		} finally {
 		}
@@ -147,7 +147,7 @@ public final class DatabaseHandler {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -162,7 +162,7 @@ public final class DatabaseHandler {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -175,11 +175,11 @@ public final class DatabaseHandler {
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				System.out.println(count);
+				LOGGER.info(count);
 				return (count > 0);
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -194,7 +194,7 @@ public final class DatabaseHandler {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -207,11 +207,11 @@ public final class DatabaseHandler {
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				System.out.println(count);
+				LOGGER.error(count);
 				return (count > 0);
 			}
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -227,7 +227,7 @@ public final class DatabaseHandler {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -242,7 +242,7 @@ public final class DatabaseHandler {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -262,7 +262,7 @@ public final class DatabaseHandler {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -278,7 +278,7 @@ public final class DatabaseHandler {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -367,7 +367,7 @@ public final class DatabaseHandler {
 		Statement statement = conn.createStatement();
 		statement.closeOnCompletion();
 		for (String command : tableData) {
-			System.out.println(command);
+			LOGGER.info(command);
 			statement.addBatch(command);
 		}
 		statement.executeBatch();
@@ -402,7 +402,7 @@ public final class DatabaseHandler {
 			}
 			return true;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
@@ -415,7 +415,7 @@ public final class DatabaseHandler {
 			insertSysConfig();
 			return true;
 		} catch (SQLException ex) {
-			LOGGER.log(Level.ERROR, "{}", ex);
+			LOGGER.error("{}", ex);
 		}
 		return false;
 	}
