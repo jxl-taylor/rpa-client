@@ -136,30 +136,30 @@ public class MainController implements Initializable {
 			globalProperty.getTaskPaneVisible().setValue(true);
 			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
-			globalProperty.getTaskHistoryPaneVisible().setValue(false);
-			globalProperty.getTaskLogPaneVisible().setValue(false);
-			globalProperty.getLogAreaMinHeight().set(150);
-			refreshSplit();
+			recoverLogPane();
 		});
 		settingShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
 			globalProperty.getSettingPaneVisible().setValue(true);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
-			globalProperty.getTaskHistoryPaneVisible().setValue(false);
-			globalProperty.getTaskLogPaneVisible().setValue(false);
-			globalProperty.getLogAreaMinHeight().set(150);
-			refreshSplit();
+			recoverLogPane();
 		});
 		myInfoShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
 			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(true);
-			globalProperty.getTaskHistoryPaneVisible().setValue(false);
-			globalProperty.getTaskLogPaneVisible().setValue(false);
-			globalProperty.getLogAreaMinHeight().set(150);
-			refreshSplit();
+			recoverLogPane();
 
 		});
+	}
+
+	private void recoverLogPane() {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.getTaskHistoryPaneVisible().setValue(false);
+		globalProperty.getTaskLogPaneVisible().setValue(false);
+		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
+		globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
+		refreshSplit();
 	}
 
 	@FXML

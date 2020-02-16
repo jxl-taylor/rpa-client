@@ -33,12 +33,14 @@ public class TaskLogController implements Initializable {
 			globalProperty.getTaskLogPaneVisible().set(!visible);
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(visible);
-			globalProperty.getLogAreaMinHeight().set(visible ? 150 : 540);
+			globalProperty.getLogAreaMinHeight().set(visible ? globalProperty.DEFAULT_LOG_HEIGHT : globalProperty.MAX_LOG_HEIGHT);
+			globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
 			globalProperty.getMainController().refreshSplit();
 		});
 
 		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
 		logTextArea.minHeightProperty().bind(globalProperty.getLogAreaMinHeight());
-		globalProperty.getLogAreaMinHeight().set(150);
+		logTextArea.maxHeightProperty().bind(globalProperty.getLogAreaMinHeight());
+		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
 	}
 }

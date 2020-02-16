@@ -42,14 +42,22 @@ public class TaskLogListController implements Initializable {
 		tableView.setRowFactory(tv -> {
 			TableRow<TaskLog> row = new TableRow<TaskLog>();
 			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					showLogDetail(row.getItem());
+				if(!row.isEmpty()){
+					if (event.getClickCount() == 2) {
+						showLogDetail(row.getItem());
+					}
+					Integer taskId = row.getItem().getId();
+					GlobalProperty.getInstance().getSelectedLog()
+							.set(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
 				}
-				Integer taskId = row.getItem().getId();
-				GlobalProperty.getInstance().getSelectedLog().set(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
+
 			});
 			return row;
 		});
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		tableView.minHeightProperty().bind(globalProperty.getLogListHeight());
+		tableView.maxHeightProperty().bind(globalProperty.getLogListHeight());
+		globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
 	}
 
 	private Stage getStage() {

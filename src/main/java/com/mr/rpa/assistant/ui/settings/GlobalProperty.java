@@ -7,7 +7,6 @@ import com.mr.rpa.assistant.event.AfterLoginEventHandler;
 import com.mr.rpa.assistant.ui.main.MainController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -31,7 +30,11 @@ public class GlobalProperty {
 		return globalProperty;
 	}
 
-	public static String TITLE_PREFIX = "MR-ROBOT";
+	public final static String TITLE_PREFIX = "MR-ROBOT";
+	public final static double DEFAULT_LOG_HEIGHT = 210.0;
+	public final static double MAX_LOG_HEIGHT = 550.0;
+	public final static double DEFAULT_LOG_LIST_HEIGHT = 150.0;
+	public final static double MAX_LOG_LIST_HEIGHT =495.0;
 
 	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
 
@@ -67,6 +70,8 @@ public class GlobalProperty {
 	private SimpleStringProperty selectedLog = new SimpleStringProperty();
 	//selectd Task Log height
 	private SimpleDoubleProperty logAreaMinHeight = new SimpleDoubleProperty();
+	//selectd Task Log List height
+	private SimpleDoubleProperty logListHeight = new SimpleDoubleProperty();
 
 	private SysConfig sysConfig = new SysConfig();
 
@@ -100,7 +105,7 @@ public class GlobalProperty {
 		return sysConfig;
 	}
 
-	public void doAfterLogin(){
+	public void doAfterLogin() {
 		mainController.doAfterLogin();
 	}
 }

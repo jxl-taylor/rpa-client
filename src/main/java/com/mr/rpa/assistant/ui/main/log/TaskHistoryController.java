@@ -41,6 +41,11 @@ public class TaskHistoryController implements Initializable {
 			globalProperty.getTaskHistoryPaneVisible().set(!visible);
 			globalProperty.getTaskLogPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(visible);
+			globalProperty.getLogListHeight().set(
+					visible ? globalProperty.DEFAULT_LOG_LIST_HEIGHT : globalProperty.MAX_LOG_LIST_HEIGHT);
+			globalProperty.getLogAreaMinHeight().set(
+					visible ? globalProperty.DEFAULT_LOG_HEIGHT : globalProperty.MAX_LOG_HEIGHT);
+			globalProperty.getMainController().refreshSplit();
 		});
 	}
 
