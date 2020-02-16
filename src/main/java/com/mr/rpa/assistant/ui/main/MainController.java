@@ -112,7 +112,7 @@ public class MainController implements Initializable {
 		initGraphs();
 		initComponents();
 
-		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈融机器人");
+		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈荣机器人");
 	}
 
 	public void refreshSplit() {

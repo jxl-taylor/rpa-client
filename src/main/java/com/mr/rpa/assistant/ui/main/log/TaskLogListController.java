@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,6 +36,7 @@ public class TaskLogListController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		initCol();
 		tableView.setItems(DataHelper.getTaskLogList());
 		tableView.setRowFactory(tv -> {
@@ -47,14 +47,14 @@ public class TaskLogListController implements Initializable {
 						showLogDetail(row.getItem());
 					}
 					Integer taskId = row.getItem().getId();
-					GlobalProperty.getInstance().getSelectedLog()
-							.set(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
+					globalProperty.getLogTextCollector()
+							.addLog(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
 				}
 
 			});
 			return row;
 		});
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
+
 		tableView.minHeightProperty().bind(globalProperty.getLogListHeight());
 		tableView.maxHeightProperty().bind(globalProperty.getLogListHeight());
 		globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);

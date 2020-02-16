@@ -3,9 +3,13 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -38,9 +42,24 @@ public class TaskLogController implements Initializable {
 			globalProperty.getMainController().refreshSplit();
 		});
 
+		globalProperty.setTaskLogController(this);
 		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
 		logTextArea.minHeightProperty().bind(globalProperty.getLogAreaMinHeight());
 		logTextArea.maxHeightProperty().bind(globalProperty.getLogAreaMinHeight());
 		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
+
+	}
+
+	public void appendText(String text){
+		logTextArea.appendText(text);
+	}
+
+	public String getLogText(){
+		return logTextArea.getText();
+	}
+
+	public void scrollText(){
+		logTextArea.selectEnd();
+		logTextArea.deselect();
 	}
 }

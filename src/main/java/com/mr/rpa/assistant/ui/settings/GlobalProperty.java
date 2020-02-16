@@ -5,8 +5,10 @@ import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.event.AfterLoginEventHandler;
 import com.mr.rpa.assistant.ui.main.MainController;
+import com.mr.rpa.assistant.ui.main.log.TaskLogController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -58,6 +60,8 @@ public class GlobalProperty {
 
 	private MainController mainController;
 
+	private TaskLogController taskLogController;
+
 	private AfterLoginEventHandler afterLoginEventHandler;
 
 	private StackPane rootPane;
@@ -72,6 +76,8 @@ public class GlobalProperty {
 	private SimpleDoubleProperty logAreaMinHeight = new SimpleDoubleProperty();
 	//selectd Task Log List height
 	private SimpleDoubleProperty logListHeight = new SimpleDoubleProperty();
+	//Log Text
+	private LogTextCollector logTextCollector = new LogTextCollector();
 
 	private SysConfig sysConfig = new SysConfig();
 

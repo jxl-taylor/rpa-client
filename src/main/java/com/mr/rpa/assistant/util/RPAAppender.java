@@ -1,5 +1,9 @@
 package com.mr.rpa.assistant.util;
 
+import com.mr.rpa.assistant.ui.main.log.TaskLogController;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.LogTextCollector;
+import javafx.beans.property.SimpleObjectProperty;
 import org.apache.log4j.Layout;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.helpers.LogLog;
@@ -139,7 +143,13 @@ public class RPAAppender extends WriterAppender {
 
 	@Override
 	public void append(LoggingEvent event) {
+		LogTextCollector textCollector = GlobalProperty.getInstance().getLogTextCollector();
+		TaskLogController logController = GlobalProperty.getInstance().getTaskLogController();
 		super.append(event);
+		textCollector.addLog(String.valueOf(event.getMessage()));
+		if(logController != null){
+			logController.scrollText();
+		}
 	}
 
 	/**
