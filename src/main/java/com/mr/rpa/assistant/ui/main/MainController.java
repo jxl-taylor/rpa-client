@@ -37,20 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 public class MainController implements Initializable {
 
 	private DatabaseHandler databaseHandler;
-	@FXML
-	private PieChart totalTaskChart;
-	@FXML
-	private PieChart totalTaskLogChart;
-	@FXML
-	private PieChart taskChart;
 
-	@FXML
-	private HBox task_info;
-	@FXML
-	private HBox total_info;
-
-	@FXML
-	private TextField taskIDInput;
 	@FXML
 	private JFXTextField taskID;
 	@FXML
@@ -109,7 +96,7 @@ public class MainController implements Initializable {
 
 		initShowButtonAction();
 		initDrawer();
-		initGraphs();
+		initStatisticTab();
 		initComponents();
 
 		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈荣机器人");
@@ -174,16 +161,6 @@ public class MainController implements Initializable {
 
 	}
 
-	@FXML
-	private void loadTaskStatistic(ActionEvent event) {
-		taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
-		if (StringUtils.isNotBlank(taskIDInput.getText())) {
-			enableDisableGraph(true);
-		} else {
-			enableDisableGraph(false);
-		}
-	}
-
 	private void initDrawer() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/main/toolbar/toolbar.fxml"));
@@ -210,36 +187,12 @@ public class MainController implements Initializable {
 		});
 	}
 
-	private void clearTaskEntries() {
-		taskIDInput.setText("");
-	}
-
-	private void initGraphs() {
-		totalTaskChart.setData(databaseHandler.getTotalTaskGraphStatistics());
-		totalTaskLogChart.setData(databaseHandler.getTotalTaskLogGraphStatistics());
-		taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
-		enableDisableGraph(false);
+	private void initStatisticTab() {
 		statisticTab.setOnSelectionChanged((Event event) -> {
-			clearTaskEntries();
 			if (statisticTab.isSelected()) {
-				refreshGraphs();
+				GlobalProperty.getInstance().getStatisticController().refreshGraphs();
 			}
 		});
-	}
-
-	private void refreshGraphs() {
-		enableDisableGraph(false);
-		taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
-		totalTaskChart.setData(databaseHandler.getTotalTaskGraphStatistics());
-		totalTaskLogChart.setData(databaseHandler.getTotalTaskLogGraphStatistics());
-	}
-
-	private void enableDisableGraph(Boolean status) {
-		if (status) {
-			taskChart.setOpacity(1);
-		} else {
-			taskChart.setOpacity(0);
-		}
 	}
 
 	private void initComponents() {

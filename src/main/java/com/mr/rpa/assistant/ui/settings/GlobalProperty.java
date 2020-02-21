@@ -6,6 +6,7 @@ import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.event.AfterLoginEventHandler;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
+import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -58,6 +59,8 @@ public class GlobalProperty {
 	private SimpleBooleanProperty taskLogPaneVisible = new SimpleBooleanProperty(false);
 
 	private MainController mainController;
+
+	private StatisticController statisticController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 

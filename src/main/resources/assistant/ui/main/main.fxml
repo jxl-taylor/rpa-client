@@ -126,55 +126,7 @@
                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                       <children>
                                                          <VBox prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                            <children>
-                                                               <HBox fx:id="total_info" alignment="CENTER" prefHeight="600.0" prefWidth="1000.0">
-                                                                  <children>
-                                                                     <VBox alignment="CENTER" spacing="20.0">
-                                                                        <HBox.margin>
-                                                                           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                                                                        </HBox.margin>
-                                                                        <children>
-                                                                           <PieChart fx:id="totalTaskChart"/>
-                                                                        </children>
-                                                                     </VBox>
-                                                                     <VBox alignment="CENTER" spacing="20.0">
-                                                                        <HBox.margin>
-                                                                           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                                                                        </HBox.margin>
-                                                                        <children>
-                                                                           <PieChart fx:id="totalTaskLogChart"/>
-                                                                        </children>
-                                                                     </VBox>
-                                                                  </children>
-                                                                  <VBox.margin>
-                                                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                                                                  </VBox.margin>
-                                                               </HBox>
-                                                               <HBox fx:id="task_info" alignment="CENTER" prefHeight="600.0" prefWidth="1000.0">
-                                                                  <children>
-                                                                     <VBox alignment="CENTER" spacing="20.0" prefWidth="450">
-                                                                        <HBox.margin>
-                                                                           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                                                                        </HBox.margin>
-                                                                        <children>
-                                                                           <FontAwesomeIconView glyphName="USER" size="30"/>
-                                                                           <JFXTextField fx:id="taskIDInput" labelFloat="true" onAction="#loadTaskStatistic" prefWidth="230.0" promptText="任务编号"/>
-                                                                        </children>
-                                                                     </VBox>
-                                                                     <VBox alignment="CENTER" spacing="20.0">
-                                                                        <HBox.margin>
-                                                                           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                                                                        </HBox.margin>
-                                                                        <children>
-                                                                           <PieChart fx:id="taskChart"/>
-                                                                        </children>
-                                                                     </VBox>
-                                                                  </children>
-                                                                  <VBox.margin>
-                                                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                                                                  </VBox.margin>
-                                                               </HBox>
-                                                            </children>
+                                                            <fx:include source="/assistant/ui/main/statistic/statistic.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                          </VBox>
                                                       </children>
                                                    </AnchorPane>
