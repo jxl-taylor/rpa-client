@@ -35,7 +35,7 @@ public class LargeTaskLogController implements Initializable, ILogShow{
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(true);
 			globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
-			globalProperty.getMainController().refreshSplit();
+			globalProperty.getTaskBeanController().refreshSplit();
 		});
 
 		globalProperty.getLogShows().add(this);

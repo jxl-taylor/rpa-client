@@ -1,4 +1,4 @@
-package com.mr.rpa.assistant.encryption;
+package com.mr.rpa.assistant.util.encryption;
 
 import java.io.File;
 import java.io.FileInputStream;

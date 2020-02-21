@@ -14,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.exceptions.ExceptionUtil;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
@@ -26,7 +25,6 @@ public class Main extends Application {
     private SimpleStringProperty titleProperty = new SimpleStringProperty();
     @Override
     public void start(Stage stage) throws Exception {
-//        ExceptionUtil.init();
         LOGGER.info("MR-RPA Client Starting...");
         DatabaseHandler.getInstance();
 

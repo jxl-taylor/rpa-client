@@ -3,7 +3,6 @@ package com.mr.rpa.assistant.ui.main.statistic;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;

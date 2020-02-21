@@ -24,17 +24,6 @@ public class DataHelper {
 
 	private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class);
 
-	private static ObservableList<TaskListController.Task> taskList = FXCollections.observableArrayList();
-	private static ObservableList<TaskLogListController.TaskLog> taskLogList = FXCollections.observableArrayList();
-
-	public static ObservableList<TaskListController.Task> getTaskList() {
-		return taskList;
-	}
-
-	public static ObservableList<TaskLogListController.TaskLog> getTaskLogList() {
-		return taskLogList;
-	}
-
 	public static boolean insertNewBook(Book book) {
 		try {
 			PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
@@ -44,41 +33,6 @@ public class DataHelper {
 			statement.setString(3, book.getAuthor());
 			statement.setString(4, book.getPublisher());
 			statement.setBoolean(5, book.getAvailability());
-			return statement.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public static boolean insertNewTask(Task task) {
-		try {
-			PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-					"INSERT INTO TASK(id,name,desp,running,status) VALUES(?,?,?,?,?)");
-			int i = 1;
-			statement.setString(i++, task.getId());
-			statement.setString(i++, task.getName());
-			statement.setString(i++, task.getDesp());
-			statement.setBoolean(i++, task.getRunning());
-			statement.setInt(i++, task.getStatus());
-			return statement.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public static boolean insertNewTaskLog(TaskLog taskLog) {
-		try {
-			PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-					"INSERT INTO TASK_LOG(id, task_id, status, error, startTime, endTime) VALUES(?,?,?,?,?,?)");
-			int i = 1;
-			statement.setString(i++, taskLog.getId());
-			statement.setString(i++, taskLog.getTaskId());
-			statement.setInt(i++, taskLog.getStatus());
-			statement.setString(i++, taskLog.getError());
-			statement.setTimestamp(i++, taskLog.getStartTime());
-			statement.setTimestamp(i++, taskLog.getEndTime());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
 			LOGGER.error("{}", ex);
@@ -193,83 +147,4 @@ public class DataHelper {
 		return null;
 	}
 
-	public static List<TaskListController.Task> loadTaskList() {
-		return loadTaskList(null, null);
-	}
-
-    public static List<TaskLogListController.TaskLog> loadTaskLogList(String taskId) {
-        return loadTaskLogList(taskId, null);
-    }
-
-	public static List<TaskListController.Task> loadTaskList(String taskId, String taskName) {
-		StringBuilder sql = new StringBuilder("SELECT * FROM TASK WHERE 1=1");
-		if (StringUtils.isNotBlank(taskId)) {
-			sql.append(String.format(" AND ID = '%s'", taskId));
-		}
-
-		if (StringUtils.isNotBlank(taskName)) {
-			sql.append(String.format(" AND NAME = '%s'", taskName));
-		}
-		return loadTask(sql.toString());
-	}
-
-	public static List<TaskLogListController.TaskLog> loadTaskLogList(String taskId, Integer status) {
-        StringBuilder sql = new StringBuilder("SELECT * FROM TASK_LOG WHERE 1=1");
-        sql.append(String.format(" AND TASK_ID = '%s'", taskId));
-
-        if (status != null) {
-            sql.append(String.format(" AND STATUS = %d", status));
-        }
-        return loadLogTask(sql.toString());
-	}
-
-	private static List<TaskListController.Task> loadTask(String sql) {
-		taskList.clear();
-		DatabaseHandler handler = DatabaseHandler.getInstance();
-		ResultSet rs = handler.execQuery(sql);
-		try {
-			while (rs.next()) {
-				String id = rs.getString("id");
-				String name = rs.getString("name");
-				String desp = rs.getString("desp");
-				Boolean running = rs.getBoolean("running");
-				Integer status = rs.getInt("status");
-
-				//TODO count
-				taskList.add(new TaskListController.Task(id, name, desp, running, status, 0, 0));
-
-			}
-		} catch (SQLException ex) {
-			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		return taskList;
-	}
-
-    private static List<TaskLogListController.TaskLog> loadLogTask(String sql) {
-        taskLogList.clear();
-        DatabaseHandler handler = DatabaseHandler.getInstance();
-        ResultSet rs = handler.execQuery(sql);
-        try {
-        	int i = 1;
-            while (rs.next()) {
-            	Integer seq = i++;
-                String id = rs.getString("id");
-                String taskId = rs.getString("task_id");
-                Integer status = rs.getInt("status");
-                String error = rs.getString("error");
-                java.util.Date startTime = rs.getTimestamp("startTime");
-                java.util.Date endTime = rs.getTimestamp("endTime");
-
-                taskLogList.add(new TaskLogListController.TaskLog(seq, taskId, status, error, startTime, endTime));
-
-            }
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        return taskLogList;
-    }
-
-	public static void removeTask(TaskListController.Task selectedForDeletion) {
-		taskList.remove(selectedForDeletion);
-	}
 }

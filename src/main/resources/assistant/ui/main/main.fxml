@@ -44,79 +44,7 @@
                                                 <content>
                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                       <children>
-                                                         <SplitPane fx:id="taskSplit" orientation="VERTICAL" dividerPositions="0.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                            <items>
-                                                               <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                  <top>
-                                                                     <HBox alignment="TOP_LEFT" spacing="10" BorderPane.alignment="CENTER">
-                                                                        <children>
-                                                                           <VBox alignment="TOP_LEFT" prefWidth="450.0">
-                                                                              <children>
-                                                                                 <HBox alignment="TOP_LEFT">
-                                                                                    <children>
-                                                                                       <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务编号"/>
-                                                                                       <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="90.0" text="查询" />
-                                                                                    </children>
-                                                                                 </HBox>
-                                                                              </children>
-                                                                           </VBox>
-                                                                           <VBox alignment="TOP_RIGHT" prefWidth="450.0">
-                                                                              <children>
-                                                                                 <JFXButton onAction="#loadAddTask" prefHeight="32.0" prefWidth="90.0" text="新建任务"/>
-                                                                              </children>
-                                                                           </VBox>
-                                                                        </children>
-                                                                        <BorderPane.margin>
-                                                                           <Insets top="20.0" left="15.0" />
-                                                                        </BorderPane.margin>
-                                                                     </HBox>
-                                                                  </top>
-                                                                  <bottom>
-                                                                     <HBox alignment="CENTER" BorderPane.alignment="CENTER">
-                                                                        <children>
-                                                                        </children>
-                                                                     </HBox>
-                                                                  </bottom>
-                                                                  <center>
-                                                                     <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
-                                                                        <children>
-                                                                           <VBox alignment="TOP_CENTER">
-                                                                              <children>
-                                                                                 <fx:include source="/assistant/ui/listtask/task_list.fxml"/>
-                                                                              </children>
-                                                                           </VBox>
-                                                                        </children>
-                                                                        <BorderPane.margin>
-                                                                           <Insets top="5.0"/>
-                                                                        </BorderPane.margin>
-                                                                     </HBox>
-                                                                  </center>
-                                                               </BorderPane>
-                                                               <AnchorPane>
-                                                                  <children>
-                                                                     <SplitPane dividerPositions="0.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                        <items>
-                                                                           <AnchorPane>
-                                                                              <children>
-                                                                                 <fx:include source="/assistant/ui/main/log/history.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-                                                                              </children>
-                                                                           </AnchorPane>
-                                                                           <AnchorPane>
-                                                                              <children>
-                                                                                 <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                    <children>
-                                                                                       <fx:include source="/assistant/ui/main/log/small_log.fxml" />
-                                                                                    </children>
-                                                                                 </HBox>
-
-                                                                              </children>
-                                                                           </AnchorPane>
-                                                                        </items>
-                                                                     </SplitPane>
-                                                                  </children>
-                                                               </AnchorPane>
-                                                            </items>
-                                                         </SplitPane>
+                                                         <fx:include source="/assistant/ui/main/task/task_split.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                       </children>
                                                    </AnchorPane>
                                                 </content>
@@ -125,9 +53,7 @@
                                                 <content>
                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                       <children>
-                                                         <VBox prefHeight="412.0" prefWidth="557.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                            <fx:include source="/assistant/ui/main/statistic/statistic.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                         </VBox>
+                                                         <fx:include source="/assistant/ui/main/statistic/statistic.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                       </children>
                                                    </AnchorPane>
                                                 </content>

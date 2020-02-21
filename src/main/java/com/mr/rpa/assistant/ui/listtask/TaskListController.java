@@ -2,8 +2,9 @@ package com.mr.rpa.assistant.ui.listtask;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.TaskLog;
-import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
+import com.mr.rpa.assistant.database.TaskDao;
+import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
@@ -22,8 +23,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.apache.commons.lang3.StringUtils;
-import org.omg.CORBA.StringHolder;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,11 +54,15 @@ public class TaskListController implements Initializable {
 	@FXML
 	private AnchorPane contentPane;
 
+	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+
+	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initCol();
 		loadData();
-		tableView.setItems(DataHelper.getTaskList());
+		tableView.setItems(taskDao.getTaskList());
 		tableView.setRowFactory(tv -> {
 			TableRow<Task> row = new TableRow<Task>();
 			row.setOnMouseClicked(event -> {
@@ -92,11 +95,11 @@ public class TaskListController implements Initializable {
 	}
 
 	private void loadData() {
-		DataHelper.loadTaskList();
+		taskDao.loadTaskList();
 	}
 
 	private void loadLogData(String taskId) {
-		DataHelper.loadTaskLogList(taskId);
+		taskLogDao.loadTaskLogList(taskId);
 	}
 
 	@FXML
@@ -112,10 +115,10 @@ public class TaskListController implements Initializable {
 		alert.setContentText("确定删除该任务么 " + selectedForDeletion.getName() + " ?");
 		Optional<ButtonType> answer = alert.showAndWait();
 		if (answer.get() == ButtonType.OK) {
-			Boolean result = DatabaseHandler.getInstance().deleteTask(selectedForDeletion);
+			Boolean result = taskDao.deleteTask(selectedForDeletion);
 			if (result) {
 				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
-				DataHelper.removeTask(selectedForDeletion);
+				taskDao.removeTask(selectedForDeletion);
 			} else {
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
 			}
@@ -164,7 +167,7 @@ public class TaskListController implements Initializable {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
 		//todo for test
 		addLog(selectedTask);
-		DatabaseHandler.getInstance().updateTaskRunning(selectedTask.getId(), true);
+		taskDao.updateTaskRunning(selectedTask.getId(), true);
 		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
 }
@@ -172,16 +175,16 @@ public class TaskListController implements Initializable {
 	private void addLog(Task task) {
 		TaskLog taskLog = new TaskLog(UUID.randomUUID().toString(), task.getId(), 0, "",
 				new Timestamp(System.currentTimeMillis()), null);
-		DataHelper.insertNewTaskLog(taskLog);
+		taskLogDao.insertNewTaskLog(taskLog);
 		TaskLog taskLog2 = new TaskLog(UUID.randomUUID().toString(), task.getId(), 1, "",
 				new Timestamp(System.currentTimeMillis()), null);
-		DataHelper.insertNewTaskLog(taskLog2);
+		taskLogDao.insertNewTaskLog(taskLog2);
 	}
 
 	@FXML
 	private void endTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
-		DatabaseHandler.getInstance().updateTaskRunning(selectedTask.getId(), false);
+		taskDao.updateTaskRunning(selectedTask.getId(), false);
 		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
 	}

@@ -7,6 +7,8 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
+import com.mr.rpa.assistant.database.TaskDao;
+import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -42,6 +44,10 @@ public class TaskAddController implements Initializable {
 	private DatabaseHandler databaseHandler;
 	private SimpleBooleanProperty isInEditMode = new SimpleBooleanProperty();
 
+	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+
+	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		databaseHandler = DatabaseHandler.getInstance();
@@ -65,11 +71,11 @@ public class TaskAddController implements Initializable {
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
 
 		Task task = new Task(id.getText(), name.getText(), desp.getText(), Boolean.FALSE, 0, 0, 0);
-		boolean result = DataHelper.insertNewTask(task);
+		boolean result = taskDao.insertNewTask(task);
 		if (result) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
 			clearEntries();
-			DataHelper.loadTaskList();
+			taskDao.loadTaskList();
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增失败", "请检查输入");
 		}
@@ -97,7 +103,7 @@ public class TaskAddController implements Initializable {
 
 	private void handleEditOperation() {
 		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), desp.getText(), false, 0, 0, 0);
-		if (databaseHandler.updateTask(task)) {
+		if (taskDao.updateTask(task)) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Success", "修改成功");
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");

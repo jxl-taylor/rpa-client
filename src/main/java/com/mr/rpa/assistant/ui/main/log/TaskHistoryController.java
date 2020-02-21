@@ -45,7 +45,7 @@ public class TaskHistoryController implements Initializable {
 					visible ? globalProperty.DEFAULT_LOG_LIST_HEIGHT : globalProperty.MAX_LOG_LIST_HEIGHT);
 			globalProperty.getLogAreaMinHeight().set(
 					visible ? globalProperty.DEFAULT_LOG_HEIGHT : globalProperty.MAX_LOG_HEIGHT);
-			globalProperty.getMainController().refreshSplit();
+			globalProperty.getTaskBeanController().refreshSplit();
 		});
 	}
 

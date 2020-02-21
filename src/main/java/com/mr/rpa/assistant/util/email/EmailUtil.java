@@ -1,4 +1,4 @@
-package com.mr.rpa.assistant.email;
+package com.mr.rpa.assistant.util.email;
 
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;

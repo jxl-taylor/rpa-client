@@ -162,22 +162,6 @@ public class BookListController implements Initializable {
         loadData();
     }
 
-    @FXML
-    private void exportAsPDF(ActionEvent event) {
-        List<List> printData = new ArrayList<>();
-        String[] headers = {"   Title   ", "ID", "  Author  ", "  Publisher ", "Avail"};
-        printData.add(Arrays.asList(headers));
-        for (Book book : list) {
-            List<String> row = new ArrayList<>();
-            row.add(book.getTitle());
-            row.add(book.getId());
-            row.add(book.getAuthor());
-            row.add(book.getPublisher());
-            row.add(book.getAvailabilty());
-            printData.add(row);
-        }
-        LibraryAssistantUtil.initPDFExprot(rootPane, contentPane, getStage(), printData);
-    }
 
     @FXML
     private void closeStage(ActionEvent event) {

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,7 +18,6 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.database.DataHelper;
-import com.mr.rpa.assistant.email.EmailUtil;
 import com.mr.rpa.assistant.ui.notifoverdue.NotificationItem;
 import com.mr.rpa.assistant.ui.settings.Preferences;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
@@ -91,7 +90,7 @@ public class EmailSenderController implements Initializable {
                 String finePerDay = String.valueOf(Preferences.getPreferences().getFinePerDay());
                 String amount = item.getFineAmount();
                 String emailContent = String.format(emailText.toString(), reportDate, bookName, issueDate, daysUsed, finePerDay, amount);
-                EmailUtil.sendMail(mailServerInfo, item.getMemberEmail(), emailContent, "Library Assistant Overdue Notification", this);
+//                EmailUtil.sendMail(mailServerInfo, item.getMemberEmail(), emailContent, "Library Assistant Overdue Notification", this);
                 flag.set(false);
                 updateUI(size, count);
             }

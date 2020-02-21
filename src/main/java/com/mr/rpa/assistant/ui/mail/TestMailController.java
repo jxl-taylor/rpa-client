@@ -11,7 +11,7 @@ import javafx.fxml.Initializable;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
-import com.mr.rpa.assistant.email.EmailUtil;
+import com.mr.rpa.assistant.util.email.EmailUtil;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import org.apache.log4j.Logger;
 

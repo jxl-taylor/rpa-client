@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.ui.main.log;
 
 import com.mr.rpa.assistant.database.DataHelper;
+import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -13,12 +14,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class TaskLogListController implements Initializable {
+
+	private final static Logger LOGGER = Logger.getLogger(TaskLogListController.class);
+
 	@FXML
 	private TableView<TaskLog> tableView;
 	@FXML
@@ -47,8 +52,7 @@ public class TaskLogListController implements Initializable {
 						showLogDetail(row.getItem());
 					}
 					Integer taskId = row.getItem().getId();
-					globalProperty.getLogTextCollector()
-							.addLog(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
+					LOGGER.info(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
 				}
 
 			});

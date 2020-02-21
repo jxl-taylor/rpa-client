@@ -35,7 +35,7 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(false);
 			globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
-			globalProperty.getMainController().refreshSplit();
+			globalProperty.getTaskBeanController().refreshSplit();
 		});
 
 		globalProperty.getLogShows().add(this);

@@ -8,21 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.database.impl.TaskDaoImpl;
+import com.mr.rpa.assistant.database.impl.TaskLogDaoImpl;
 import com.mr.rpa.assistant.ui.listbook.BookListController;
-import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.listmember.MemberListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart;
-
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,6 +33,9 @@ public final class DatabaseHandler {
 			GlobalProperty.getInstance().getSysConfig().getDbPath());
 	private static Connection conn = null;
 	private static Statement stmt = null;
+
+	private static TaskDao taskDao = new TaskDaoImpl();
+	private static TaskLogDao taskLogDao= new TaskLogDaoImpl();
 
 	static {
 		createConnection();
@@ -124,6 +121,10 @@ public final class DatabaseHandler {
 		return result;
 	}
 
+	public void closeStmt() throws SQLException {
+		stmt.close();
+	}
+
 	public boolean execAction(String qu) {
 		try {
 			stmt = conn.createStatement();
@@ -152,20 +153,7 @@ public final class DatabaseHandler {
 		return false;
 	}
 
-	public boolean deleteTask(TaskListController.Task task) {
-		try {
-			String deleteStatement = "DELETE FROM TASK WHERE ID = ?";
-			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
-			stmt.setString(1, task.getId());
-			int res = stmt.executeUpdate();
-			if (res == 1) {
-				return true;
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
+
 
 	public boolean isBookAlreadyIssued(BookListController.Book book) {
 		try {
@@ -232,41 +220,6 @@ public final class DatabaseHandler {
 		return false;
 	}
 
-	public boolean updateTask(TaskListController.Task task) {
-		try {
-			String update = "UPDATE TASK SET NAME=?, DESP=? WHERE ID=?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, task.getName());
-			stmt.setString(2, task.getDesp());
-			stmt.setString(3, task.getId());
-			int res = stmt.executeUpdate();
-			return (res > 0);
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	/**
-	 * update task running
-	 * @param taskId
-	 * @param running
-	 * @return
-	 */
-	public boolean updateTaskRunning(String taskId, boolean running) {
-		try {
-			String update = "UPDATE TASK SET RUNNING=? WHERE ID=?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setBoolean(1, running);
-			stmt.setString(2, taskId);
-			int res = stmt.executeUpdate();
-			return (res > 0);
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
 	public boolean updateMember(MemberListController.Member member) {
 		try {
 			String update = "UPDATE MEMBER SET NAME=?, EMAIL=?, MOBILE=? WHERE ID=?";
@@ -281,86 +234,6 @@ public final class DatabaseHandler {
 			LOGGER.error("{}", ex);
 		}
 		return false;
-	}
-
-	public static void main(String[] args) throws Exception {
-		DatabaseHandler.getInstance();
-	}
-
-	public ObservableList<PieChart.Data> getTotalTaskGraphStatistics() {
-		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
-		try {
-			String runSqL = "SELECT COUNT(*) FROM TASK WHERE RUNNING = TRUE ";
-			String stopSql = "SELECT COUNT(*) FROM TASK WHERE RUNNING = FALSE ";
-			ResultSet rs = execQuery(runSqL);
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("已启动数 (" + count + ")", 100));
-			}
-			rs.close();
-			stmt.close();
-			rs = execQuery(stopSql);
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("未启动数 (" + count + ")", 50));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
-
-	public ObservableList<PieChart.Data> getTotalTaskLogGraphStatistics() {
-		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
-		try {
-			String succSqL = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 1 ";
-			String failSql = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 2 ";
-			ResultSet rs = execQuery(succSqL);
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("成功总次数 (" + count + ")", 100));
-			}
-			rs.close();
-			stmt.close();
-			rs = execQuery(failSql);
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("失败总次数 (" + count + ")", 50));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
-
-	public ObservableList<PieChart.Data> getTaskGraphStatistics(String taskId) {
-		String sTaskId = StringUtils.isNotBlank(taskId) ? taskId : "undefined";
-		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
-		try {
-			String succSqL = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 1 AND TASK_id = '%s'";
-			String failSql = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 2 AND TASK_id = '%s'";
-			ResultSet rs = execQuery(String.format(succSqL, sTaskId));
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("成功次数 (" + count + ")", 100));
-			}
-			rs.close();
-			stmt.close();
-			rs = execQuery(String.format(failSql, sTaskId));
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("失败次数 (" + count + ")", 50));
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return data;
 	}
 
 	private static void createTables(List<String> tableData) throws SQLException {
@@ -413,6 +286,7 @@ public final class DatabaseHandler {
 			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
 			stmt.executeUpdate();
 			insertSysConfig();
+			stmt.close();
 			return true;
 		} catch (SQLException ex) {
 			LOGGER.error("{}", ex);
@@ -459,5 +333,13 @@ public final class DatabaseHandler {
 		statement.setInt(i++, sysConfig.getRunningLimit());
 		statement.executeUpdate();
 		statement.close();
+	}
+
+	public TaskDao getTaskDao(){
+		return taskDao;
+	}
+
+	public TaskLogDao getTaskLogDao(){
+		return taskLogDao;
 	}
 }

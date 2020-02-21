@@ -10,42 +10,32 @@ import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 public class MainController implements Initializable {
 
-	private DatabaseHandler databaseHandler;
+	private final static Logger LOGGER = Logger.getLogger(MainController.class);
 
-	@FXML
-	private JFXTextField taskID;
+	private DatabaseHandler databaseHandler = DatabaseHandler.getInstance();
+
 	@FXML
 	private StackPane rootPane;
 	@FXML
 	private AnchorPane taskPane;
-	@FXML
-	private SplitPane taskSplit;
 	@FXML
 	private AnchorPane settingPane;
 	@FXML
@@ -88,8 +78,6 @@ public class MainController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		databaseHandler = DatabaseHandler.getInstance();
-
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.setRootPane(rootPane);
 		globalProperty.setMainController(this);
@@ -100,10 +88,6 @@ public class MainController implements Initializable {
 		initComponents();
 
 		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈荣机器人");
-	}
-
-	public void refreshSplit() {
-		this.taskSplit.setDividerPositions(0.6);
 	}
 
 	private void initShowButtonAction() {
@@ -146,20 +130,10 @@ public class MainController implements Initializable {
 		globalProperty.getTaskLogPaneVisible().setValue(false);
 		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
 		globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
-		refreshSplit();
+		globalProperty.getTaskBeanController().refreshSplit();
 	}
 
-	@FXML
-	private void loadTaskInfo(ActionEvent event) {
-		String taskId = taskID.getText();
-		DataHelper.loadTaskList(taskId, null);
-	}
 
-	@FXML
-	private void loadAddTask(ActionEvent event) {
-		LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
-
-	}
 
 	private void initDrawer() {
 		try {
@@ -168,7 +142,7 @@ public class MainController implements Initializable {
 			drawer.setSidePane(toolbar);
 			GlobalProperty.getInstance().setAfterLoginEventHandler(toolbar);
 		} catch (IOException ex) {
-			Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+			LOGGER.error(ex);
 		}
 		HamburgerSlideCloseTransition task = new HamburgerSlideCloseTransition(hamburger);
 		task.setRate(-1);
