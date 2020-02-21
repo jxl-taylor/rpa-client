@@ -104,7 +104,7 @@
             <artifactId>fontawesomefx-common</artifactId>
             <version>8.15</version>
             <scope>system</scope>
-            <systemPath>${basedir}/src/main/resources/fontawesomefx-commons-8.15.jar</systemPath>
+            <systemPath>${basedir}/src/main/resources/lib/fontawesomefx-commons-8.15.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/de.jensd/fontawesomefx-fontawesome -->
@@ -112,6 +112,8 @@
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-fontawesome</artifactId>
             <version>4.7.0-5</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/resources/lib/fontawesomefx-fontawesome-4.7.0-5.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/fontbox -->
