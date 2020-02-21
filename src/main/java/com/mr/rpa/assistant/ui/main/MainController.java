@@ -45,9 +45,9 @@ public class MainController implements Initializable {
 	private PieChart taskChart;
 
 	@FXML
-	private HBox total_info;
-	@FXML
 	private HBox task_info;
+	@FXML
+	private HBox total_info;
 
 	@FXML
 	private TextField taskIDInput;

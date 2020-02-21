@@ -105,7 +105,7 @@
                                                                               <children>
                                                                                  <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                                     <children>
-                                                                                       <fx:include source="/assistant/ui/main/log/log.fxml" />
+                                                                                       <fx:include source="/assistant/ui/main/log/small_log.fxml" />
                                                                                     </children>
                                                                                  </HBox>
 
@@ -218,7 +218,7 @@
                                              </AnchorPane>
                                              <AnchorPane>
                                                 <children>
-                                                   <fx:include source="/assistant/ui/main/log/log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                                                   <fx:include source="/assistant/ui/main/log/medium_log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                                 </children>
                                              </AnchorPane>
                                           </items>
@@ -231,7 +231,7 @@
                               <children>
                                  <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
-                                       <fx:include source="/assistant/ui/main/log/log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                                       <fx:include source="/assistant/ui/main/log/large_log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                     </children>
                                  </AnchorPane>
                               </children>

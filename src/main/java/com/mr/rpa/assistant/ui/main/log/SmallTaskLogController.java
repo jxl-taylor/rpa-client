@@ -3,13 +3,9 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -19,7 +15,7 @@ import java.util.ResourceBundle;
 /**
  * Created by feng on 2020/2/9 0009
  */
-public class TaskLogController implements Initializable {
+public class SmallTaskLogController implements Initializable, ILogShow {
 
 	@FXML
 	private VBox rootPane;
@@ -32,22 +28,18 @@ public class TaskLogController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		logTextArea.setMinHeight(globalProperty.DEFAULT_LOG_HEIGHT);
+		logTextArea.setMaxHeight(globalProperty.DEFAULT_LOG_HEIGHT);
 		logButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
-			boolean visible = globalProperty.getTaskLogPaneVisible().get();
-			globalProperty.getTaskLogPaneVisible().set(!visible);
+			globalProperty.getTaskLogPaneVisible().set(true);
 			globalProperty.getTaskHistoryPaneVisible().set(false);
-			globalProperty.getTaskPaneVisible().set(visible);
-			globalProperty.getLogAreaMinHeight().set(visible ? globalProperty.DEFAULT_LOG_HEIGHT : globalProperty.MAX_LOG_HEIGHT);
-			globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
+			globalProperty.getTaskPaneVisible().set(false);
+			globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
 			globalProperty.getMainController().refreshSplit();
 		});
 
-		globalProperty.setTaskLogController(this);
+		globalProperty.getLogShows().add(this);
 		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
-		logTextArea.minHeightProperty().bind(globalProperty.getLogAreaMinHeight());
-		logTextArea.maxHeightProperty().bind(globalProperty.getLogAreaMinHeight());
-		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
-
 	}
 
 	public void appendText(String text){

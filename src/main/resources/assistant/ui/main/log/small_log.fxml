@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXButton?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<VBox fx:id="rootPane" stylesheets="@/dark-theme.css"
+      xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mr.rpa.assistant.ui.main.log.SmallTaskLogController">
+    <children>
+
+        <HBox alignment="TOP_LEFT" style="-fx-background-color: derive(#2A2E37, 10%)" stylesheets="@/dark-theme.css">
+            <children>
+                <JFXButton fx:id="logButton" prefWidth="100.0" styleClass="top-menu-button" text="日志查看"/>
+            </children>
+        </HBox>
+
+        <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
+            <children>
+                <JFXTextArea fx:id="logTextArea"  VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" />
+            </children>
+            <VBox.margin>
+                <Insets top="0.0" left="5.0" right="5.0" bottom="0.0"/>
+            </VBox.margin>
+        </HBox>
+
+    </children>
+</VBox>

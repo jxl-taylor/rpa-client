@@ -56,17 +56,17 @@ public class Main extends Application {
 //                stage.setIconified(true);
 //            }
 //        });
-//        new Thread(()->{
-//            for(;;){
-//                LOGGER.info("MR-RPA TEST LOG................................");
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//        }).start();
+        new Thread(()->{
+            for(;;){
+                LOGGER.info("MR-RPA TEST LOG................................");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
     }
 
     public static void main(String[] args) {
