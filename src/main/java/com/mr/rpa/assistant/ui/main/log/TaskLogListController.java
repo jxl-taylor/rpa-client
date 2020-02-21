@@ -1,6 +1,8 @@
 package com.mr.rpa.assistant.ui.main.log;
 
 import com.mr.rpa.assistant.database.DataHelper;
+import com.mr.rpa.assistant.database.DatabaseHandler;
+import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -39,11 +41,13 @@ public class TaskLogListController implements Initializable {
 	@FXML
 	private AnchorPane rootPane;
 
+	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		initCol();
-		tableView.setItems(DataHelper.getTaskLogList());
+		tableView.setItems(taskLogDao.getTaskLogList());
 		tableView.setRowFactory(tv -> {
 			TableRow<TaskLog> row = new TableRow<TaskLog>();
 			row.setOnMouseClicked(event -> {
@@ -77,7 +81,7 @@ public class TaskLogListController implements Initializable {
 	}
 
 	private List<TaskLog> loadLogData() {
-		return DataHelper.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
+		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
 	}
 
 	@FXML

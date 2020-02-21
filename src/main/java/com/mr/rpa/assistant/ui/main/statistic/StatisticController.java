@@ -1,6 +1,8 @@
 package com.mr.rpa.assistant.ui.main.statistic;
 
 import com.mr.rpa.assistant.database.DatabaseHandler;
+import com.mr.rpa.assistant.database.TaskDao;
+import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,8 +20,6 @@ import java.util.ResourceBundle;
  */
 public class StatisticController implements Initializable {
 
-	private DatabaseHandler databaseHandler;
-
 	@FXML
 	private VBox rootPane;
 
@@ -34,6 +34,10 @@ public class StatisticController implements Initializable {
 	@FXML
 	private TextField taskIDInput;
 
+	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+
+	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initGraphs();
@@ -41,11 +45,9 @@ public class StatisticController implements Initializable {
 	}
 
 	private void initGraphs() {
-		databaseHandler = DatabaseHandler.getInstance();
-
-		totalTaskChart.setData(databaseHandler.getTotalTaskGraphStatistics());
-		totalTaskLogChart.setData(databaseHandler.getTotalTaskLogGraphStatistics());
-		taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
+		totalTaskChart.setData(taskDao.getTotalTaskGraphStatistics());
+		totalTaskLogChart.setData(taskDao.getTotalTaskLogGraphStatistics());
+		taskChart.setData(taskDao.getTaskGraphStatistics(taskIDInput.getText()));
 		enableDisableGraph(false);
 
 	}
@@ -53,9 +55,9 @@ public class StatisticController implements Initializable {
 	public void refreshGraphs() {
 		taskIDInput.setText("");
 		enableDisableGraph(false);
-		taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
-		totalTaskChart.setData(databaseHandler.getTotalTaskGraphStatistics());
-		totalTaskLogChart.setData(databaseHandler.getTotalTaskLogGraphStatistics());
+		taskChart.setData(taskDao.getTaskGraphStatistics(taskIDInput.getText()));
+		totalTaskChart.setData(taskDao.getTotalTaskGraphStatistics());
+		totalTaskLogChart.setData(taskDao.getTotalTaskLogGraphStatistics());
 	}
 
 	private void enableDisableGraph(Boolean status) {
@@ -68,7 +70,7 @@ public class StatisticController implements Initializable {
 
 	@FXML
 	private void loadTaskStatistic(ActionEvent event) {
-		taskChart.setData(databaseHandler.getTaskGraphStatistics(taskIDInput.getText()));
+		taskChart.setData(taskDao.getTaskGraphStatistics(taskIDInput.getText()));
 		if (StringUtils.isNotBlank(taskIDInput.getText())) {
 			enableDisableGraph(true);
 		} else {
