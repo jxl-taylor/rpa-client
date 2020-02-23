@@ -9,10 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -23,7 +20,6 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	private final static Logger LOGGER = Logger.getLogger(TaskLogDaoImpl.class);
 
 	DatabaseHandler handler = DatabaseHandler.getInstance();
-	Connection connection = DatabaseHandler.getInstance().getConnection();
 
 	private static ObservableList<TaskLogListController.TaskLog> taskLogList = FXCollections.observableArrayList();
 
@@ -35,7 +31,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	@Override
 	public  boolean insertNewTaskLog(TaskLog taskLog) {
 		try {
-			PreparedStatement statement = connection.prepareStatement(
+			PreparedStatement statement = handler.getConnection().prepareStatement(
 					"INSERT INTO TASK_LOG(id, task_id, status, error, startTime, endTime) VALUES(?,?,?,?,?,?)");
 			int i = 1;
 			statement.setString(i++, taskLog.getId());
@@ -90,6 +86,39 @@ public class TaskLogDaoImpl implements TaskLogDao {
 			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		}
 		return taskLogList;
+	}
+
+	@Override
+	public boolean deleteTaskLog(String taskId) {
+		try {
+			String deleteStatement = "DELETE FROM TASK_LOG WHERE TASK_ID = ?";
+			PreparedStatement stmt = handler.getConnection().prepareStatement(deleteStatement);
+			stmt.setString(1, taskId);
+			int res = stmt.executeUpdate();
+			if (res == 1) {
+				return true;
+			}
+		} catch (SQLException ex) {
+			LOGGER.error(ex);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateTaskLog(TaskLog taskLog) {
+		try {
+			String update = "UPDATE TASK_LOG SET STATUS=?, ERROR = ?, endTime=? WHERE ID=?";
+			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
+			stmt.setInt(1, taskLog.getStatus());
+			stmt.setString(2, taskLog.getError());
+			stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+			stmt.setString(4, taskLog.getId());
+			int res = stmt.executeUpdate();
+			return (res > 0);
+		} catch (SQLException ex) {
+			LOGGER.error("{}", ex);
+			return false;
+		}
 	}
 
 }

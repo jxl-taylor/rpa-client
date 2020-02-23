@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <tables>
-    <table-entry name="TASK" col-data="id varchar(200) primary key,name varchar(200),desp varchar(200),running boolean default false,status integer default 0"/>
-    <table-entry name="TASK_LOG" col-data="id varchar(200) primary key,task_id varchar(200),status integer default 0,error varchar(200),startTime timestamp default CURRENT_TIMESTAMP,endTime timestamp"/>
+    <table-entry name="TASK"
+                 col-data="id varchar(200) primary key,
+                 name varchar(200),
+                 desp varchar(200),
+                 running boolean default false,
+                 status integer default 0,
+                 cron varchar(200) default '0 0 0/1 * * ?',
+                 createTime timestamp default CURRENT_TIMESTAMP,
+                 updateTime timestamp"/>
+    <table-entry name="TASK_LOG"
+                 col-data="id varchar(200) primary key,
+                 task_id varchar(200),
+                 status integer default 0,
+                 error varchar(1000),
+                 startTime timestamp default CURRENT_TIMESTAMP,
+                 endTime timestamp"/>
+    <table-entry name="TASK_ERROR_LOG"
+                 col-data="id varchar(200) primary key,
+                 task_log_id varchar(200),
+                 error varchar(1000),
+                 createTime timestamp default CURRENT_TIMESTAMP"/>
     <table-entry name="SYS_CONFIG"
                  col-data="id varchar(200) primary key,
                  admin_username varchar(200),

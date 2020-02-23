@@ -70,12 +70,7 @@
                         </AnchorPane>
                         <AnchorPane>
                             <children>
-                                <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <children>
-                                        <fx:include source="/assistant/ui/main/log/small_log.fxml" />
-                                    </children>
-                                </HBox>
-
+                                <fx:include source="/assistant/ui/main/log/small_log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
                     </items>

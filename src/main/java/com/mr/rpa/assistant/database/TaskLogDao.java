@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.database;
 
 import com.mr.rpa.assistant.data.model.TaskLog;
+import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import javafx.collections.ObservableList;
 
@@ -20,4 +21,8 @@ public interface TaskLogDao {
 	boolean insertNewTaskLog(TaskLog taskLog);
 
 	List<TaskLogListController.TaskLog> loadLogTask(String sql);
+
+	boolean deleteTaskLog(String taskId);
+
+	boolean updateTaskLog(TaskLog taskLog);
 }

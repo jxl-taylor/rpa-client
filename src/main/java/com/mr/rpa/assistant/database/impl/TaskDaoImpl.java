@@ -1,5 +1,7 @@
 package com.mr.rpa.assistant.database.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.collect.Lists;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
@@ -10,10 +12,7 @@ import javafx.scene.chart.PieChart;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -23,9 +22,7 @@ public class TaskDaoImpl implements TaskDao {
 
 	private final static Logger LOGGER = Logger.getLogger(TaskDaoImpl.class);
 
-	DatabaseHandler handler = DatabaseHandler.getInstance();
-
-	Connection connection = DatabaseHandler.getInstance().getConnection();
+	private DatabaseHandler handler = DatabaseHandler.getInstance();
 
 	private static ObservableList<TaskListController.Task> taskList = FXCollections.observableArrayList();
 
@@ -38,7 +35,7 @@ public class TaskDaoImpl implements TaskDao {
 	public boolean deleteTask(TaskListController.Task task) {
 		try {
 			String deleteStatement = "DELETE FROM TASK WHERE ID = ?";
-			PreparedStatement stmt = connection.prepareStatement(deleteStatement);
+			PreparedStatement stmt = handler.getConnection().prepareStatement(deleteStatement);
 			stmt.setString(1, task.getId());
 			int res = stmt.executeUpdate();
 			if (res == 1) {
@@ -53,11 +50,13 @@ public class TaskDaoImpl implements TaskDao {
 	@Override
 	public boolean updateTask(TaskListController.Task task) {
 		try {
-			String update = "UPDATE TASK SET NAME=?, DESP=? WHERE ID=?";
-			PreparedStatement stmt = connection.prepareStatement(update);
+			String update = "UPDATE TASK SET NAME=?, CRON=?, DESP=? ,updateTime=? WHERE ID=?";
+			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
 			stmt.setString(1, task.getName());
-			stmt.setString(2, task.getDesp());
-			stmt.setString(3, task.getId());
+			stmt.setString(2, task.getCron());
+			stmt.setString(3, task.getDesp());
+			stmt.setTimestamp(4, new Timestamp(new java.util.Date().getTime()));
+			stmt.setString(5, task.getId());
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
@@ -76,16 +75,33 @@ public class TaskDaoImpl implements TaskDao {
 	@Override
 	public boolean updateTaskRunning(String taskId, boolean running) {
 		try {
-			String update = "UPDATE TASK SET RUNNING=? WHERE ID=?";
-			PreparedStatement stmt = connection.prepareStatement(update);
+			String update = "UPDATE TASK SET RUNNING=?,updateTime=? WHERE ID=?";
+			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
 			stmt.setBoolean(1, running);
-			stmt.setString(2, taskId);
+			stmt.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+			stmt.setString(3, taskId);
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
 			LOGGER.error("{}", ex);
+			return false;
 		}
-		return false;
+	}
+
+	@Override
+	public boolean updateTaskStatus(String taskId, int status) {
+		try {
+			String update = "UPDATE TASK SET STATUS=?,updateTime=? WHERE ID=?";
+			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
+			stmt.setInt(1, status);
+			stmt.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+			stmt.setString(3, taskId);
+			int res = stmt.executeUpdate();
+			return (res > 0);
+		} catch (SQLException ex) {
+			LOGGER.error(ex);
+			return false;
+		}
 	}
 
 	@Override
@@ -169,16 +185,20 @@ public class TaskDaoImpl implements TaskDao {
 
 	@Override
 	public boolean insertNewTask(Task task) {
+		String sql = "INSERT INTO TASK(id,name,desp,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?)";
 		try {
-			PreparedStatement statement = connection.prepareStatement(
-					"INSERT INTO TASK(id,name,desp,running,status) VALUES(?,?,?,?,?)");
+			PreparedStatement statement = handler.getConnection().prepareStatement(sql);
 			int i = 1;
 			statement.setString(i++, task.getId());
 			statement.setString(i++, task.getName());
 			statement.setString(i++, task.getDesp());
-			statement.setBoolean(i++, task.getRunning());
+			statement.setBoolean(i++, task.isRunning());
 			statement.setInt(i++, task.getStatus());
-			return statement.executeUpdate() > 0;
+			statement.setString(i++, task.getCron());
+			statement.setTimestamp(i++, task.getCreateTime());
+			statement.executeUpdate();
+			statement.close();
+			return true;
 		} catch (SQLException ex) {
 			LOGGER.error("{}", ex);
 		}
@@ -191,7 +211,7 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	@Override
-	public  List<TaskListController.Task> loadTaskList(String taskId, String taskName) {
+	public List<TaskListController.Task> loadTaskList(String taskId, String taskName) {
 		StringBuilder sql = new StringBuilder("SELECT * FROM TASK WHERE 1=1");
 		if (StringUtils.isNotBlank(taskId)) {
 			sql.append(String.format(" AND ID = '%s'", taskId));
@@ -210,17 +230,56 @@ public class TaskDaoImpl implements TaskDao {
 			while (rs.next()) {
 				String id = rs.getString("id");
 				String name = rs.getString("name");
+				String cron = rs.getString("cron");
 				String desp = rs.getString("desp");
 				Boolean running = rs.getBoolean("running");
 				Integer status = rs.getInt("status");
 
 				//TODO count
-				taskList.add(new TaskListController.Task(id, name, desp, running, status, 0, 0));
+				taskList.add(new TaskListController.Task(id, name, desp, running, status, cron, 0, 0));
 
 			}
 			handler.closeStmt();
 		} catch (SQLException ex) {
-			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			LOGGER.error(ex);
+		}
+		return taskList;
+	}
+
+	@Override
+	public Task queryTaskById(String id) {
+		String sql = String.format("SELECT * FROM TASK WHERE ID = '%s'", id);
+		List<Task> taskList = queryTask(sql);
+		return CollectionUtil.isEmpty(taskList) ? null : taskList.get(0);
+	}
+
+	@Override
+	public List<Task> queryTaskList() {
+		String sql = "SELECT * FROM TASK ";
+		return queryTask(sql);
+	}
+
+	private List<Task> queryTask(String sql) {
+		List<Task> taskList = Lists.newArrayList();
+		ResultSet rs = handler.execQuery(sql);
+		try {
+			while (rs.next()) {
+				Task task = new Task(rs.getString("id"),
+						rs.getString("name"),
+						rs.getString("desp"),
+						rs.getBoolean("running"),
+						rs.getInt("status"),
+						rs.getString("cron"),
+						0,
+						0,
+						rs.getTimestamp("createTime"),
+						rs.getTimestamp("updateTime"));
+
+				taskList.add(task);
+			}
+			handler.closeStmt();
+		} catch (SQLException ex) {
+			LOGGER.error(ex);
 		}
 		return taskList;
 	}

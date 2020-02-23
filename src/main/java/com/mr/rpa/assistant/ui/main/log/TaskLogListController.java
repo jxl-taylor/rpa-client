@@ -55,8 +55,7 @@ public class TaskLogListController implements Initializable {
 					if (event.getClickCount() == 2) {
 						showLogDetail(row.getItem());
 					}
-					Integer taskId = row.getItem().getId();
-					LOGGER.info(String.format("任务编号：%s 第 %d 次任务执行日志", row.getItem().getTaskId(), taskId));
+					Integer otaskId = row.getItem().getId();
 				}
 
 			});

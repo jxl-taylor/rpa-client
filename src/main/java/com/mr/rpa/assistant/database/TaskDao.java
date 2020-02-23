@@ -20,6 +20,8 @@ public interface TaskDao {
 
 	boolean updateTaskRunning(String taskId, boolean running);
 
+	boolean updateTaskStatus(String taskId, int status);
+
 	ObservableList<PieChart.Data> getTotalTaskGraphStatistics();
 
 	ObservableList<PieChart.Data> getTotalTaskLogGraphStatistics();
@@ -31,6 +33,10 @@ public interface TaskDao {
 	List<TaskListController.Task> loadTaskList();
 
 	List<TaskListController.Task> loadTaskList(String taskId, String taskName);
+
+	List<Task> queryTaskList();
+
+	Task queryTaskById(String id);
 
 	void removeTask(TaskListController.Task selectedForDeletion);
 }

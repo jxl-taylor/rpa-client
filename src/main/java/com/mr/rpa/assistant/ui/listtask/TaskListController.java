@@ -1,10 +1,12 @@
 package com.mr.rpa.assistant.ui.listtask;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
@@ -23,6 +25,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.extern.log4j.Log4j;
+import org.quartz.SchedulerException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +35,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Log4j
 public class TaskListController implements Initializable {
 	@FXML
 	private TableView<Task> tableView;
@@ -38,6 +43,8 @@ public class TaskListController implements Initializable {
 	private TableColumn<Task, String> idCol;
 	@FXML
 	private TableColumn<Task, String> nameCol;
+	@FXML
+	private TableColumn<Task, String> cronCol;
 	@FXML
 	private TableColumn<Task, String> despCol;
 	@FXML
@@ -87,6 +94,7 @@ public class TaskListController implements Initializable {
 	private void initCol() {
 		idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		cronCol.setCellValueFactory(new PropertyValueFactory<>("cron"));
 		despCol.setCellValueFactory(new PropertyValueFactory<>("desp"));
 		runningCol.setCellValueFactory(new PropertyValueFactory<>("running"));
 		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -115,7 +123,15 @@ public class TaskListController implements Initializable {
 		alert.setContentText("确定删除该任务么 " + selectedForDeletion.getName() + " ?");
 		Optional<ButtonType> answer = alert.showAndWait();
 		if (answer.get() == ButtonType.OK) {
+			try {
+				JobFactory.delete(taskDao.queryTaskById(selectedForDeletion.getId()));
+			} catch (SchedulerException e) {
+				log.error(e);
+				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
+				return;
+			}
 			Boolean result = taskDao.deleteTask(selectedForDeletion);
+			taskLogDao.deleteTaskLog(selectedForDeletion.getId());
 			if (result) {
 				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
 				taskDao.removeTask(selectedForDeletion);
@@ -165,25 +181,36 @@ public class TaskListController implements Initializable {
 	@FXML
 	private void startTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
-		//todo for test
-		addLog(selectedTask);
-		taskDao.updateTaskRunning(selectedTask.getId(), true);
+		com.mr.rpa.assistant.data.model.Task task =  taskDao.queryTaskById(selectedTask.getId());
+		if(task.isRunning()){
+			AlertMaker.showSimpleAlert("开启任务", "不能重复开启");
+			return;
+		}
+		try {
+			JobFactory.delete(task);
+		} catch (SchedulerException e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("开启任务", "调度器开启任务失败.");
+		}
+		taskDao.updateTaskRunning(task.getId(), true);
 		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
 }
 
-	private void addLog(Task task) {
-		TaskLog taskLog = new TaskLog(UUID.randomUUID().toString(), task.getId(), 0, "",
-				new Timestamp(System.currentTimeMillis()), null);
-		taskLogDao.insertNewTaskLog(taskLog);
-		TaskLog taskLog2 = new TaskLog(UUID.randomUUID().toString(), task.getId(), 1, "",
-				new Timestamp(System.currentTimeMillis()), null);
-		taskLogDao.insertNewTaskLog(taskLog2);
-	}
-
 	@FXML
 	private void endTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		com.mr.rpa.assistant.data.model.Task task =  taskDao.queryTaskById(selectedTask.getId());
+		if(task.isRunning()){
+			AlertMaker.showSimpleAlert("停止任务", "任务已经停止");
+			return;
+		}
+		try {
+			JobFactory.delete(task);
+		} catch (SchedulerException e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("停止任务", "调度器停止任务失败.");
+		}
 		taskDao.updateTaskRunning(selectedTask.getId(), false);
 		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
@@ -194,29 +221,21 @@ public class TaskListController implements Initializable {
 		loadData();
 	}
 
-	@FXML
-	private void exportAsPDF(ActionEvent event) {
-
-	}
-
-	@FXML
-	private void closeStage(ActionEvent event) {
-		getStage().close();
-	}
-
 	public static class Task {
 
 		private final SimpleStringProperty id;
 		private final SimpleStringProperty name;
+		private final SimpleStringProperty cron;
 		private final SimpleStringProperty desp;
 		private final SimpleStringProperty running;
 		private final SimpleStringProperty status;
 		private final SimpleIntegerProperty successCount;
 		private final SimpleIntegerProperty failCount;
 
-		public Task(String id, String name, String desp, Boolean running, Integer status, Integer successCount, Integer failCount) {
+		public Task(String id, String name, String desp, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
 			this.id = new SimpleStringProperty(id);
 			this.name = new SimpleStringProperty(name);
+			this.cron = new SimpleStringProperty(cron);
 			this.desp = new SimpleStringProperty(desp);
 			if (running) {
 				this.running = new SimpleStringProperty("已开启");
@@ -238,6 +257,10 @@ public class TaskListController implements Initializable {
 
 		public String getName() {
 			return name.get();
+		}
+
+		public String getCron() {
+			return cron.get();
 		}
 
 		public String getDesp() {
