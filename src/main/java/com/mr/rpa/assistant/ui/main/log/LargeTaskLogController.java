@@ -3,11 +3,13 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,7 +17,7 @@ import java.util.ResourceBundle;
 /**
  * Created by feng on 2020/2/9 0009
  */
-public class LargeTaskLogController implements Initializable, ILogShow{
+public class LargeTaskLogController implements Initializable, ILogShow {
 
 	@FXML
 	private VBox rootPane;
@@ -43,16 +45,18 @@ public class LargeTaskLogController implements Initializable, ILogShow{
 
 	}
 
-	public void appendText(String text){
+	public void appendText(String text) {
 		logTextArea.appendText(text);
 	}
 
-	public String getLogText(){
+	public String getLogText() {
 		return logTextArea.getText();
 	}
 
-	public void scrollText(){
-		logTextArea.selectEnd();
-		logTextArea.deselect();
+	public void scrollText() {
+		Platform.runLater(() -> {
+			logTextArea.selectEnd();
+			logTextArea.deselect();
+		});
 	}
 }

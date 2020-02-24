@@ -55,9 +55,11 @@ public class TaskLogListController implements Initializable {
 					if (event.getClickCount() == 2) {
 						showLogDetail(row.getItem());
 					}
-					Integer otaskId = row.getItem().getId();
+					String taskLogId = row.getItem().getId();
+					SimpleStringProperty selectedTaskLogId = globalProperty.getSelectedTaskLogId();
+					if(!taskLogId.equalsIgnoreCase(selectedTaskLogId.get())) globalProperty.getLogTextCollector().clearSelectLog();
+					globalProperty.getSelectedTaskLogId().set(taskLogId);
 				}
-
 			});
 			return row;
 		});
@@ -110,15 +112,15 @@ public class TaskLogListController implements Initializable {
 
 	public static class TaskLog {
 
-		private final SimpleIntegerProperty id;
+		private final SimpleStringProperty id;
 		private final SimpleStringProperty taskId;
 		private final SimpleStringProperty status;
 		private final SimpleStringProperty error;
 		private final SimpleStringProperty startTime;
 		private final SimpleStringProperty endTime;
 
-		public TaskLog(Integer id, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
-			this.id = new SimpleIntegerProperty(id);
+		public TaskLog(String id, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
+			this.id = new SimpleStringProperty(id);
 			this.taskId = new SimpleStringProperty(taskId);
 			if (status == 0) {
 				this.status = new SimpleStringProperty("正在执行");
@@ -138,7 +140,7 @@ public class TaskLogListController implements Initializable {
 			}
 		}
 
-		public Integer getId() {
+		public String getId() {
 			return id.get();
 		}
 

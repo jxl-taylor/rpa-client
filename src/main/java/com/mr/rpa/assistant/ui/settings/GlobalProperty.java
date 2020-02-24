@@ -10,6 +10,7 @@ import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -76,7 +77,10 @@ public class GlobalProperty {
 	//selectd Task
 	private SimpleStringProperty selectedTaskId = new SimpleStringProperty();
 	//selectd Task Log
+	private SimpleStringProperty selectedTaskLogId = new SimpleStringProperty();
+	//selectd Task Log
 	private SimpleStringProperty selectedLog = new SimpleStringProperty();
+
 	//selectd Task Log height
 	private SimpleDoubleProperty logAreaMinHeight = new SimpleDoubleProperty(DEFAULT_LOG_HEIGHT);
 	//selectd Task Log List height

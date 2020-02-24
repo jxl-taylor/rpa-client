@@ -67,20 +67,22 @@ public class TaskListController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		initCol();
 		loadData();
 		tableView.setItems(taskDao.getTaskList());
 		tableView.setRowFactory(tv -> {
 			TableRow<Task> row = new TableRow<Task>();
 			row.setOnMouseClicked(event -> {
-				if(!row.isEmpty()){
+				if (!row.isEmpty()) {
 					if (event.getClickCount() == 2) {
 						showEditOption(row.getItem());
 					}
 					String taskId = row.getItem().getId();
-					GlobalProperty.getInstance().getSelectedTaskId().set(taskId);
+					globalProperty.getSelectedTaskId().set(taskId);
 					//load task log
 					loadLogData(taskId);
+					globalProperty.getSelectedTaskLogId().set("");
 				}
 			});
 			return row;
@@ -150,7 +152,7 @@ public class TaskListController implements Initializable {
 		showEditOption(selectedForEdit);
 	}
 
-	private void showEditOption(Task selectedForEdit){
+	private void showEditOption(Task selectedForEdit) {
 
 		if (selectedForEdit == null) {
 			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务编辑.");
@@ -181,8 +183,8 @@ public class TaskListController implements Initializable {
 	@FXML
 	private void startTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
-		com.mr.rpa.assistant.data.model.Task task =  taskDao.queryTaskById(selectedTask.getId());
-		if(task.isRunning()){
+		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		if (task.isRunning()) {
 			AlertMaker.showSimpleAlert("开启任务", "不能重复开启");
 			return;
 		}
@@ -195,13 +197,13 @@ public class TaskListController implements Initializable {
 		taskDao.updateTaskRunning(task.getId(), true);
 		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
-}
+	}
 
 	@FXML
 	private void endTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
-		com.mr.rpa.assistant.data.model.Task task =  taskDao.queryTaskById(selectedTask.getId());
-		if(task.isRunning()){
+		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		if (task.isRunning()) {
 			AlertMaker.showSimpleAlert("停止任务", "任务已经停止");
 			return;
 		}

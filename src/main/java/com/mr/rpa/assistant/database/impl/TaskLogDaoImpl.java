@@ -70,7 +70,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 		try {
 			int i = 1;
 			while (rs.next()) {
-				Integer seq = i++;
+				String seq = String.valueOf(i++);
 				String id = rs.getString("id");
 				String taskId = rs.getString("task_id");
 				Integer status = rs.getInt("status");

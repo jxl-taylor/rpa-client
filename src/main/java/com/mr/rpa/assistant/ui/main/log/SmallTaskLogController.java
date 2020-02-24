@@ -3,6 +3,7 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,16 +43,19 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
 	}
 
-	public void appendText(String text){
+	public void appendText(String text) {
 		logTextArea.appendText(text);
 	}
 
-	public String getLogText(){
+	public String getLogText() {
 		return logTextArea.getText();
 	}
 
-	public void scrollText(){
-		logTextArea.selectEnd();
-		logTextArea.deselect();
+	public void scrollText() {
+		Platform.runLater(() -> {
+			logTextArea.selectEnd();
+			logTextArea.deselect();
+		});
 	}
+
 }

@@ -1,13 +1,17 @@
 package com.mr.rpa.assistant.util;
 
+import com.mr.rpa.assistant.database.DatabaseHandler;
+import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.LogTextCollector;
 import org.apache.log4j.Layout;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
+
 import java.io.IOException;
 import java.io.OutputStream;
+
 /**
  * Created by feng on 2020/2/15 0015
  */
@@ -23,6 +27,10 @@ public class RPAAppender extends WriterAppender {
 	 * or System.err made after configuration.
 	 */
 	private boolean follow = false;
+
+	private TaskLogDao geTaskLogDao() {
+		return DatabaseHandler.getInstance().getTaskLogDao();
+	}
 
 	/**
 	 * Constructs an unconfigured appender.
@@ -144,7 +152,7 @@ public class RPAAppender extends WriterAppender {
 		super.append(event);
 		textCollector.addLog(String.valueOf(event.getMessage()));
 		globalProperty.getLogShows().forEach(item -> {
-			if(item != null) item.scrollText();
+			if (item != null) item.scrollText();
 		});
 	}
 

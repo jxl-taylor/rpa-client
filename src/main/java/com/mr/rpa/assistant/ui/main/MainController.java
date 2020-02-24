@@ -76,9 +76,10 @@ public class MainController implements Initializable {
 	@FXML
 	private JFXTabPane mainTabPane;
 
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.setRootPane(rootPane);
 		globalProperty.setMainController(this);
 
@@ -92,7 +93,6 @@ public class MainController implements Initializable {
 
 	private void initShowButtonAction() {
 		topMenu.getChildren().remove(myInfoShowButton);
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		taskPane.visibleProperty().bind(globalProperty.getTaskPaneVisible());
 		settingPane.visibleProperty().bind(globalProperty.getSettingPaneVisible());
 		myInfoPane.visibleProperty().bind(globalProperty.getMyInfoPaneVisible());
@@ -125,7 +125,6 @@ public class MainController implements Initializable {
 	}
 
 	private void recoverLogPane() {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.getTaskHistoryPaneVisible().setValue(false);
 		globalProperty.getTaskLogPaneVisible().setValue(false);
 		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
@@ -164,7 +163,11 @@ public class MainController implements Initializable {
 	private void initStatisticTab() {
 		statisticTab.setOnSelectionChanged((Event event) -> {
 			if (statisticTab.isSelected()) {
-				GlobalProperty.getInstance().getStatisticController().refreshGraphs();
+				globalProperty.getStatisticController().refreshGraphs();
+			}
+
+			if (taskTab.isSelected()) {
+				globalProperty.getSelectedTaskLogId().set("");
 			}
 		});
 	}

@@ -3,6 +3,7 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -40,7 +41,6 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 
 		globalProperty.getLogShows().add(this);
 		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
-
 	}
 
 	public void appendText(String text) {
@@ -52,7 +52,9 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 	}
 
 	public void scrollText() {
-		logTextArea.selectEnd();
-		logTextArea.deselect();
+		Platform.runLater(() -> {
+			logTextArea.selectEnd();
+			logTextArea.deselect();
+		});
 	}
 }
