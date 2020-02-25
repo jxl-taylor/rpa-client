@@ -3,10 +3,13 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.LogTextCollector;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -26,6 +29,9 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 	@FXML
 	private JFXTextArea logTextArea;
 
+	@FXML
+	private MenuItem logMenu;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
@@ -40,15 +46,26 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 		});
 
 		globalProperty.getLogShows().add(this);
-		logTextArea.textProperty().bind(globalProperty.getSelectedLog());
+		logTextArea.textProperty().bind(globalProperty.getAllLog());
 	}
 
-	public void appendText(String text) {
-		logTextArea.appendText(text);
+	@FXML
+	private void clearLog(ActionEvent event) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.getLogTextCollector().clearAllLog();
 	}
 
-	public String getLogText() {
-		return logTextArea.getText();
+	@FXML
+	private void stopLog(ActionEvent event) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
+		if (logTextCollector.isLogAble()) {
+			logTextCollector.setLogAble(false);
+			logMenu.setText("开启日志");
+		} else {
+			logTextCollector.setLogAble(true);
+			logMenu.setText("停止日志");
+		}
 	}
 
 	public void scrollText() {

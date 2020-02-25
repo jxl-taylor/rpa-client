@@ -121,6 +121,8 @@ public class TaskAddController implements Initializable {
 				false, 0, cron.getText(),0, 0);
 		try {
 			Task taskModel = taskDao.queryTaskById(task.getId());
+			taskModel.setCron(task.getCron());
+			taskModel.setDesp(task.getDesp());
 			JobFactory.update(taskModel);
 		} catch (SchedulerException e) {
 			log.error(e);

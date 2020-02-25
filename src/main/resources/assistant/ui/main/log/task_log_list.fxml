@@ -28,7 +28,7 @@
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#handleRefresh" text="刷新"/>
                         <MenuItem mnemonicParsing="false" onAction="#handleTaskDetailOption" text="详情"/>
-                        <MenuItem mnemonicParsing="false" onAction="#handleTaskDeleteOption" text="删除"/>
+                        <MenuItem mnemonicParsing="false" onAction="#reRun" text="重新执行"/>
                     </items>
                     <styleClass>
                         <String fx:value="table-context"/>

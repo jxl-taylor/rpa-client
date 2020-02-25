@@ -7,6 +7,7 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -29,7 +30,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	}
 
 	@Override
-	public  boolean insertNewTaskLog(TaskLog taskLog) {
+	public boolean insertNewTaskLog(TaskLog taskLog) {
 		try {
 			PreparedStatement statement = handler.getConnection().prepareStatement(
 					"INSERT INTO TASK_LOG(id, task_id, status, error, startTime, endTime) VALUES(?,?,?,?,?,?)");
@@ -48,18 +49,19 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	}
 
 	@Override
-	public  List<TaskLogListController.TaskLog> loadTaskLogList(String taskId) {
+	public List<TaskLogListController.TaskLog> loadTaskLogList(String taskId) {
 		return loadTaskLogList(taskId, null);
 	}
 
 	@Override
-	public  List<TaskLogListController.TaskLog> loadTaskLogList(String taskId, Integer status) {
-		StringBuilder sql = new StringBuilder("SELECT * FROM TASK_LOG WHERE 1=1");
+	public List<TaskLogListController.TaskLog> loadTaskLogList(String taskId, Integer status) {
+		StringBuilder sql = new StringBuilder("SELECT * FROM TASK_LOG WHERE 1=1 ");
 		sql.append(String.format(" AND TASK_ID = '%s'", taskId));
 
 		if (status != null) {
 			sql.append(String.format(" AND STATUS = %d", status));
 		}
+		sql.append(" ORDER BY STARTTIME DESC");
 		return loadLogTask(sql.toString());
 	}
 
@@ -67,6 +69,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	public List<TaskLogListController.TaskLog> loadLogTask(String sql) {
 		taskLogList.clear();
 		ResultSet rs = handler.execQuery(sql);
+		if (rs == null) return taskLogList;
 		try {
 			int i = 1;
 			while (rs.next()) {
@@ -78,7 +81,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 				java.util.Date startTime = rs.getTimestamp("startTime");
 				java.util.Date endTime = rs.getTimestamp("endTime");
 
-				taskLogList.add(new TaskLogListController.TaskLog(seq, taskId, status, error, startTime, endTime));
+				taskLogList.add(new TaskLogListController.TaskLog(seq, id, taskId, status, error, startTime, endTime));
 
 			}
 			handler.closeStmt();
@@ -86,6 +89,30 @@ public class TaskLogDaoImpl implements TaskLogDao {
 			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		}
 		return taskLogList;
+	}
+
+	@Override
+	public TaskLog loadTaskLogById(String taskLogId) {
+		String sql = String.format("SELECT * FROM TASK_LOG WHERE ID = '%s'", taskLogId);
+		TaskLog taskLog = null;
+		ResultSet rs = handler.execQuery(sql);
+		if (rs == null) return null;
+		try {
+			int i = 1;
+			if (rs.next()) {
+				taskLog = new TaskLog();
+				taskLog.setId(rs.getString("id"));
+				taskLog.setTaskId(rs.getString("task_id"));
+				taskLog.setStatus(rs.getInt("status"));
+				taskLog.setError(rs.getString("error"));
+				taskLog.setStartTime(rs.getTimestamp("startTime"));
+				taskLog.setEndTime(rs.getTimestamp("endTime"));
+			}
+			handler.closeStmt();
+		} catch (SQLException ex) {
+			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		return taskLog;
 	}
 
 	@Override

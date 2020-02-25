@@ -11,6 +11,7 @@ import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -137,6 +138,7 @@ public class TaskListController implements Initializable {
 			if (result) {
 				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
 				taskDao.removeTask(selectedForDeletion);
+				taskLogDao.getTaskLogList().clear();
 			} else {
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
 			}
@@ -153,7 +155,6 @@ public class TaskListController implements Initializable {
 	}
 
 	private void showEditOption(Task selectedForEdit) {
-
 		if (selectedForEdit == null) {
 			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务编辑.");
 			return;
@@ -183,44 +184,131 @@ public class TaskListController implements Initializable {
 	@FXML
 	private void startTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		if (selectedTask == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
+			return;
+		}
 		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
 		if (task.isRunning()) {
 			AlertMaker.showSimpleAlert("开启任务", "不能重复开启");
 			return;
 		}
-		try {
-			JobFactory.delete(task);
-		} catch (SchedulerException e) {
-			log.error(e);
-			AlertMaker.showErrorMessage("开启任务", "调度器开启任务失败.");
+
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("开启任务");
+		alert.setContentText("确定开启该任务么 " + task.getName() + " ?");
+		Optional<ButtonType> answer = alert.showAndWait();
+		if (answer.get() == ButtonType.OK) {
+			try {
+				task.setRunning(true);
+				JobFactory.add(task);
+			} catch (SchedulerException e) {
+				log.error(e);
+				AlertMaker.showErrorMessage("开启任务", "调度引擎开启任务失败.");
+				return;
+			}
+			taskDao.updateTaskRunning(task.getId(), true);
+			loadData();
+			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
 		}
-		taskDao.updateTaskRunning(task.getId(), true);
-		loadData();
-		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
 	}
 
 	@FXML
 	private void endTask(ActionEvent event) {
 		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		if (selectedTask == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
+			return;
+		}
 		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
-		if (task.isRunning()) {
+		if (!task.isRunning()) {
 			AlertMaker.showSimpleAlert("停止任务", "任务已经停止");
 			return;
 		}
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("停止任务");
+		alert.setContentText("确定停止该任务么" + task.getName() + " ?");
+		Optional<ButtonType> answer = alert.showAndWait();
+		if (answer.get() == ButtonType.OK) {
+			try {
+				JobFactory.delete(task);
+			} catch (SchedulerException e) {
+				log.error(e);
+				AlertMaker.showErrorMessage("停止任务", "调度引擎停止任务失败.");
+				return;
+			}
+			taskDao.updateTaskRunning(selectedTask.getId(), false);
+			loadData();
+			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
+		}
+	}
+
+	@FXML
+	private void resumeTask(ActionEvent event) {
+		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		if (selectedTask == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
+			return;
+		}
+		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		if (!task.isRunning()) {
+			AlertMaker.showSimpleAlert("恢复执行", "任务还没启动");
+			return;
+		}
+
+		if (task.getStatus() != SystemContants.TASK_RUNNING_STATUS_PAUSE) {
+			AlertMaker.showSimpleAlert("恢复执行", "任务未暂停");
+			return;
+		}
+
 		try {
-			JobFactory.delete(task);
+			task.setStatus(SystemContants.TASK_RUNNING_STATUS_RUN);
+			JobFactory.resume(task);
 		} catch (SchedulerException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("停止任务", "调度器停止任务失败.");
+			AlertMaker.showErrorMessage("恢复执行", "调度引擎恢复任务失败.");
+			return;
 		}
-		taskDao.updateTaskRunning(selectedTask.getId(), false);
+		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
 		loadData();
-		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "恢复执行", selectedTask.getId() + " 已恢复");
+	}
+
+	@FXML
+	private void pauseTask(ActionEvent event) {
+		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		if (selectedTask == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
+			return;
+		}
+		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		if (!task.isRunning()) {
+			AlertMaker.showSimpleAlert("暂停执行", "任务还没启动");
+			return;
+		}
+
+		if (task.getStatus() != SystemContants.TASK_RUNNING_STATUS_RUN) {
+			AlertMaker.showSimpleAlert("暂停执行", "任务已暂停");
+			return;
+		}
+
+		try {
+			task.setStatus(SystemContants.TASK_RUNNING_STATUS_PAUSE);
+			JobFactory.pause(task);
+		} catch (SchedulerException e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("暂停执行", "调度引擎暂停任务失败.");
+			return;
+		}
+		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_PAUSE);
+		loadData();
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "暂停执行", selectedTask.getId() + " 已暂停 ");
 	}
 
 	@FXML
 	private void handleRefresh(ActionEvent event) {
 		loadData();
+		taskLogDao.getTaskLogList().clear();
 	}
 
 	public static class Task {
@@ -245,9 +333,9 @@ public class TaskListController implements Initializable {
 				this.running = new SimpleStringProperty("未开启");
 			}
 			if (status == 0) {
-				this.status = new SimpleStringProperty("暂停中");
+				this.status = new SimpleStringProperty("暂停");
 			} else {
-				this.status = new SimpleStringProperty("运行中");
+				this.status = new SimpleStringProperty("正常");
 			}
 			this.successCount = new SimpleIntegerProperty(successCount);
 			this.failCount = new SimpleIntegerProperty(failCount);

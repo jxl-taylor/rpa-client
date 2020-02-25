@@ -28,6 +28,8 @@ public class TaskBeanController implements Initializable {
 
 	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
 
+	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		GlobalProperty.getInstance().setTaskBeanController(this);
@@ -37,6 +39,7 @@ public class TaskBeanController implements Initializable {
 	private void loadTaskInfo(ActionEvent event) {
 		String taskId = taskID.getText();
 		taskDao.loadTaskList(taskId, null);
+		taskLogDao.getTaskLogList().clear();
 	}
 
 	@FXML

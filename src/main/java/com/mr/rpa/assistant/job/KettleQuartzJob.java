@@ -10,6 +10,7 @@ import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -27,15 +28,19 @@ public class KettleQuartzJob implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		String taskId = context.getJobDetail().getKey().getName();
 		Task task = taskDao.queryTaskById(taskId);
-		TaskLog taskLog = null;
+		JobDataMap dataMap = context.getTrigger().getJobDataMap();
+		TaskLog taskLog = (TaskLog) dataMap.get(SystemContants.TASK_LOG_KEY);
 		try {
-			log.info(String.format("job run start, taskId=[%s], taskName=[%s]", task.getId(), task.getName()));
-			taskLog = addLog(taskId);
+			if(taskLog == null){
+				taskLog = addLog(taskId);
+			}
+
+			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run start", task.getName(), taskLog.getId()));
 
 			runKbj(task.getName());
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
 			taskLogDao.updateTaskLog(taskLog);
-			log.info(String.format("job run end, taskId=[%s], taskName=[%s]", task.getId(), task.getName()));
+			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run end", task.getName(), taskLog.getId()));
 		} catch (Exception e) {
 			if (taskLog != null) {
 				taskLog.setError(e.getMessage());
@@ -57,6 +62,7 @@ public class KettleQuartzJob implements Job {
 	protected void runKbj(String kbjName) {
 		//todo
 		log.info("=========================do something =============================");
+
 	}
 
 }

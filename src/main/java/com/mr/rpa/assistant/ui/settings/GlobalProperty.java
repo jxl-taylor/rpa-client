@@ -76,10 +76,10 @@ public class GlobalProperty {
 
 	//selectd Task
 	private SimpleStringProperty selectedTaskId = new SimpleStringProperty();
-	//selectd Task Log
+	//selectd Task Log Id
 	private SimpleStringProperty selectedTaskLogId = new SimpleStringProperty();
-	//selectd Task Log
-	private SimpleStringProperty selectedLog = new SimpleStringProperty();
+	//All Task Log
+	private SimpleStringProperty allLog = new SimpleStringProperty();
 
 	//selectd Task Log height
 	private SimpleDoubleProperty logAreaMinHeight = new SimpleDoubleProperty(DEFAULT_LOG_HEIGHT);

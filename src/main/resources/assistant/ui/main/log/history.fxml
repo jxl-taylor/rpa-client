@@ -19,7 +19,7 @@
         <HBox alignment="TOP_LEFT" spacing="20">
             <children>
                 <ChoiceBox fx:id="logStatusChoice" maxWidth="274.0" minWidth="150.0" prefHeight="32.0" prefWidth="150.0" />
-                <JFXButton prefHeight="32.0" prefWidth="90.0" text="查询" />
+                <JFXButton prefHeight="32.0" prefWidth="90.0" text="查询" onAction="#loadTaskLog" />
             </children>
             <VBox.margin>
                 <Insets top="15.0" left="15.0" />

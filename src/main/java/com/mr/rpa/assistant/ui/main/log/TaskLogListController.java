@@ -1,30 +1,44 @@
 package com.mr.rpa.assistant.ui.main.log;
 
+import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.job.JobFactory;
+import com.mr.rpa.assistant.ui.addtask.TaskAddController;
+import com.mr.rpa.assistant.ui.addtask.TaskLogDetailController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
+@Log4j
 public class TaskLogListController implements Initializable {
-
-	private final static Logger LOGGER = Logger.getLogger(TaskLogListController.class);
 
 	@FXML
 	private TableView<TaskLog> tableView;
@@ -51,13 +65,11 @@ public class TaskLogListController implements Initializable {
 		tableView.setRowFactory(tv -> {
 			TableRow<TaskLog> row = new TableRow<TaskLog>();
 			row.setOnMouseClicked(event -> {
-				if(!row.isEmpty()){
+				if (!row.isEmpty()) {
 					if (event.getClickCount() == 2) {
 						showLogDetail(row.getItem());
 					}
 					String taskLogId = row.getItem().getId();
-					SimpleStringProperty selectedTaskLogId = globalProperty.getSelectedTaskLogId();
-					if(!taskLogId.equalsIgnoreCase(selectedTaskLogId.get())) globalProperty.getLogTextCollector().clearSelectLog();
 					globalProperty.getSelectedTaskLogId().set(taskLogId);
 				}
 			});
@@ -86,7 +98,26 @@ public class TaskLogListController implements Initializable {
 	}
 
 	@FXML
-	private void handleTaskDeleteOption(ActionEvent event) {
+	private void reRun(ActionEvent event) {
+		//Fetch the selected row
+		TaskLog selectedForDetail = tableView.getSelectionModel().getSelectedItem();
+		if (selectedForDetail == null) {
+			AlertMaker.showErrorMessage("未选择任务日志", "请选择一条记录.");
+			return;
+		}
+
+		try {
+			com.mr.rpa.assistant.data.model.TaskLog taskLog = taskLogDao.loadTaskLogById(selectedForDetail.getTaskLogId());
+			if (taskLog.getStatus() == SystemContants.TASK_LOG_STATUS_RUNNING) {
+				AlertMaker.showErrorMessage("重新执行", "任务运行中，请稍等再试.");
+				return;
+			}
+			JobFactory.trigger(taskLog);
+		} catch (SchedulerException e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("开启任务", "调度引擎开启任务失败.");
+			return;
+		}
 
 	}
 
@@ -94,10 +125,35 @@ public class TaskLogListController implements Initializable {
 	private void handleTaskDetailOption(ActionEvent event) {
 		//Fetch the selected row
 		TaskLog selectedForDetail = tableView.getSelectionModel().getSelectedItem();
+		showLogDetail(selectedForDetail);
+
 	}
 
-	private void showLogDetail(TaskLogListController.TaskLog selectedForEdit) {
+	private void showLogDetail(TaskLogListController.TaskLog selectedForDetail) {
 
+		if (selectedForDetail == null) {
+			AlertMaker.showErrorMessage("未选择任务日志", "请选择一条记录.");
+			return;
+		}
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/addtask/task_log.fxml"));
+			Parent parent = loader.load();
+
+			TaskLogDetailController controller = (TaskLogDetailController) loader.getController();
+			controller.load(selectedForDetail);
+			Stage stage = new Stage(StageStyle.DECORATED);
+			stage.setTitle("任务日志详情");
+			stage.setScene(new Scene(parent));
+			stage.show();
+			LibraryAssistantUtil.setStageIcon(stage);
+
+			stage.setOnHiding((e) -> {
+				handleRefresh(new ActionEvent());
+			});
+
+		} catch (IOException ex) {
+			java.util.logging.Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	@FXML
@@ -113,20 +169,22 @@ public class TaskLogListController implements Initializable {
 	public static class TaskLog {
 
 		private final SimpleStringProperty id;
+		private final SimpleStringProperty taskLogId;
 		private final SimpleStringProperty taskId;
 		private final SimpleStringProperty status;
 		private final SimpleStringProperty error;
 		private final SimpleStringProperty startTime;
 		private final SimpleStringProperty endTime;
 
-		public TaskLog(String id, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
+		public TaskLog(String id, String taskLogId, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
 			this.id = new SimpleStringProperty(id);
+			this.taskLogId = new SimpleStringProperty(taskLogId);
 			this.taskId = new SimpleStringProperty(taskId);
-			if (status == 0) {
+			if (status == SystemContants.TASK_LOG_STATUS_RUNNING) {
 				this.status = new SimpleStringProperty("正在执行");
-			} else if (status == 1) {
+			} else if (status == SystemContants.TASK_LOG_STATUS_SUCCESS) {
 				this.status = new SimpleStringProperty("执行成功");
-			} else if (status == 2) {
+			} else if (status == SystemContants.TASK_LOG_STATUS_FAIL) {
 				this.status = new SimpleStringProperty("执行失败");
 			} else {
 				this.status = new SimpleStringProperty("未知状态");
@@ -142,6 +200,10 @@ public class TaskLogListController implements Initializable {
 
 		public String getId() {
 			return id.get();
+		}
+
+		public String getTaskLogId() {
+			return taskLogId.get();
 		}
 
 		public String getTaskId() {

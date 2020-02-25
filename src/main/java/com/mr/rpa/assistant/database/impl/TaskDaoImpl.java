@@ -94,7 +94,7 @@ public class TaskDaoImpl implements TaskDao {
 			String update = "UPDATE TASK SET STATUS=?,updateTime=? WHERE ID=?";
 			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
 			stmt.setInt(1, status);
-			stmt.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+			stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 			stmt.setString(3, taskId);
 			int res = stmt.executeUpdate();
 			return (res > 0);
@@ -226,6 +226,9 @@ public class TaskDaoImpl implements TaskDao {
 	private List<TaskListController.Task> loadTask(String sql) {
 		taskList.clear();
 		ResultSet rs = handler.execQuery(sql);
+		if(rs == null){
+			return taskList;
+		}
 		try {
 			while (rs.next()) {
 				String id = rs.getString("id");

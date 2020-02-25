@@ -6,6 +6,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
+<?import java.lang.String?>
 <VBox fx:id="rootPane" stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mr.rpa.assistant.ui.main.log.LargeTaskLogController">
@@ -19,7 +22,20 @@
 
         <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
             <children>
-                <JFXTextArea fx:id="logTextArea"  VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" />
+                <JFXTextArea fx:id="logTextArea"  VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" >
+                    <contextMenu>
+                        <ContextMenu>
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#clearLog" text="清空"/>
+                                <MenuItem fx:id="logMenu" mnemonicParsing="false" onAction="#stopLog" text="停止日志"/>
+                            </items>
+                            <styleClass>
+                                <String fx:value="table-context"/>
+                                <String fx:value="colored-context-menu"/>
+                            </styleClass>
+                        </ContextMenu>
+                    </contextMenu>
+                </JFXTextArea>
             </children>
             <VBox.margin>
                 <Insets top="0.0" left="5.0" right="5.0" bottom="0.0"/>

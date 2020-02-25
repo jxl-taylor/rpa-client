@@ -32,8 +32,10 @@
                     <contextMenu>
                         <ContextMenu>
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#startTask" text="开启任务"/>
-                                <MenuItem mnemonicParsing="false" onAction="#endTask" text="停止任务"/>
+                                <MenuItem mnemonicParsing="false" onAction="#startTask" text="开启"/>
+                                <MenuItem mnemonicParsing="false" onAction="#endTask" text="停止"/>
+                                <MenuItem mnemonicParsing="false" onAction="#resumeTask" text="恢复"/>
+                                <MenuItem mnemonicParsing="false" onAction="#pauseTask" text="暂停"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleRefresh" text="刷新"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskEditOption" text="编辑"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskDeleteOption" text="删除"/>

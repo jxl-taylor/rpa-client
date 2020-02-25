@@ -1,9 +1,12 @@
 package com.mr.rpa.assistant.ui.main.log;
 
 import com.jfoenix.controls.JFXButton;
+import com.mr.rpa.assistant.database.DatabaseHandler;
+import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,6 +28,8 @@ public class TaskHistoryController implements Initializable {
 
 	@FXML
 	private ChoiceBox<Status> logStatusChoice;
+
+	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -49,13 +54,25 @@ public class TaskHistoryController implements Initializable {
 		});
 	}
 
+	@FXML
+	public void loadTaskLog(ActionEvent actionEvent) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		int status = logStatusChoice.getValue().key;
+		if(status == -1){
+			taskLogDao.loadTaskLogList(globalProperty.getSelectedTaskId().get());
+		}else {
+			taskLogDao.loadTaskLogList(globalProperty.getSelectedTaskId().get(), logStatusChoice.getValue().key);
+		}
+
+	}
+
 	@AllArgsConstructor
 	class Status {
 		private Integer key;
 		private String value;
 
 		@Override
-		public String toString(){
+		public String toString() {
 			return value;
 		}
 	}

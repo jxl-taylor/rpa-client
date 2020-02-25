@@ -22,6 +22,8 @@ public interface TaskLogDao {
 
 	List<TaskLogListController.TaskLog> loadLogTask(String sql);
 
+	TaskLog loadTaskLogById(String taskLogId);
+
 	boolean deleteTaskLog(String taskId);
 
 	boolean updateTaskLog(TaskLog taskLog);

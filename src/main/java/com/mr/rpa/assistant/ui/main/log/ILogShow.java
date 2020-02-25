@@ -5,9 +5,5 @@ package com.mr.rpa.assistant.ui.main.log;
  */
 public interface ILogShow {
 
-	void appendText(String text);
-
-	String getLogText();
-
 	void scrollText();
 }

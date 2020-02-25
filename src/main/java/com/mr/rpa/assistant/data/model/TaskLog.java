@@ -18,4 +18,7 @@ public class TaskLog {
 	private String error;
 	private Timestamp startTime;
 	private  Timestamp endTime;
+
+	public TaskLog(){
+	}
 }

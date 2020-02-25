@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.job;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.mr.rpa.assistant.data.model.Task;
+import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -61,6 +62,22 @@ public class JobFactory implements Runnable {
 		if (isStarted) {
 			executor.shutdownNow();
 		}
+	}
+
+	/**
+	 * taskLogId
+	 *
+	 * @param taskLog
+	 * @throws SchedulerException
+	 */
+	public static void trigger(TaskLog taskLog) throws SchedulerException {
+		scheduleAble();
+		Task task = jobFactory.taskDao.queryTaskById(taskLog.getTaskId());
+		String taskId = task.getId();
+
+		JobDataMap map = new JobDataMap();
+		map.put(SystemContants.TASK_LOG_KEY, taskLog);
+		jobFactory.userScheduler.triggerJob(JobKey.jobKey(taskId), map);
 	}
 
 	public static void add(Task task) throws SchedulerException {
