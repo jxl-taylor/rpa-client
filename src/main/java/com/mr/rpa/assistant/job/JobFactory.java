@@ -6,9 +6,16 @@ import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.LogTextCollector;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
+import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.logging.KettleLogStore;
+import org.pentaho.di.core.logging.KettleLoggingEvent;
+import org.pentaho.di.core.logging.KettleLoggingEventListener;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -43,8 +50,22 @@ public class JobFactory implements Runnable {
 	 *
 	 * @throws SchedulerException
 	 */
-	public static void start() throws SchedulerException {
+	public static void start() throws SchedulerException, KettleException {
 		if (!isStarted) {
+			//初始化
+			KettleEnvironment.init();
+			KettleLogStore.getAppender().addLoggingEventListener(new KettleLoggingEventListener() {
+				@Override
+				public void eventAdded(KettleLoggingEvent kettleLoggingEvent) {
+					GlobalProperty globalProperty = GlobalProperty.getInstance();
+					LogTextCollector textCollector = globalProperty.getLogTextCollector();
+					textCollector.addLog(kettleLoggingEvent.getMessage().toString());
+					globalProperty.getLogShows().forEach(item -> {
+						if (item != null) item.scrollText();
+					});
+				}
+			});
+
 			Thread thread = new Thread(() -> {
 				executor.submit(jobFactory);
 			});

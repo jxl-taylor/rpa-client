@@ -147,9 +147,9 @@ public class RPAAppender extends WriterAppender {
 
 	@Override
 	public void append(LoggingEvent event) {
+		super.append(event);
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		LogTextCollector textCollector = globalProperty.getLogTextCollector();
-		super.append(event);
 		textCollector.addLog(String.valueOf(event.getMessage()));
 		globalProperty.getLogShows().forEach(item -> {
 			if (item != null) item.scrollText();
