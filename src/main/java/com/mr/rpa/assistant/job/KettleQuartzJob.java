@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.job;
 
 import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson.JSON;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
@@ -8,6 +9,7 @@ import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,7 @@ import org.quartz.JobExecutionException;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Log4j
@@ -44,7 +47,7 @@ public class KettleQuartzJob implements Job {
 
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run start", task.getName(), taskLog.getId()));
 
-			runKbj(task.getName());
+			runKbj(task.getName(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
 			taskLogDao.updateTaskLog(taskLog);
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run end", task.getName(), taskLog.getId()));
@@ -66,7 +69,7 @@ public class KettleQuartzJob implements Job {
 		return taskLog;
 	}
 
-	protected void runKbj(String kbjName) {
+	protected void runKbj(String kbjName, List<KeyValue> kvList) {
 		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
 		FileUtil.mkdir(taskFileDir);
 		String jobPath = taskFileDir + File.separator + kbjName;
@@ -76,10 +79,7 @@ public class KettleQuartzJob implements Job {
 			JobMeta jobMeta = new JobMeta(jobPath, null);
 			org.pentaho.di.job.Job job = new org.pentaho.di.job.Job(null, jobMeta);
 			// 向Job 脚本传递参数，脚本中获取参数值：${参数名}  ,此参数可有可无，按需加入
-			// job.setVariable(paraname, paravalue);
-//			job.setVariable("id", params[0]);
-//			job.setVariable("content", params[1]);
-//			job.setVariable("file", params[2]);
+			kvList.forEach(keyValue -> job.setVariable(keyValue.getObject1(), keyValue.getObject2()));
 			job.start();
 			job.waitUntilFinished();
 			if (job.getErrors() > 0) {

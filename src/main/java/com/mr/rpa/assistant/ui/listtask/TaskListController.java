@@ -12,6 +12,7 @@ import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import com.mr.rpa.assistant.util.SystemContants;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -56,6 +57,8 @@ public class TaskListController implements Initializable {
 	private TableColumn<Task, Integer> successCountCol;
 	@FXML
 	private TableColumn<Task, Integer> failCountCol;
+	@FXML
+	private TableColumn<Task, CheckBox> registeredCol;
 	@FXML
 	private StackPane rootPane;
 
@@ -103,6 +106,7 @@ public class TaskListController implements Initializable {
 		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 		successCountCol.setCellValueFactory(new PropertyValueFactory<>("successCount"));
 		failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
+		registeredCol.setCellValueFactory(new PropertyValueFactory<>("checkBox"));
 	}
 
 	private void loadData() {
@@ -317,16 +321,20 @@ public class TaskListController implements Initializable {
 		private final SimpleStringProperty name;
 		private final SimpleStringProperty cron;
 		private final SimpleStringProperty desp;
+		private final SimpleStringProperty params;
 		private final SimpleStringProperty running;
 		private final SimpleStringProperty status;
 		private final SimpleIntegerProperty successCount;
 		private final SimpleIntegerProperty failCount;
 
-		public Task(String id, String name, String desp, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+		private CheckBox checkBox = new CheckBox();
+
+		public Task(String id, String name, String desp, String params, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
 			this.id = new SimpleStringProperty(id);
 			this.name = new SimpleStringProperty(name);
 			this.cron = new SimpleStringProperty(cron);
 			this.desp = new SimpleStringProperty(desp);
+			this.params = new SimpleStringProperty(params);
 			if (running) {
 				this.running = new SimpleStringProperty("已开启");
 			} else {
@@ -355,6 +363,10 @@ public class TaskListController implements Initializable {
 
 		public String getDesp() {
 			return desp.get();
+		}
+
+		public String getParams() {
+			return params.get();
 		}
 
 		public String getRunning() {

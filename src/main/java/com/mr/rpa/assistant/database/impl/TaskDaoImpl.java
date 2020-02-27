@@ -50,13 +50,15 @@ public class TaskDaoImpl implements TaskDao {
 	@Override
 	public boolean updateTask(TaskListController.Task task) {
 		try {
-			String update = "UPDATE TASK SET NAME=?, CRON=?, DESP=? ,updateTime=? WHERE ID=?";
+			String update = "UPDATE TASK SET NAME=?, CRON=?, DESP=? ,PARAMS=? ,updateTime=? WHERE ID=?";
 			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
-			stmt.setString(1, task.getName());
-			stmt.setString(2, task.getCron());
-			stmt.setString(3, task.getDesp());
-			stmt.setTimestamp(4, new Timestamp(new java.util.Date().getTime()));
-			stmt.setString(5, task.getId());
+			int i = 1;
+			stmt.setString(i++, task.getName());
+			stmt.setString(i++, task.getCron());
+			stmt.setString(i++, task.getDesp());
+			stmt.setString(i++, task.getParams());
+			stmt.setTimestamp(i++, new Timestamp(System.currentTimeMillis()));
+			stmt.setString(i++, task.getId());
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
@@ -185,13 +187,14 @@ public class TaskDaoImpl implements TaskDao {
 
 	@Override
 	public boolean insertNewTask(Task task) {
-		String sql = "INSERT INTO TASK(id,name,desp,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO TASK(id,name,desp,params,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement statement = handler.getConnection().prepareStatement(sql);
 			int i = 1;
 			statement.setString(i++, task.getId());
 			statement.setString(i++, task.getName());
 			statement.setString(i++, task.getDesp());
+			statement.setString(i++, task.getParams());
 			statement.setBoolean(i++, task.isRunning());
 			statement.setInt(i++, task.getStatus());
 			statement.setString(i++, task.getCron());
@@ -235,11 +238,12 @@ public class TaskDaoImpl implements TaskDao {
 				String name = rs.getString("name");
 				String cron = rs.getString("cron");
 				String desp = rs.getString("desp");
+				String params = rs.getString("params");
 				Boolean running = rs.getBoolean("running");
 				Integer status = rs.getInt("status");
 
 				//TODO count
-				taskList.add(new TaskListController.Task(id, name, desp, running, status, cron, 0, 0));
+				taskList.add(new TaskListController.Task(id, name, desp, params, running, status, cron, 0, 0));
 
 			}
 			handler.closeStmt();
@@ -270,6 +274,7 @@ public class TaskDaoImpl implements TaskDao {
 				Task task = new Task(rs.getString("id"),
 						rs.getString("name"),
 						rs.getString("desp"),
+						rs.getString("params"),
 						rs.getBoolean("running"),
 						rs.getInt("status"),
 						rs.getString("cron"),

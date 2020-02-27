@@ -1,9 +1,7 @@
 package com.mr.rpa.assistant.data.model;
 
-import com.mr.rpa.assistant.util.SystemContants;
 import lombok.Data;
 import lombok.ToString;
-
 import java.sql.Timestamp;
 
 /**
@@ -15,6 +13,7 @@ public class Task {
 	private String id;
 	private String name;
 	private String desp;
+	private String params;
 	//是否启动 已开启|未开启
 	private boolean running;
 	//运行状态 运行中|暂停中
@@ -29,23 +28,24 @@ public class Task {
 
 	}
 
-	public Task(String id, String name, String desp, Boolean running,
+	public Task(String id, String name, String desp, String params, Boolean running,
 				Integer status, String cron) {
-		this(id, name, desp, running, status, cron, 0, 0);
+		this(id, name, desp, params, running, status, cron, 0, 0);
 	}
 
-	public Task(String id, String name, String desp, Boolean running,
+	public Task(String id, String name, String desp, String params, Boolean running,
 				Integer status, String cron,
 				Integer successCount, Integer failCount) {
-		this(id, name, desp, running, status, cron, successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
+		this(id, name, desp, params, running, status, cron, successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
 	}
 
-	public Task(String id, String name, String desp, Boolean running,
+	public Task(String id, String name, String desp, String params, Boolean running,
 				Integer status, String cron,
 				Integer successCount, Integer failCount, Timestamp createTime, Timestamp updateTime) {
 		this.id = id;
 		this.name = name;
 		this.desp = desp;
+		this.params = params;
 		this.running = running;
 		this.status = status;
 		this.successCount = successCount;
@@ -54,4 +54,5 @@ public class Task {
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}
+	
 }

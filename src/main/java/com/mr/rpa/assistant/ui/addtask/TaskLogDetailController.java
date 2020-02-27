@@ -50,5 +50,4 @@ public class TaskLogDetailController implements Initializable {
 		endTime.setText(taskLog.getEndTime());
 	}
 
-
 }

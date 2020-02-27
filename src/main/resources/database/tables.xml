@@ -5,6 +5,7 @@
                  col-data="id varchar(200) primary key,
                  name varchar(200),
                  desp varchar(200),
+                 params varchar(200),
                  running boolean default false,
                  status integer default 0,
                  cron varchar(200) default '0 0 0/1 * * ?',

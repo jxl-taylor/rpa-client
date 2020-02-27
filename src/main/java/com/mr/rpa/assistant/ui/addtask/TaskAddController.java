@@ -1,8 +1,14 @@
 package com.mr.rpa.assistant.ui.addtask;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.validation.RequiredFieldValidator;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.database.DatabaseHandler;
@@ -10,22 +16,28 @@ import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 
+import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j
 public class TaskAddController implements Initializable {
@@ -39,13 +51,20 @@ public class TaskAddController implements Initializable {
 	@FXML
 	private JFXTextArea desp;
 	@FXML
-	private JFXButton saveButton;
-	@FXML
-	private JFXButton cancelButton;
-	@FXML
 	private StackPane rootPane;
 	@FXML
+	private VBox vFormBox;
+
+	@FXML
+	private HBox kjbName;
+	@FXML
+	private JFXButton uploadButton;
+
+	@FXML
 	private AnchorPane mainContainer;
+
+	private LinkedHashMap<Object, HBox> paramDeleteMap = Maps.newLinkedHashMap();
+	private LinkedHashMap<Object, HBox> paramConfirmMap = Maps.newLinkedHashMap();
 
 	private SimpleBooleanProperty isInEditMode = new SimpleBooleanProperty();
 
@@ -56,10 +75,76 @@ public class TaskAddController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		id.visibleProperty().bind(isInEditMode);
+		final FileChooser fileChooser = new FileChooser();
+		uploadButton.setOnAction(
+				(final ActionEvent e) -> {
+					configureFileChooser(fileChooser);
+					File file = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
+					if (file != null) {
+						String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+						if (FileUtil.exist(taskFileDir + File.separator + file.getName())) {
+							log.error(String.format("bot[%s] 已经存在", file.getName()));
+							AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", file.getName()));
+							return;
+						}
+						name.setText(file.getName());
+						FileUtil.copy(file.getAbsolutePath(), taskFileDir + File.separator + file.getName(), true);
+					}
+				});
+	}
+
+	@FXML
+	private void addParam(ActionEvent event) {
+		HBox paramBox = new HBox();
+		paramBox.setSpacing(5);
+
+		JFXTextField keyField = new JFXTextField();
+		keyField.setLabelFloat(false);
+		keyField.setPromptText("参数名");
+		paramBox.getChildren().add(keyField);
+
+		JFXTextField valueField = new JFXTextField();
+		valueField.setLabelFloat(false);
+		valueField.setPromptText("参数值");
+		paramBox.getChildren().add(valueField);
+		HBox.setHgrow(valueField, Priority.ALWAYS);
+
+		//确定、删除事件
+		JFXButton confirmButton = new JFXButton("确定");
+		confirmButton.setOnAction((final ActionEvent e) -> {
+			HBox selectedHBox = paramConfirmMap.get(e.getSource());
+			JFXTextField kField = (JFXTextField) selectedHBox.getChildren().get(0);
+			Label keyLabel = new Label(kField.getText());
+			keyLabel.setPrefWidth(100);
+			keyLabel.setStyle("-fx-text-fill: -fx-secondary; -fx-alignment: CENTER; -fx-padding: 10px 0 0 0;");
+			selectedHBox.getChildren().remove(0);
+			selectedHBox.getChildren().remove(e.getSource());
+			selectedHBox.getChildren().add(0, keyLabel);
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					selectedHBox.getChildren().get(1).requestFocus();
+				}
+			});
+		});
+		paramBox.getChildren().add(confirmButton);
+		paramConfirmMap.put(confirmButton, paramBox);
+
+		JFXButton deleteButton = new JFXButton("删除");
+		deleteButton.setOnAction((final ActionEvent e) -> {
+			HBox selectedHBox = paramDeleteMap.get(e.getSource());
+			vFormBox.getChildren().remove(selectedHBox);
+			paramDeleteMap.remove(e.getSource());
+		});
+		paramBox.getChildren().add(deleteButton);
+		paramDeleteMap.put(deleteButton, paramBox);
+
+		vFormBox.getChildren().add(vFormBox.getChildren().size() - 2, paramBox);
 	}
 
 	@FXML
 	private void addTask(ActionEvent event) {
+		if (kjbName.getChildren().size() < 2) kjbName.getChildren().add(uploadButton);
 		String taskName = StringUtils.trimToEmpty(name.getText());
 		String taskCron = StringUtils.trimToEmpty(cron.getText());
 		String taskDesp = StringUtils.trimToEmpty(desp.getText());
@@ -74,7 +159,7 @@ public class TaskAddController implements Initializable {
 			return;
 		}
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
-		Task task = new Task(id.getText(), name.getText(), desp.getText(),
+		Task task = new Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
 				true, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
 				0, 0);
 		try {
@@ -89,6 +174,7 @@ public class TaskAddController implements Initializable {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
 			clearEntries();
 			taskDao.loadTaskList();
+			closeWindow();
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增失败", "请检查输入");
 		}
@@ -96,6 +182,10 @@ public class TaskAddController implements Initializable {
 
 	@FXML
 	private void cancel(ActionEvent event) {
+		closeWindow();
+	}
+
+	private void closeWindow() {
 		Stage stage = (Stage) rootPane.getScene().getWindow();
 		stage.close();
 	}
@@ -105,7 +195,9 @@ public class TaskAddController implements Initializable {
 		name.setText(task.getName());
 		cron.setText(task.getCron());
 		desp.setText(task.getDesp());
+		convertStringToParam(task.getParams());
 		id.setEditable(false);
+		if (kjbName.getChildren().size() == 2) kjbName.getChildren().remove(uploadButton);
 		isInEditMode.setValue(Boolean.TRUE);
 	}
 
@@ -114,15 +206,19 @@ public class TaskAddController implements Initializable {
 		name.clear();
 		cron.clear();
 		desp.clear();
+		paramConfirmMap.clear();
+		vFormBox.getChildren().removeAll(paramDeleteMap.values());
+		paramDeleteMap.clear();
 	}
 
 	private void handleEditOperation() {
-		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), desp.getText(),
-				false, 0, cron.getText(),0, 0);
+		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
+				false, 0, cron.getText(), 0, 0);
 		try {
 			Task taskModel = taskDao.queryTaskById(task.getId());
 			taskModel.setCron(task.getCron());
 			taskModel.setDesp(task.getDesp());
+			taskModel.setParams(task.getParams());
 			JobFactory.update(taskModel);
 		} catch (SchedulerException e) {
 			log.error(e);
@@ -133,5 +229,64 @@ public class TaskAddController implements Initializable {
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
 		}
+	}
+
+	private static void configureFileChooser(
+			final FileChooser fileChooser) {
+		fileChooser.setTitle("选择任务");
+		fileChooser.setInitialDirectory(
+				new File(System.getProperty("user.home"))
+		);
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("所有任务", "*.*"),
+				new FileChooser.ExtensionFilter("kjb", "*.kjb"),
+				new FileChooser.ExtensionFilter("ktr", "*.ktr")
+		);
+	}
+
+	public String converParamToString() {
+		List<KeyValue> keyValues = paramDeleteMap.values().stream().map(pBox -> {
+			List<Node> nodes = pBox.getChildren().stream().filter(node -> !(node instanceof JFXButton)).collect(Collectors.toList());
+			KeyValue keyValue = null;
+			if (nodes.get(0) instanceof Label) {
+				keyValue = new KeyValue(((Label) nodes.get(0)).getText(), ((JFXTextField) nodes.get(1)).getText());
+			} else {
+				keyValue = new KeyValue(((JFXTextField) nodes.get(0)).getText(), ((JFXTextField) nodes.get(1)).getText());
+			}
+			return keyValue;
+		}).collect(Collectors.toList());
+		return JSON.toJSONString(keyValues);
+	}
+
+	public void convertStringToParam(String paramString) {
+		vFormBox.getChildren().removeAll(paramDeleteMap.values());
+		List<KeyValue> keyValues = JSON.parseArray(paramString).toJavaList(KeyValue.class);
+		keyValues.forEach(keyValue -> {
+			HBox paramBox = new HBox();
+			paramBox.setSpacing(5);
+
+			Label keyLabel = new Label(keyValue.getObject1());
+			keyLabel.setPrefWidth(100);
+			keyLabel.setStyle("-fx-text-fill: -fx-secondary; -fx-alignment: CENTER; -fx-padding: 10px 0 0 0;");
+			paramBox.getChildren().add(keyLabel);
+
+			JFXTextField valueField = new JFXTextField();
+			valueField.setLabelFloat(false);
+			valueField.setText(keyValue.getObject2());
+			paramBox.getChildren().add(valueField);
+			HBox.setHgrow(valueField, Priority.ALWAYS);
+
+			//删除事件
+			JFXButton deleteButton = new JFXButton("删除");
+			deleteButton.setOnAction((final ActionEvent e) -> {
+				HBox selectedHBox = paramDeleteMap.get(e.getSource());
+				vFormBox.getChildren().remove(selectedHBox);
+			});
+			paramBox.getChildren().add(deleteButton);
+			paramDeleteMap.put(deleteButton, paramBox);
+
+			vFormBox.getChildren().add(vFormBox.getChildren().size() - 2, paramBox);
+		});
+
 	}
 }

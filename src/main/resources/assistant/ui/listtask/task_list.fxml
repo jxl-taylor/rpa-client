@@ -25,6 +25,8 @@
                         <TableColumn fx:id="statusCol" text="状态"/>
                         <TableColumn fx:id="successCountCol" text="成功次数"/>
                         <TableColumn fx:id="failCountCol" text="失败次数"/>
+                        <TableColumn fx:id="registeredCol" text="操作" visible="false"/>
+
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
