@@ -2,20 +2,12 @@
 
 <?import com.jfoenix.controls.JFXDrawer?>
 <?import com.jfoenix.controls.JFXHamburger?>
-<?import com.jfoenix.controls.JFXTabPane?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.chart.PieChart?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.ScrollPane?>
 <StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
            prefHeight="625.0" prefWidth="1000.0" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.main.MainController">
@@ -26,10 +18,10 @@
                <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
                      <HBox fx:id="topMenu" alignment="TOP_RIGHT" style="-fx-background-color: derive(#2A2E37, 10%)">
-                        <JFXButton fx:id="taskShowButton" prefWidth="100.0" styleClass="top-menu-button" text="任务管理"/>
-                        <JFXButton fx:id="settingShowButton" prefWidth="100.0" styleClass="top-menu-button" text="设置"/>
-                        <JFXButton fx:id="myInfoShowButton" prefWidth="100.0" styleClass="top-menu-button" text="我的信息"/>
-                        <JFXButton fx:id="loginShowButton" prefWidth="70.0" styleClass="top-menu-button" text="登录"/>
+                        <JFXButton fx:id="taskShowButton" prefWidth="100.0" styleClass="top-menu-button" text="BOT中心"/>
+                        <JFXButton fx:id="settingShowButton" prefWidth="100.0" styleClass="top-menu-button" text="设置中心"/>
+                        <JFXButton fx:id="myInfoShowButton" prefWidth="100.0" styleClass="top-menu-button" text="用户中心"/>
+                        <JFXButton fx:id="statisticShowButton" prefWidth="100.0" styleClass="top-menu-button" text="统计中心"/>
                      </HBox>
                      <StackPane>
                         <children>
@@ -38,29 +30,12 @@
                                  <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true" styleClass="jfx-drawer" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  <AnchorPane fx:id="rootAnchorPane" prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
-                                       <JFXTabPane fx:id="mainTabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                          <tabs>
-                                             <Tab fx:id="taskTab" closable="false" styleClass="tab-main" text="任务列表">
-                                                <content>
-                                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                                      <children>
-                                                         <fx:include source="/assistant/ui/main/task/task_split.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                      </children>
-                                                   </AnchorPane>
-                                                </content>
-                                             </Tab>
-                                             <Tab fx:id="statisticTab" closable="false" styleClass="tab-main" text="统计信息">
-                                                <content>
-                                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                                      <children>
-                                                         <fx:include source="/assistant/ui/main/statistic/statistic.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                      </children>
-                                                   </AnchorPane>
-                                                </content>
-                                             </Tab>
-                                          </tabs>
-                                       </JFXTabPane>
-                                       <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="58.0"/>
+                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
+                                          <children>
+                                             <fx:include source="/assistant/ui/main/task/task_split.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          </children>
+                                       </AnchorPane>
+                                       <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="23.0"/>
                                     </children>
                                  </AnchorPane>
                               </children>
@@ -79,6 +54,15 @@
                                  <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                        <fx:include source="/assistant/ui/myinfo/myInfo.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                 </AnchorPane>
+                              </children>
+                           </AnchorPane>
+                           <AnchorPane fx:id="statisticPane">
+                              <children>
+                                 <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                       <fx:include source="/assistant/ui/main/statistic/statistic.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                  </AnchorPane>
                               </children>

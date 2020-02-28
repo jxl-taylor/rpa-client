@@ -3,18 +3,15 @@ package com.mr.rpa.assistant.ui.settings;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.event.AfterLoginEventHandler;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import lombok.Data;
 
 import java.util.List;
@@ -56,6 +53,8 @@ public class GlobalProperty {
 
 	private SimpleBooleanProperty myInfoPaneVisible = new SimpleBooleanProperty(false);
 
+	private SimpleBooleanProperty statisticPaneVisible = new SimpleBooleanProperty(false);
+
 	private SimpleBooleanProperty taskHistoryPaneVisible = new SimpleBooleanProperty(false);
 
 	private SimpleBooleanProperty taskLogPaneVisible = new SimpleBooleanProperty(false);
@@ -67,8 +66,6 @@ public class GlobalProperty {
 	private TaskBeanController taskBeanController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
-
-	private AfterLoginEventHandler afterLoginEventHandler;
 
 	private StackPane rootPane;
 
@@ -89,10 +86,6 @@ public class GlobalProperty {
 	private LogTextCollector logTextCollector = new LogTextCollector();
 
 	private SysConfig sysConfig = new SysConfig();
-
-	public void setAfterLoginEventHandler(VBox toolbar) {
-		this.afterLoginEventHandler = new AfterLoginEventHandler(toolbar);
-	}
 
 	public void setTitle(String username) {
 		this.title.set(String.format("MR-ROBOT（用户：%s）", username));
@@ -118,9 +111,5 @@ public class GlobalProperty {
 
 	public SysConfig getSysConfig() {
 		return sysConfig;
-	}
-
-	public void doAfterLogin() {
-		mainController.doAfterLogin();
 	}
 }

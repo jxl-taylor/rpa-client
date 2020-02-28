@@ -10,6 +10,7 @@ import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.LibraryAssistantUtil;
@@ -41,6 +42,8 @@ public class MainController implements Initializable {
 	@FXML
 	private AnchorPane myInfoPane;
 	@FXML
+	private AnchorPane statisticPane;
+	@FXML
 	private AnchorPane taskHistoryPane;
 
 	@FXML
@@ -58,23 +61,12 @@ public class MainController implements Initializable {
 	private JFXButton myInfoShowButton;
 
 	@FXML
-	private JFXButton loginShowButton;
+	private JFXButton statisticShowButton;
 
 	@FXML
 	private JFXHamburger hamburger;
 	@FXML
 	private JFXDrawer drawer;
-	@FXML
-	private AnchorPane rootAnchorPane;
-	@FXML
-	private HBox taskDataContainer;
-
-	@FXML
-	private Tab statisticTab;
-	@FXML
-	private Tab taskTab;
-	@FXML
-	private JFXTabPane mainTabPane;
 
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
@@ -85,40 +77,47 @@ public class MainController implements Initializable {
 
 		initShowButtonAction();
 		initDrawer();
-		initStatisticTab();
-		initComponents();
 
 		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈荣机器人");
 	}
 
 	private void initShowButtonAction() {
-		topMenu.getChildren().remove(myInfoShowButton);
 		taskPane.visibleProperty().bind(globalProperty.getTaskPaneVisible());
 		settingPane.visibleProperty().bind(globalProperty.getSettingPaneVisible());
 		myInfoPane.visibleProperty().bind(globalProperty.getMyInfoPaneVisible());
+		statisticPane.visibleProperty().bind(globalProperty.getStatisticPaneVisible());
 		taskHistoryPane.visibleProperty().bind(globalProperty.getTaskHistoryPaneVisible());
 		taskLogPane.visibleProperty().bind(globalProperty.getTaskLogPaneVisible());
 
-		loginShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
-			LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
-
-		});
 		taskShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+			if (!globalProperty.getTaskPaneVisible().get()) globalProperty.getSelectedTaskLogId().set("");
 			globalProperty.getTaskPaneVisible().setValue(true);
 			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
+			globalProperty.getStatisticPaneVisible().setValue(false);
 			recoverLogPane();
 		});
 		settingShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
 			globalProperty.getSettingPaneVisible().setValue(true);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
+			globalProperty.getStatisticPaneVisible().setValue(false);
 			recoverLogPane();
 		});
 		myInfoShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
 			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(true);
+			globalProperty.getStatisticPaneVisible().setValue(false);
+			recoverLogPane();
+
+		});
+		statisticShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+			globalProperty.getTaskPaneVisible().setValue(false);
+			globalProperty.getSettingPaneVisible().setValue(false);
+			globalProperty.getMyInfoPaneVisible().setValue(false);
+			globalProperty.getStatisticPaneVisible().setValue(true);
+			globalProperty.getStatisticController().refreshGraphs();
 			recoverLogPane();
 
 		});
@@ -133,13 +132,11 @@ public class MainController implements Initializable {
 	}
 
 
-
 	private void initDrawer() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/main/toolbar/toolbar.fxml"));
 			VBox toolbar = loader.load();
 			drawer.setSidePane(toolbar);
-			GlobalProperty.getInstance().setAfterLoginEventHandler(toolbar);
 		} catch (IOException ex) {
 			LOGGER.error(ex);
 		}
@@ -158,28 +155,6 @@ public class MainController implements Initializable {
 			task.setRate(task.getRate() * -1);
 			task.play();
 		});
-	}
-
-	private void initStatisticTab() {
-		statisticTab.setOnSelectionChanged((Event event) -> {
-			if (statisticTab.isSelected()) {
-				globalProperty.getStatisticController().refreshGraphs();
-			}
-
-			if (taskTab.isSelected()) {
-				globalProperty.getSelectedTaskLogId().set("");
-			}
-		});
-	}
-
-	private void initComponents() {
-		mainTabPane.tabMinWidthProperty().bind(rootAnchorPane.widthProperty().divide(mainTabPane.getTabs().size()).subtract(15));
-
-	}
-
-	public void doAfterLogin() {
-		topMenu.getChildren().remove(loginShowButton);
-		topMenu.getChildren().add(myInfoShowButton);
 	}
 
 }
