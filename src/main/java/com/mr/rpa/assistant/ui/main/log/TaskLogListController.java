@@ -1,19 +1,14 @@
 package com.mr.rpa.assistant.ui.main.log;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.data.model.TaskLog;
-import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
-import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.addtask.TaskLogDetailController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.SystemContants;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,7 +23,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 
 import java.io.IOException;
@@ -145,7 +139,7 @@ public class TaskLogListController implements Initializable {
 			stage.setTitle("任务日志详情");
 			stage.setScene(new Scene(parent));
 			stage.show();
-			LibraryAssistantUtil.setStageIcon(stage);
+			AssistantUtil.setStageIcon(stage);
 
 			stage.setOnHiding((e) -> {
 				handleRefresh(new ActionEvent());

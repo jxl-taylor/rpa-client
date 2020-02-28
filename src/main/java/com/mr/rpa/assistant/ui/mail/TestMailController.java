@@ -12,7 +12,7 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.util.email.EmailUtil;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,7 +43,7 @@ public class TestMailController implements Initializable, GenericCallback {
     @FXML
     private void handleStartAction(ActionEvent event) {
         String toAddress = recepientAddressInput.getText();
-        if (LibraryAssistantUtil.validateEmailAddress(toAddress)) {
+        if (AssistantUtil.validateEmailAddress(toAddress)) {
             EmailUtil.sendTestMail(mailServerInfo, toAddress, this);
             progressBar.setVisible(true);
         } else {

@@ -21,7 +21,7 @@ import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.ui.notifoverdue.NotificationItem;
 import com.mr.rpa.assistant.ui.settings.Preferences;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import org.apache.log4j.Logger;
 
 /**
@@ -44,7 +44,7 @@ public class EmailSenderController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            Scanner scanner = new Scanner(getClass().getResourceAsStream(LibraryAssistantUtil.MAIL_CONTENT_LOC));
+            Scanner scanner = new Scanner(getClass().getResourceAsStream(AssistantUtil.MAIL_CONTENT_LOC));
             while (scanner.hasNext()) {
                 emailText.append(scanner.nextLine()).append("\n");
             }
@@ -84,7 +84,7 @@ public class EmailSenderController implements Initializable {
             while (iterator.hasNext() && flag.get()) {
                 count++;
                 NotificationItem item = (NotificationItem) iterator.next();
-                String reportDate = LibraryAssistantUtil.getDateString(new Date());
+                String reportDate = AssistantUtil.getDateString(new Date());
                 String bookName = item.getBookName();
                 String issueDate = item.getIssueDate();
                 Integer daysUsed = item.getDayCount();

@@ -1,8 +1,6 @@
 package com.mr.rpa.assistant.ui.listtask;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.data.model.Task;
-import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -10,9 +8,8 @@ import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.SystemContants;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -32,7 +29,6 @@ import org.quartz.SchedulerException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -174,7 +170,7 @@ public class TaskListController implements Initializable {
 			stage.setTitle("编辑任务");
 			stage.setScene(new Scene(parent));
 			stage.show();
-			LibraryAssistantUtil.setStageIcon(stage);
+			AssistantUtil.setStageIcon(stage);
 
 			stage.setOnHiding((e) -> {
 				handleRefresh(new ActionEvent());

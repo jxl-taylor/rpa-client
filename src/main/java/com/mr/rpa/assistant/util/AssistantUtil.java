@@ -18,7 +18,7 @@ import javafx.stage.StageStyle;
 import com.mr.rpa.assistant.ui.settings.Preferences;
 import com.mr.rpa.assistant.ui.main.MainController;
 
-public class LibraryAssistantUtil {
+public class AssistantUtil {
 
     public static final String ICON_IMAGE_LOC = "/icon.png";
     public static final String MAIL_CONTENT_LOC = "/mail_content.html";
@@ -86,7 +86,7 @@ public class LibraryAssistantUtil {
             Desktop desktop = Desktop.getDesktop();
             desktop.open(file);
         } catch (IOException ex) {
-            Logger.getLogger(LibraryAssistantUtil.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AssistantUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

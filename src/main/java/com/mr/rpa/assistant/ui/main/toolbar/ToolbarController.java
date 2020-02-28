@@ -10,7 +10,7 @@ import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
@@ -26,7 +26,7 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadAddTask(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
+        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
     }
 
     @FXML
@@ -49,7 +49,7 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void LoadAboutUs(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/about.fxml"), "关于我们", null);
+        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/about.fxml"), "关于我们", null);
     }
 
     @FXML
@@ -62,7 +62,7 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadLogin(ActionEvent event) {
-        LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
+        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
 
     }
 

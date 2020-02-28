@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.concurrent.Task;
 
 /**
@@ -41,6 +41,6 @@ public class DatabaseExporter extends Task<Boolean> {
             cs.execute();
         }
         File file = new File(backupdirectory);
-        LibraryAssistantUtil.openFileWithDesktop(file);
+        AssistantUtil.openFileWithDesktop(file);
     }
 }

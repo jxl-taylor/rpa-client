@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -13,7 +12,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.MouseEvent;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -1,6 +1,5 @@
 package com.mr.rpa.assistant.ui.notifoverdue;
 
-import com.mr.rpa.assistant.ui.notifoverdue.NotificationItem;
 import com.google.common.collect.ImmutableList;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
@@ -34,7 +33,7 @@ import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.notifoverdue.emailsender.EmailSenderController;
 import com.mr.rpa.assistant.ui.settings.Preferences;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 
 /**
  * FXML Controller class
@@ -111,9 +110,9 @@ public class OverdueNotificationController implements Initializable {
                 Timestamp issueTime = rs.getTimestamp("issueTime");
                 System.out.println("Issued on " + issueTime);
                 Integer days = Math.toIntExact(TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - issueTime.getTime())) + 1;
-                Float fine = LibraryAssistantUtil.getFineAmount(days);
+                Float fine = AssistantUtil.getFineAmount(days);
 
-                com.mr.rpa.assistant.ui.notifoverdue.NotificationItem item = new com.mr.rpa.assistant.ui.notifoverdue.NotificationItem(true, memberID, memberName, email, bookTitle, LibraryAssistantUtil.getDateString(issueTime), days, fine);
+                com.mr.rpa.assistant.ui.notifoverdue.NotificationItem item = new com.mr.rpa.assistant.ui.notifoverdue.NotificationItem(true, memberID, memberName, email, bookTitle, AssistantUtil.getDateString(issueTime), days, fine);
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -128,7 +127,7 @@ public class OverdueNotificationController implements Initializable {
             AlertMaker.showErrorMessage("Nothing Selected", "Nothing selected to notify");
             return;
         }
-        Object controller = LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/notifoverdue/emailsender/email_sender.fxml"), "Notify Overdue", null);
+        Object controller = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/notifoverdue/emailsender/email_sender.fxml"), "Notify Overdue", null);
         if (controller != null) {
             EmailSenderController cont = (EmailSenderController) controller;
             cont.setNotifRequestData(selectedItems);

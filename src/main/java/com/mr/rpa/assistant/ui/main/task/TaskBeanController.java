@@ -1,12 +1,11 @@
 package com.mr.rpa.assistant.ui.main.task;
 
 import com.jfoenix.controls.JFXTextField;
-import com.mr.rpa.assistant.database.DataHelper;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,7 +43,7 @@ public class TaskBeanController implements Initializable {
 
 	@FXML
 	private void loadAddTask(ActionEvent event) {
-		LibraryAssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
 
 	}
 

@@ -17,4 +17,6 @@ public class SystemContants {
 
 	public static final String TASK_LOG_KEY = "taskLogKey";
 
+	public static final String LICENSE_PROPERTY_FILE_PATH = "/verifyParam.properties";
+
 }

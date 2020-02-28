@@ -7,8 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,7 +47,7 @@ public class AboutController implements Initializable {
         stage.setScene(scene);
         stage.setTitle("MR");
         stage.show();
-        LibraryAssistantUtil.setStageIcon(stage);
+        AssistantUtil.setStageIcon(stage);
     }
 
     @FXML

@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -34,7 +31,7 @@ import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.ui.addbook.BookAddController;
 import com.mr.rpa.assistant.ui.addmember.MemberAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 
 public class MemberListController implements Initializable {
 
@@ -148,7 +145,7 @@ public class MemberListController implements Initializable {
             stage.setTitle("Edit Member");
             stage.setScene(new Scene(parent));
             stage.show();
-            LibraryAssistantUtil.setStageIcon(stage);
+            AssistantUtil.setStageIcon(stage);
 
             stage.setOnHiding((e) -> {
                 handleRefresh(new ActionEvent());

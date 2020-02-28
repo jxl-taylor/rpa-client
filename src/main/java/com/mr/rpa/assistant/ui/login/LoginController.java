@@ -8,13 +8,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.LibraryAssistantUtil;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -102,7 +101,7 @@ public class LoginController implements Initializable {
 			stage.show();
 			stage.titleProperty().bind(GlobalProperty.getInstance().getTitle());
 
-			LibraryAssistantUtil.setStageIcon(stage);
+			AssistantUtil.setStageIcon(stage);
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
@@ -132,6 +131,10 @@ public class LoginController implements Initializable {
 //            }
 //
 //        }).start();
+
+//			AlertMaker.showMaterialDialog(((StackPane) parent),
+//					((StackPane) parent).getChildren().get(0),
+//					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License无效", true);
 
 		} catch (Exception ex) {
 			log.error(ex);
