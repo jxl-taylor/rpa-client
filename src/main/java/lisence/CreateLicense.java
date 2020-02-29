@@ -90,7 +90,7 @@ public class CreateLicense {
 		// 设置对证书内容加密的对称密码
 		CipherParam cipherParam = new DefaultCipherParam(STOREPWD);
 		// 参数1,2从哪个Class.getResource()获得密钥库;参数3密钥库的别名;参数4密钥库存储密码;参数5密钥库密码
-		KeyStoreParam privateStoreParam = new DefaultKeyStoreParam(
+		KeyStoreParam privateStoreParam = new MyKeyStoreParam(
 				CreateLicense.class, priPath, PRIVATEALIAS, STOREPWD, KEYPWD);
 		LicenseParam licenseParams = new DefaultLicenseParam(SUBJECT,
 				preference, privateStoreParam, cipherParam);

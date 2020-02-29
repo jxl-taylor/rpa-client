@@ -13,18 +13,17 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.util.AssistantUtil;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.quartz.SchedulerException;
 
+@Log4j
 public class RpaApplication extends Application {
-
-	private final static Logger LOGGER = Logger.getLogger(RpaApplication.class);
 
 	private SimpleStringProperty titleProperty = new SimpleStringProperty();
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		LOGGER.info("MR-BOT Client Starting...");
+		log.info("MR-BOT Client Starting...");
 		DatabaseHandler.getInstance();
 		Parent root = FXMLLoader.load(getClass().getResource("/assistant/ui/login/login.fxml"));
 
@@ -46,7 +45,7 @@ public class RpaApplication extends Application {
 		Long startTime = System.currentTimeMillis();
 		launch(args);
 		Long endTime = System.currentTimeMillis();
-		LOGGER.info(String.format("MR-BOT Client is started successfully on %s. Used for %s ms", AssistantUtil.formatDateTimeString(startTime), endTime));
+		log.info(String.format("MR-BOT Client is started successfully on %s. Used for %s ms", AssistantUtil.formatDateTimeString(startTime), endTime));
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -54,9 +53,9 @@ public class RpaApplication extends Application {
 				try {
 					JobFactory.exit();
 				} catch (SchedulerException e) {
-					LOGGER.error(e);
+					log.error(e);
 				}
-				LOGGER.info(String.format("MR-RPA Client is closed on %s.", AssistantUtil.formatDateTimeString(System.currentTimeMillis())));
+				log.info(String.format("MR-RPA Client is closed on %s.", AssistantUtil.formatDateTimeString(System.currentTimeMillis())));
 
 			}
 		});
