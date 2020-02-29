@@ -37,7 +37,7 @@ public class RpaApplication extends Application {
 		if(!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()){
 			AlertMaker.showMaterialDialog(((StackPane) root),
 					((StackPane) root).getChildren().get(0),
-					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "Liscense不可用", true);
+					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License不可用", false);
 		}
 	}
 

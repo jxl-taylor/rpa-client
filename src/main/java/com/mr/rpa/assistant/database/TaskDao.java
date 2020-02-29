@@ -34,6 +34,8 @@ public interface TaskDao {
 
 	List<TaskListController.Task> loadTaskList(String taskId, String taskName);
 
+	Task queryTaskByName(String name);
+
 	List<Task> queryTaskList();
 
 	Task queryTaskById(String id);

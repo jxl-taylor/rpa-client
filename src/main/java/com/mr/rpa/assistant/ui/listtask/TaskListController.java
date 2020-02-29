@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.ui.listtask;
 
+import cn.hutool.core.io.FileUtil;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
@@ -27,6 +28,7 @@ import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j;
 import org.quartz.SchedulerException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -133,7 +135,10 @@ public class TaskListController implements Initializable {
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
 				return;
 			}
-			Boolean result = taskDao.deleteTask(selectedForDeletion);
+			String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+			String jobPath = taskFileDir + File.separator + selectedForDeletion.getName();
+			FileUtil.del(jobPath);
+			boolean result = taskDao.deleteTask(selectedForDeletion);
 			taskLogDao.deleteTaskLog(selectedForDeletion.getId());
 			if (result) {
 				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");

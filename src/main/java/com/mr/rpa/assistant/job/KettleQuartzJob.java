@@ -64,26 +64,22 @@ public class KettleQuartzJob implements Job {
 		return taskLog;
 	}
 
-	protected void runKbj(String kbjName, List<KeyValue> kvList) {
+	protected void runKbj(String kbjName, List<KeyValue> kvList) throws Exception {
 		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
 		FileUtil.mkdir(taskFileDir);
 		String jobPath = taskFileDir + File.separator + kbjName;
 		if (!FileUtil.exist(jobPath)) throw new RuntimeException(kbjName + "不存在");
-		try {
-			// jobname 是Job脚本的路径及名称
-			JobMeta jobMeta = new JobMeta(jobPath, null);
-			org.pentaho.di.job.Job job = new org.pentaho.di.job.Job(null, jobMeta);
-			// 向Job 脚本传递参数，脚本中获取参数值：${参数名}  ,此参数可有可无，按需加入
-			kvList.forEach(keyValue -> job.setVariable(keyValue.getObject1(), keyValue.getObject2()));
-			job.start();
-			job.waitUntilFinished();
-			if (job.getErrors() > 0) {
-				throw new Exception(
-						"There are errors during job exception!(执行job发生异常)");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		// jobname 是Job脚本的路径及名称
+		JobMeta jobMeta = new JobMeta(jobPath, null);
+		org.pentaho.di.job.Job job = new org.pentaho.di.job.Job(null, jobMeta);
+		// 向Job 脚本传递参数，脚本中获取参数值：${参数名}  ,此参数可有可无，按需加入
+		kvList.forEach(keyValue -> job.setVariable(keyValue.getObject1(), keyValue.getObject2()));
+		job.start();
+		job.waitUntilFinished();
+		if (job.getErrors() > 0) {
+			throw new Exception("There are errors during job exception!(执行job发生异常)");
 		}
+
 	}
 
 }

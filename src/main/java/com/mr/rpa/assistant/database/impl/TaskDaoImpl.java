@@ -261,6 +261,13 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	@Override
+	public Task queryTaskByName(String name) {
+		String sql = String.format("SELECT * FROM TASK WHERE ID = '%s'", name);
+		List<Task> taskList = queryTask(sql);
+		return CollectionUtil.isEmpty(taskList) ? null : taskList.get(0);
+	}
+
+	@Override
 	public List<Task> queryTaskList() {
 		String sql = "SELECT * FROM TASK ";
 		return queryTask(sql);

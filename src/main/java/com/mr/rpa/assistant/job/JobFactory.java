@@ -112,10 +112,7 @@ public class JobFactory implements Runnable {
 		if (task.isRunning()) {
 			jobFactory.userScheduler.scheduleJob(jobDetail, jobTrigger);
 			if (task.getStatus() == SystemContants.TASK_RUNNING_STATUS_PAUSE) pause(task);
-		} else {
-			jobFactory.userScheduler.addJob(jobDetail, true);
 		}
-
 	}
 
 	public static void delete(Task task) throws SchedulerException {

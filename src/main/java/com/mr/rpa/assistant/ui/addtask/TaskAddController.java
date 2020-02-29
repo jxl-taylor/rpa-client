@@ -114,6 +114,11 @@ public class TaskAddController implements Initializable {
 		confirmButton.setOnAction((final ActionEvent e) -> {
 			HBox selectedHBox = paramConfirmMap.get(e.getSource());
 			JFXTextField kField = (JFXTextField) selectedHBox.getChildren().get(0);
+			if (StringUtils.isBlank(kField.getText())) {
+				kField.getStyleClass().add("wrong-credentials");
+				kField.requestFocus();
+				throw new RuntimeException("Key不能为空");
+			}
 			Label keyLabel = new Label(kField.getText());
 			keyLabel.setPrefWidth(100);
 			keyLabel.setStyle("-fx-text-fill: -fx-secondary; -fx-alignment: CENTER; -fx-padding: 10px 0 0 0;");
@@ -158,17 +163,16 @@ public class TaskAddController implements Initializable {
 			handleEditOperation();
 			return;
 		}
-		id.setText(UUID.randomUUID().toString().replace("-", ""));
-		Task task = new Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
-				true, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
-				0, 0);
-		try {
-			JobFactory.add(task);
-		} catch (SchedulerException e) {
-			log.error(e);
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", "调度添加失败");
+
+		if (taskDao.queryTaskByName(taskName) != null) {
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "Job已存在，请重新选择.");
 			return;
 		}
+
+		id.setText(UUID.randomUUID().toString().replace("-", ""));
+		Task task = new Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
+				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
+				0, 0);
 		boolean result = taskDao.insertNewTask(task);
 		if (result) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
@@ -225,7 +229,8 @@ public class TaskAddController implements Initializable {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
 		}
 		if (taskDao.updateTask(task)) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Success", "修改成功");
+			AlertMaker.showSimpleAlert("Success", "修改成功");
+			closeWindow();
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
 		}
@@ -250,9 +255,25 @@ public class TaskAddController implements Initializable {
 			KeyValue keyValue = null;
 			if (nodes.get(0) instanceof Label) {
 				keyValue = new KeyValue(((Label) nodes.get(0)).getText(), ((JFXTextField) nodes.get(1)).getText());
+				if (StringUtils.isBlank(keyValue.getObject1())) {
+					((JFXTextField) nodes.get(1)).getStyleClass().add("wrong-credentials");
+					((JFXTextField) nodes.get(1)).requestFocus();
+					throw new RuntimeException("Value不能为空");
+				}
 			} else {
 				keyValue = new KeyValue(((JFXTextField) nodes.get(0)).getText(), ((JFXTextField) nodes.get(1)).getText());
+				if (StringUtils.isBlank(keyValue.getObject1())) {
+					((JFXTextField) nodes.get(0)).getStyleClass().add("wrong-credentials");
+					((JFXTextField) nodes.get(0)).requestFocus();
+					throw new RuntimeException("Key不能为空");
+				}
+				if (StringUtils.isBlank(keyValue.getObject1())) {
+					((JFXTextField) nodes.get(1)).getStyleClass().add("wrong-credentials");
+					((JFXTextField) nodes.get(1)).requestFocus();
+					throw new RuntimeException("Value不能为空");
+				}
 			}
+
 			return keyValue;
 		}).collect(Collectors.toList());
 		return JSON.toJSONString(keyValues);
