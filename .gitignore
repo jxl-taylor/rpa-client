@@ -3,6 +3,7 @@
 .idea/
 /logs/
 /database/
+/kjb/
 
 .classpath
 .project
