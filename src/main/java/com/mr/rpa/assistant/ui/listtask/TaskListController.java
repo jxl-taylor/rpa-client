@@ -1,6 +1,9 @@
 package com.mr.rpa.assistant.ui.listtask;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
+import com.google.common.collect.Lists;
+import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
@@ -21,6 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -59,10 +63,10 @@ public class TaskListController implements Initializable {
 	private TableColumn<Task, CheckBox> registeredCol;
 	@FXML
 	private StackPane rootPane;
-
 	@FXML
 	private AnchorPane contentPane;
 
+	private JFXButton cancelBtn;
 	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
 
 	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
@@ -88,6 +92,11 @@ public class TaskListController implements Initializable {
 				}
 			});
 			return row;
+		});
+		cancelBtn = new JFXButton("取消");
+		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+			rootPane.getChildren().get(0).setEffect(null);
 		});
 	}
 
@@ -123,11 +132,12 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务删除.");
 			return;
 		}
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("删除任务");
-		alert.setContentText("确定删除该任务么 " + selectedForDeletion.getName() + " ?");
-		Optional<ButtonType> answer = alert.showAndWait();
-		if (answer.get() == ButtonType.OK) {
+		if(CollectionUtil.isNotEmpty(taskDao.queryTaskByNextTask(selectedForDeletion.getName()))){
+			AlertMaker.showErrorMessage("无法删除", "该任务被别的任务依赖.");
+			return;
+		}
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
 				JobFactory.delete(taskDao.queryTaskById(selectedForDeletion.getId()));
 			} catch (SchedulerException e) {
@@ -147,9 +157,13 @@ public class TaskListController implements Initializable {
 			} else {
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
 			}
-		} else {
-			AlertMaker.showSimpleAlert("取消删除", "删除已取消");
-		}
+		});
+
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "删除任务",
+				"确定删除该任务么 " + selectedForDeletion.getName() + " ?", false);
+
 	}
 
 	@FXML
@@ -199,23 +213,26 @@ public class TaskListController implements Initializable {
 			return;
 		}
 
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("开启任务");
-		alert.setContentText("确定开启该任务么 " + task.getName() + " ?");
-		Optional<ButtonType> answer = alert.showAndWait();
-		if (answer.get() == ButtonType.OK) {
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
 				task.setRunning(true);
 				JobFactory.add(task);
 			} catch (SchedulerException e) {
 				log.error(e);
 				AlertMaker.showErrorMessage("开启任务", "调度引擎开启任务失败.");
-				return;
+				throw new RuntimeException(e);
 			}
 			taskDao.updateTaskRunning(task.getId(), true);
 			loadData();
 			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
-		}
+
+		});
+
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "开启任务", "确定开启该任务么 " + task.getName() + " ?", false);
+
 	}
 
 	@FXML
@@ -230,22 +247,26 @@ public class TaskListController implements Initializable {
 			AlertMaker.showSimpleAlert("停止任务", "任务已经停止");
 			return;
 		}
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("停止任务");
-		alert.setContentText("确定停止该任务么" + task.getName() + " ?");
-		Optional<ButtonType> answer = alert.showAndWait();
-		if (answer.get() == ButtonType.OK) {
+
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
 				JobFactory.delete(task);
 			} catch (SchedulerException e) {
 				log.error(e);
 				AlertMaker.showErrorMessage("停止任务", "调度引擎停止任务失败.");
-				return;
+				throw new RuntimeException(e);
 			}
 			taskDao.updateTaskRunning(selectedTask.getId(), false);
 			loadData();
 			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
-		}
+
+		});
+
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "停止任务", "确定停止该任务么" + task.getName() + " ?", false);
+
 	}
 
 	@FXML
@@ -323,6 +344,7 @@ public class TaskListController implements Initializable {
 		private final SimpleStringProperty cron;
 		private final SimpleStringProperty desp;
 		private final SimpleStringProperty params;
+		private final SimpleStringProperty nextTask;
 		private final SimpleStringProperty running;
 		private final SimpleStringProperty status;
 		private final SimpleIntegerProperty successCount;
@@ -330,12 +352,13 @@ public class TaskListController implements Initializable {
 
 		private CheckBox checkBox = new CheckBox();
 
-		public Task(String id, String name, String desp, String params, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+		public Task(String id, String name, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
 			this.id = new SimpleStringProperty(id);
 			this.name = new SimpleStringProperty(name);
 			this.cron = new SimpleStringProperty(cron);
 			this.desp = new SimpleStringProperty(desp);
 			this.params = new SimpleStringProperty(params);
+			this.nextTask = new SimpleStringProperty(nextTask);
 			if (running) {
 				this.running = new SimpleStringProperty("已开启");
 			} else {
@@ -368,6 +391,10 @@ public class TaskListController implements Initializable {
 
 		public String getParams() {
 			return params.get();
+		}
+
+		public String getNextTask() {
+			return nextTask.get();
 		}
 
 		public String getRunning() {

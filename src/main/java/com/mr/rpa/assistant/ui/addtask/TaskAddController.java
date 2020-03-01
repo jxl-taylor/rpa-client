@@ -1,14 +1,12 @@
 package com.mr.rpa.assistant.ui.addtask;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.validation.RequiredFieldValidator;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.database.DatabaseHandler;
@@ -21,17 +19,19 @@ import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.CronExpression;
 import org.quartz.SchedulerException;
 
 import java.io.File;
@@ -50,6 +50,8 @@ public class TaskAddController implements Initializable {
 	private JFXTextField cron;
 	@FXML
 	private JFXTextArea desp;
+	@FXML
+	private JFXComboBox<String> nextTask;
 	@FXML
 	private StackPane rootPane;
 	@FXML
@@ -72,6 +74,8 @@ public class TaskAddController implements Initializable {
 
 	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
 
+	private ObservableList<String> nextTaskItems = FXCollections.observableArrayList();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		id.visibleProperty().bind(isInEditMode);
@@ -91,6 +95,12 @@ public class TaskAddController implements Initializable {
 						FileUtil.copy(file.getAbsolutePath(), taskFileDir + File.separator + file.getName(), true);
 					}
 				});
+		nextTask.setItems(nextTaskItems);
+		nextTaskItems.clear();
+		nextTaskItems.addAll(taskDao.queryTaskList()
+				.stream()
+				.map(item -> item.getName())
+				.collect(Collectors.toList()));
 	}
 
 	@FXML
@@ -154,23 +164,18 @@ public class TaskAddController implements Initializable {
 		String taskCron = StringUtils.trimToEmpty(cron.getText());
 		String taskDesp = StringUtils.trimToEmpty(desp.getText());
 
-		if (taskName.isEmpty() || taskDesp.isEmpty() || taskCron.isEmpty()) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "请正确输入.");
-			return;
-		}
-
 		if (isInEditMode.getValue()) {
 			handleEditOperation();
 			return;
 		}
-
+		if (!checkInput(taskName, taskCron, taskDesp)) return;
 		if (taskDao.queryTaskByName(taskName) != null) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "Job已存在，请重新选择.");
 			return;
 		}
 
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
-		Task task = new Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
+		Task task = new Task(id.getText(), name.getText(), desp.getText(), converParamToString(), nextTask.getValue(),
 				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
 				0, 0);
 		boolean result = taskDao.insertNewTask(task);
@@ -182,6 +187,18 @@ public class TaskAddController implements Initializable {
 		} else {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增失败", "请检查输入");
 		}
+	}
+
+	private boolean checkInput(String taskName, String taskCron, String taskDesp) {
+		if (taskName.isEmpty() || taskDesp.isEmpty() || taskCron.isEmpty()) {
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "请正确输入.");
+			return false;
+		}
+		if (!CronExpression.isValidExpression(taskCron)) {
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "CRON表达式无效.");
+			return false;
+		}
+		return true;
 	}
 
 	@FXML
@@ -200,8 +217,13 @@ public class TaskAddController implements Initializable {
 		cron.setText(task.getCron());
 		desp.setText(task.getDesp());
 		convertStringToParam(task.getParams());
+		nextTask.setValue(task.getNextTask());
 		id.setEditable(false);
 		if (kjbName.getChildren().size() == 2) kjbName.getChildren().remove(uploadButton);
+		//依赖任务不能是自己
+		String selectedTaskId = GlobalProperty.getInstance().getSelectedTaskId().getValue();
+		nextTaskItems.remove(taskDao.queryTaskById(selectedTaskId).getName());
+
 		isInEditMode.setValue(Boolean.TRUE);
 	}
 
@@ -217,7 +239,8 @@ public class TaskAddController implements Initializable {
 
 	private void handleEditOperation() {
 		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
-				false, 0, cron.getText(), 0, 0);
+				nextTask.getValue(), false, 0, cron.getText(), 0, 0);
+		if (!checkInput(task.getName(), task.getCron(), task.getDesp())) return;
 		try {
 			Task taskModel = taskDao.queryTaskById(task.getId());
 			taskModel.setCron(task.getCron());

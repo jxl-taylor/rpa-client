@@ -115,14 +115,14 @@ public class TaskDaoImpl implements TaskDao {
 			ResultSet rs = handler.execQuery(runSqL);
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				data.add(new PieChart.Data("已启动数 (" + count + ")", 100));
+				data.add(new PieChart.Data("已启动数 (" + count + ")", count));
 			}
 			rs.close();
 			handler.closeStmt();
 			rs = handler.execQuery(stopSql);
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				data.add(new PieChart.Data("未启动数 (" + count + ")", 50));
+				data.add(new PieChart.Data("未启动数 (" + count + ")", count));
 			}
 			rs.close();
 			handler.closeStmt();
@@ -141,14 +141,14 @@ public class TaskDaoImpl implements TaskDao {
 			ResultSet rs = handler.execQuery(succSqL);
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				data.add(new PieChart.Data("成功总次数 (" + count + ")", 100));
+				data.add(new PieChart.Data("成功总次数 (" + count + ")", count));
 			}
 			rs.close();
 
 			rs = handler.execQuery(failSql);
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				data.add(new PieChart.Data("失败总次数 (" + count + ")", 50));
+				data.add(new PieChart.Data("失败总次数 (" + count + ")", count));
 			}
 			rs.close();
 			handler.closeStmt();
@@ -168,14 +168,14 @@ public class TaskDaoImpl implements TaskDao {
 			ResultSet rs = handler.execQuery(String.format(succSqL, sTaskId));
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				data.add(new PieChart.Data("成功次数 (" + count + ")", 100));
+				data.add(new PieChart.Data("成功次数 (" + count + ")", count));
 			}
 			rs.close();
 			handler.closeStmt();
 			rs = handler.execQuery(String.format(failSql, sTaskId));
 			if (rs.next()) {
 				int count = rs.getInt(1);
-				data.add(new PieChart.Data("失败次数 (" + count + ")", 50));
+				data.add(new PieChart.Data("失败次数 (" + count + ")", count));
 			}
 			rs.close();
 			handler.closeStmt();
@@ -187,7 +187,7 @@ public class TaskDaoImpl implements TaskDao {
 
 	@Override
 	public boolean insertNewTask(Task task) {
-		String sql = "INSERT INTO TASK(id,name,desp,params,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO TASK(id,name,desp,params,nextTask,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement statement = handler.getConnection().prepareStatement(sql);
 			int i = 1;
@@ -195,6 +195,7 @@ public class TaskDaoImpl implements TaskDao {
 			statement.setString(i++, task.getName());
 			statement.setString(i++, task.getDesp());
 			statement.setString(i++, task.getParams());
+			statement.setString(i++, task.getNextTask());
 			statement.setBoolean(i++, task.isRunning());
 			statement.setInt(i++, task.getStatus());
 			statement.setString(i++, task.getCron());
@@ -229,7 +230,7 @@ public class TaskDaoImpl implements TaskDao {
 	private List<TaskListController.Task> loadTask(String sql) {
 		taskList.clear();
 		ResultSet rs = handler.execQuery(sql);
-		if(rs == null){
+		if (rs == null) {
 			return taskList;
 		}
 		try {
@@ -239,11 +240,12 @@ public class TaskDaoImpl implements TaskDao {
 				String cron = rs.getString("cron");
 				String desp = rs.getString("desp");
 				String params = rs.getString("params");
+				String nextTask = rs.getString("nextTask");
 				Boolean running = rs.getBoolean("running");
 				Integer status = rs.getInt("status");
 
 				//TODO count
-				taskList.add(new TaskListController.Task(id, name, desp, params, running, status, cron, 0, 0));
+				taskList.add(new TaskListController.Task(id, name, desp, params, nextTask, running, status, cron, 0, 0));
 
 			}
 			handler.closeStmt();
@@ -262,9 +264,15 @@ public class TaskDaoImpl implements TaskDao {
 
 	@Override
 	public Task queryTaskByName(String name) {
-		String sql = String.format("SELECT * FROM TASK WHERE ID = '%s'", name);
+		String sql = String.format("SELECT * FROM TASK WHERE NAME = '%s'", name);
 		List<Task> taskList = queryTask(sql);
 		return CollectionUtil.isEmpty(taskList) ? null : taskList.get(0);
+	}
+
+	@Override
+	public List<Task> queryTaskByNextTask(String nextTask) {
+		String sql = String.format("SELECT * FROM TASK WHERE NEXTTASK = '%s'", nextTask);
+		return queryTask(sql);
 	}
 
 	@Override
@@ -282,6 +290,7 @@ public class TaskDaoImpl implements TaskDao {
 						rs.getString("name"),
 						rs.getString("desp"),
 						rs.getString("params"),
+						rs.getString("nextTask"),
 						rs.getBoolean("running"),
 						rs.getInt("status"),
 						rs.getString("cron"),

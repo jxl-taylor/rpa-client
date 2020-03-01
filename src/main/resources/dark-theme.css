@@ -417,3 +417,41 @@
     -fx-font-size: 10pt;
     -fx-text-fill: white;
 }
+
+
+/*combo-box*/
+.combo-box {
+    -fx-text-fill: -fx-secondary;
+    -fx-font-size: 10pt;
+    -jfx-focus-color: -fx-secondary;
+    -fx-text-fill: derive(-fx-secondary, 20%);
+}
+
+.combo-box .list-cell
+{
+    -fx-text-fill: -fx-secondary;
+    -fx-border-width: 0;
+}
+
+.combo-box-popup .list-view
+{
+    -fx-text-fill: -fx-secondary;
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}
+
+.combo-box-popup .list-view .list-cell
+{
+    -fx-padding: 4 0 4 5;
+
+    /* No alternate highlighting */
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-primarytext;
+}
+
+
+.combo-box-popup .list-view .list-cell:filled:hover
+{
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-secondary;
+}

@@ -10,7 +10,6 @@ import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.LogTextCollector;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.KettleLogStore;

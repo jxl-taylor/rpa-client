@@ -29,16 +29,17 @@ public class RpaApplication extends Application {
 
 		Scene scene = new Scene(root);
 
-		stage.setScene(scene);
-		stage.show();
-		stage.setTitle("MR-BOT");
-
 		AssistantUtil.setStageIcon(stage);
 		if(!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()){
 			AlertMaker.showMaterialDialog(((StackPane) root),
 					((StackPane) root).getChildren().get(0),
 					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License不可用", false);
 		}
+
+		stage.setScene(scene);
+		stage.show();
+		stage.setTitle("MR-BOT");
+
 	}
 
 	public static void main(String[] args) {

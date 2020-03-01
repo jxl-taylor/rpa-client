@@ -11,6 +11,7 @@ import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.di.job.JobMeta;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -43,6 +44,11 @@ public class KettleQuartzJob implements Job {
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run start", task.getName(), taskLog.getId()));
 
 			runKbj(task.getName(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
+			//执行依赖任务
+			if(StringUtils.isNotBlank(task.getNextTask())){
+				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
+				runKbj(nextTask.getName(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
+			}
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
 			taskLogDao.updateTaskLog(taskLog);
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run end", task.getName(), taskLog.getId()));

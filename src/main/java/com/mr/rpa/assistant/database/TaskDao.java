@@ -36,6 +36,8 @@ public interface TaskDao {
 
 	Task queryTaskByName(String name);
 
+	List<Task> queryTaskByNextTask(String nextTask);
+
 	List<Task> queryTaskList();
 
 	Task queryTaskById(String id);

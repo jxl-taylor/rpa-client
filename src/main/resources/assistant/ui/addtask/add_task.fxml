@@ -10,6 +10,8 @@
 <?import com.jfoenix.controls.JFXTextArea?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.addtask.TaskAddController">
    <children>
       <AnchorPane id="AnchorPane" fx:id="mainContainer" prefHeight="338.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
@@ -23,7 +25,7 @@
                   </JFXTextField>
                   <HBox fx:id="kjbName" VBox.vgrow="ALWAYS">
                      <children>
-                        <JFXTextField fx:id="name" labelFloat="true" promptText="任务脚本" HBox.hgrow="ALWAYS">
+                        <JFXTextField fx:id="name" labelFloat="true" promptText="任务脚本" HBox.hgrow="ALWAYS" editable="false">
                         </JFXTextField>
                         <JFXButton fx:id="uploadButton" prefWidth="70.0" text="上传"/>
                      </children>
@@ -43,14 +45,11 @@
                      </VBox.margin>
                   </JFXTextArea>
 
-                  <HBox VBox.vgrow="ALWAYS" spacing="5" alignment="CENTER_RIGHT">
-                     <children>
-                        <JFXButton prefWidth="100.0" onAction="#addParam" text="添加参数"/>
-                     </children>
+                  <JFXComboBox fx:id="nextTask" labelFloat="true" promptText="依赖任务">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" top="20.0" />
                      </VBox.margin>
-                  </HBox>
+                  </JFXComboBox>
 
                   <HBox alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="30.0">
                      <children>
