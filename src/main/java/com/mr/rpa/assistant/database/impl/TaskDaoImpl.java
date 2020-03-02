@@ -33,36 +33,56 @@ public class TaskDaoImpl implements TaskDao {
 
 	@Override
 	public boolean deleteTask(TaskListController.Task task) {
+		PreparedStatement stmt = null;
 		try {
 			String deleteStatement = "DELETE FROM TASK WHERE ID = ?";
-			PreparedStatement stmt = handler.getConnection().prepareStatement(deleteStatement);
+			stmt = handler.getConnection().prepareStatement(deleteStatement);
 			stmt.setString(1, task.getId());
 			int res = stmt.executeUpdate();
 			if (res == 1) {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			LOGGER.error(ex);
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public boolean updateTask(TaskListController.Task task) {
+		PreparedStatement stmt = null;
 		try {
-			String update = "UPDATE TASK SET NAME=?, CRON=?, DESP=? ,PARAMS=? ,updateTime=? WHERE ID=?";
-			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
+			String update = "UPDATE TASK SET NAME=?, MAINTASK=?, CRON=?, DESP=? ,PARAMS=?, NEXTTASK=?, updateTime=? WHERE ID=?";
+			stmt = handler.getConnection().prepareStatement(update);
 			int i = 1;
 			stmt.setString(i++, task.getName());
+			stmt.setString(i++, task.getMainTask());
 			stmt.setString(i++, task.getCron());
 			stmt.setString(i++, task.getDesp());
 			stmt.setString(i++, task.getParams());
+			stmt.setString(i++, task.getNextTask());
 			stmt.setTimestamp(i++, new Timestamp(System.currentTimeMillis()));
 			stmt.setString(i++, task.getId());
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			LOGGER.error(ex);
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
@@ -76,25 +96,35 @@ public class TaskDaoImpl implements TaskDao {
 	 */
 	@Override
 	public boolean updateTaskRunning(String taskId, boolean running) {
+		PreparedStatement stmt = null;
 		try {
 			String update = "UPDATE TASK SET RUNNING=?,updateTime=? WHERE ID=?";
-			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
+			stmt = handler.getConnection().prepareStatement(update);
 			stmt.setBoolean(1, running);
 			stmt.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
 			stmt.setString(3, taskId);
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			LOGGER.error(ex);
 			return false;
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	@Override
 	public boolean updateTaskStatus(String taskId, int status) {
+		PreparedStatement stmt = null;
 		try {
 			String update = "UPDATE TASK SET STATUS=?,updateTime=? WHERE ID=?";
-			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
+			stmt = handler.getConnection().prepareStatement(update);
 			stmt.setInt(1, status);
 			stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 			stmt.setString(3, taskId);
@@ -103,7 +133,16 @@ public class TaskDaoImpl implements TaskDao {
 		} catch (SQLException ex) {
 			LOGGER.error(ex);
 			return false;
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+
 	}
 
 	@Override
@@ -162,37 +201,69 @@ public class TaskDaoImpl implements TaskDao {
 	public ObservableList<PieChart.Data> getTaskGraphStatistics(String taskId) {
 		String sTaskId = StringUtils.isNotBlank(taskId) ? taskId : "undefined";
 		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
-		try {
-			String succSqL = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 1 AND TASK_id = '%s'";
-			String failSql = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 2 AND TASK_id = '%s'";
-			ResultSet rs = handler.execQuery(String.format(succSqL, sTaskId));
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("成功次数 (" + count + ")", count));
-			}
-			rs.close();
-			handler.closeStmt();
-			rs = handler.execQuery(String.format(failSql, sTaskId));
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				data.add(new PieChart.Data("失败次数 (" + count + ")", count));
-			}
-			rs.close();
-			handler.closeStmt();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		int succCount = querySuccCount(sTaskId);
+		int failCount = queryFailCount(sTaskId);
+		data.add(new PieChart.Data("成功次数 (" + succCount + ")", succCount));
+		data.add(new PieChart.Data("失败次数 (" + failCount + ")", failCount));
 		return data;
+	}
+
+	private int querySuccCount(String taskId) {
+		String succSqL = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 1 AND TASK_id = '%s'";
+		int count = 0;
+		try {
+			ResultSet rs = handler.execQuery(String.format(succSqL, taskId));
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			rs.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+
+	}
+
+	private int queryFailCount(String taskId) {
+		String failSql = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 2 AND TASK_id = '%s'";
+		ResultSet rs = handler.execQuery(String.format(failSql, taskId));
+		int count = 0;
+		try {
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			rs.close();
+			handler.closeStmt();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+
 	}
 
 	@Override
 	public boolean insertNewTask(Task task) {
-		String sql = "INSERT INTO TASK(id,name,desp,params,nextTask,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO TASK(id,name,mainTask,desp,params,nextTask,running,status,cron,createTime) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		PreparedStatement statement = null;
 		try {
-			PreparedStatement statement = handler.getConnection().prepareStatement(sql);
+			statement = handler.getConnection().prepareStatement(sql);
 			int i = 1;
 			statement.setString(i++, task.getId());
 			statement.setString(i++, task.getName());
+			statement.setString(i++, task.getMainTask());
 			statement.setString(i++, task.getDesp());
 			statement.setString(i++, task.getParams());
 			statement.setString(i++, task.getNextTask());
@@ -205,6 +276,14 @@ public class TaskDaoImpl implements TaskDao {
 			return true;
 		} catch (SQLException ex) {
 			LOGGER.error("{}", ex);
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
@@ -237,6 +316,7 @@ public class TaskDaoImpl implements TaskDao {
 			while (rs.next()) {
 				String id = rs.getString("id");
 				String name = rs.getString("name");
+				String mainTask = rs.getString("mainTask");
 				String cron = rs.getString("cron");
 				String desp = rs.getString("desp");
 				String params = rs.getString("params");
@@ -244,8 +324,10 @@ public class TaskDaoImpl implements TaskDao {
 				Boolean running = rs.getBoolean("running");
 				Integer status = rs.getInt("status");
 
-				//TODO count
-				taskList.add(new TaskListController.Task(id, name, desp, params, nextTask, running, status, cron, 0, 0));
+
+				taskList.add(new TaskListController.Task(id, name, mainTask, desp, params, nextTask,
+						running, status, cron,
+						querySuccCount(id), queryFailCount(id)));
 
 			}
 			handler.closeStmt();
@@ -288,6 +370,7 @@ public class TaskDaoImpl implements TaskDao {
 			while (rs.next()) {
 				Task task = new Task(rs.getString("id"),
 						rs.getString("name"),
+						rs.getString("mainTask"),
 						rs.getString("desp"),
 						rs.getString("params"),
 						rs.getString("nextTask"),

@@ -4,6 +4,7 @@
     <table-entry name="TASK"
                  col-data="id varchar(200) primary key,
                  name varchar(200),
+                 mainTask varchar(200),
                  desp varchar(200),
                  params varchar(200),
                  nextTask varchar(200),

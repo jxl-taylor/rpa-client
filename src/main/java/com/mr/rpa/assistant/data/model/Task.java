@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.data.model;
 
 import lombok.Data;
 import lombok.ToString;
+
 import java.sql.Timestamp;
 
 /**
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 public class Task {
 	private String id;
 	private String name;
+	private String mainTask;
 	private String desp;
 	private String params;
 	private String nextTask;
@@ -29,22 +31,23 @@ public class Task {
 
 	}
 
-	public Task(String id, String name, String desp, String params, String nextTask, Boolean running,
+	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
 				Integer status, String cron) {
-		this(id, name, desp, params, nextTask, running, status, cron, 0, 0);
+		this(id, name, mainTask, desp, params, nextTask, running, status, cron, 0, 0);
 	}
 
-	public Task(String id, String name, String desp, String params, String nextTask, Boolean running,
+	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
 				Integer status, String cron,
 				Integer successCount, Integer failCount) {
-		this(id, name, desp, params, nextTask, running, status, cron, successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
+		this(id, name, mainTask, desp, params, nextTask, running, status, cron, successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
 	}
 
-	public Task(String id, String name, String desp, String params, String nextTask, Boolean running,
+	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
 				Integer status, String cron,
 				Integer successCount, Integer failCount, Timestamp createTime, Timestamp updateTime) {
 		this.id = id;
 		this.name = name;
+		this.mainTask = mainTask;
 		this.desp = desp;
 		this.params = params;
 		this.nextTask = nextTask;

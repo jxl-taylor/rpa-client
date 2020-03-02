@@ -132,7 +132,7 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务删除.");
 			return;
 		}
-		if(CollectionUtil.isNotEmpty(taskDao.queryTaskByNextTask(selectedForDeletion.getName()))){
+		if (CollectionUtil.isNotEmpty(taskDao.queryTaskByNextTask(selectedForDeletion.getName()))) {
 			AlertMaker.showErrorMessage("无法删除", "该任务被别的任务依赖.");
 			return;
 		}
@@ -196,7 +196,7 @@ public class TaskListController implements Initializable {
 			});
 
 		} catch (IOException ex) {
-			Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+			log.error(ex);
 		}
 	}
 
@@ -333,14 +333,15 @@ public class TaskListController implements Initializable {
 
 	@FXML
 	private void handleRefresh(ActionEvent event) {
-		loadData();
 		taskLogDao.getTaskLogList().clear();
+		loadData();
 	}
 
 	public static class Task {
 
 		private final SimpleStringProperty id;
 		private final SimpleStringProperty name;
+		private final SimpleStringProperty mainTask;
 		private final SimpleStringProperty cron;
 		private final SimpleStringProperty desp;
 		private final SimpleStringProperty params;
@@ -352,9 +353,10 @@ public class TaskListController implements Initializable {
 
 		private CheckBox checkBox = new CheckBox();
 
-		public Task(String id, String name, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+		public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
 			this.id = new SimpleStringProperty(id);
 			this.name = new SimpleStringProperty(name);
+			this.mainTask = new SimpleStringProperty(mainTask);
 			this.cron = new SimpleStringProperty(cron);
 			this.desp = new SimpleStringProperty(desp);
 			this.params = new SimpleStringProperty(params);
@@ -379,6 +381,10 @@ public class TaskListController implements Initializable {
 
 		public String getName() {
 			return name.get();
+		}
+
+		public String getMainTask() {
+			return mainTask.get();
 		}
 
 		public String getCron() {

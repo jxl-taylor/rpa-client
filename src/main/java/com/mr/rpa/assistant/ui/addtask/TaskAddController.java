@@ -22,7 +22,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -48,6 +47,8 @@ public class TaskAddController implements Initializable {
 	private JFXTextField id;
 	@FXML
 	private JFXTextField name;
+	@FXML
+	private JFXComboBox<String> mainTask;
 	@FXML
 	private JFXTextField cron;
 	@FXML
@@ -87,13 +88,46 @@ public class TaskAddController implements Initializable {
 		uploadFileButton.setOnAction((final ActionEvent e) -> {
 			configureFileChooser(fileChooser);
 			File file = fileChooser.showOpenDialog(uploadFileButton.getScene().getWindow());
-			upload(file);
+			if (file != null) {
+				String taskName = file.getName().substring(0, file.getName().indexOf("."));
+				String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+				if (taskDao.queryTaskByName(taskName) != null) {
+					log.error(String.format("bot[%s] 已经存在", taskName));
+					AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", taskName));
+					return;
+				}
+
+				FileUtil.del(taskFileDir + File.separator + name);
+				name.setText(taskName);
+				FileUtil.copy(file.getAbsolutePath(), taskFileDir
+						+ File.separator
+						+ taskName
+						+ File.separator
+						+ file.getName(), true);
+				mainTask.setValue(file.getName());
+			}
 		});
 		uploadDirButton.setOnAction((final ActionEvent e) -> {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
-			directoryChooser.setTitle("Choose Folder");
+			directoryChooser.setTitle("选择文件夹");
 			File directory = directoryChooser.showDialog(new Stage());
-			upload(directory);
+			if (directory != null) {
+				String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+				if (taskDao.queryTaskByName(directory.getName()) != null) {
+					log.error(String.format("bot[%s] 已经存在", directory.getName()));
+					AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", directory.getName()));
+					return;
+				}
+				FileUtil.del(taskFileDir + File.separator + directory.getName());
+				name.setText(directory.getName());
+				FileUtil.copy(directory.getAbsolutePath(), taskFileDir + File.separator
+						, true);
+				//添加主任务选项
+				String[] fileNames = directory.list();
+				for (int i = 0; i < fileNames.length; i++) {
+					mainTask.getItems().add(fileNames[i]);
+				}
+			}
 		});
 		nextTask.setItems(nextTaskItems);
 		nextTaskItems.clear();
@@ -101,20 +135,6 @@ public class TaskAddController implements Initializable {
 				.stream()
 				.map(item -> item.getName())
 				.collect(Collectors.toList()));
-	}
-
-	private void upload(File file){
-		if (file != null) {
-			String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
-			if (taskDao.queryTaskByName(file.getName()) != null) {
-				log.error(String.format("bot[%s] 已经存在", file.getName()));
-				AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", file.getName()));
-				return;
-			}
-			FileUtil.del(taskFileDir + File.separator + file.getName());
-			name.setText(file.getName());
-			FileUtil.copy(file.getAbsolutePath(), taskFileDir + File.separator + file.getName(), true);
-		}
 	}
 
 	@FXML
@@ -173,8 +193,10 @@ public class TaskAddController implements Initializable {
 
 	@FXML
 	private void addTask(ActionEvent event) {
-		if (kjbName.getChildren().size() < 2) kjbName.getChildren().add(uploadFileButton);
+		kjbName.getChildren().clear();
+		kjbName.getChildren().addAll(name, uploadFileButton, uploadDirButton);
 		String taskName = StringUtils.trimToEmpty(name.getText());
+		String mainTaskName = StringUtils.trimToEmpty(mainTask.getValue());
 		String taskCron = StringUtils.trimToEmpty(cron.getText());
 		String taskDesp = StringUtils.trimToEmpty(desp.getText());
 
@@ -182,14 +204,15 @@ public class TaskAddController implements Initializable {
 			handleEditOperation();
 			return;
 		}
-		if (!checkInput(taskName, taskCron, taskDesp)) return;
+		if (!checkInput(taskName, mainTaskName, taskCron, taskDesp)) return;
 		if (taskDao.queryTaskByName(taskName) != null) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "Job已存在，请重新选择.");
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
+					"输入有误", "Job已存在，请重新选择.");
 			return;
 		}
 
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
-		Task task = new Task(id.getText(), name.getText(), desp.getText(), converParamToString(), nextTask.getValue(),
+		Task task = new Task(id.getText(), name.getText(), mainTaskName, desp.getText(), converParamToString(), nextTask.getValue(),
 				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
 				0, 0);
 		boolean result = taskDao.insertNewTask(task);
@@ -203,8 +226,8 @@ public class TaskAddController implements Initializable {
 		}
 	}
 
-	private boolean checkInput(String taskName, String taskCron, String taskDesp) {
-		if (taskName.isEmpty() || taskDesp.isEmpty() || taskCron.isEmpty()) {
+	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
+		if (taskName.isEmpty() || mainTaskName.isEmpty()|| taskDesp.isEmpty() || taskCron.isEmpty()) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "请正确输入.");
 			return false;
 		}
@@ -228,12 +251,14 @@ public class TaskAddController implements Initializable {
 	public void inflateUI(TaskListController.Task task) {
 		id.setText(task.getId());
 		name.setText(task.getName());
+		mainTask.setValue(task.getMainTask());
 		cron.setText(task.getCron());
 		desp.setText(task.getDesp());
 		convertStringToParam(task.getParams());
 		nextTask.setValue(task.getNextTask());
 		id.setEditable(false);
-		if (kjbName.getChildren().size() == 2) kjbName.getChildren().remove(uploadFileButton);
+		kjbName.getChildren().clear();
+		kjbName.getChildren().add(name);
 		//依赖任务不能是自己
 		String selectedTaskId = GlobalProperty.getInstance().getSelectedTaskId().getValue();
 		nextTaskItems.remove(taskDao.queryTaskById(selectedTaskId).getName());
@@ -244,6 +269,7 @@ public class TaskAddController implements Initializable {
 	private void clearEntries() {
 		id.clear();
 		name.clear();
+		mainTask.setValue("");
 		cron.clear();
 		desp.clear();
 		paramConfirmMap.clear();
@@ -252,14 +278,17 @@ public class TaskAddController implements Initializable {
 	}
 
 	private void handleEditOperation() {
-		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), desp.getText(), converParamToString(),
+		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), mainTask.getValue(),
+				desp.getText(), converParamToString(),
 				nextTask.getValue(), false, 0, cron.getText(), 0, 0);
-		if (!checkInput(task.getName(), task.getCron(), task.getDesp())) return;
+		if (!checkInput(task.getName(), mainTask.getValue(), task.getCron(), task.getDesp())) return;
 		try {
 			Task taskModel = taskDao.queryTaskById(task.getId());
+			taskModel.setMainTask(mainTask.getValue());
 			taskModel.setCron(task.getCron());
 			taskModel.setDesp(task.getDesp());
 			taskModel.setParams(task.getParams());
+			taskModel.setNextTask(nextTask.getValue());
 			JobFactory.update(taskModel);
 		} catch (SchedulerException e) {
 			log.error(e);

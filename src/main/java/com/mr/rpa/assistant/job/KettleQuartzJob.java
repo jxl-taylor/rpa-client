@@ -43,11 +43,11 @@ public class KettleQuartzJob implements Job {
 
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run start", task.getName(), taskLog.getId()));
 
-			runKbj(task.getName(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
+			runKbj(task.getName(), task.getMainTask(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
 			//执行依赖任务
 			if(StringUtils.isNotBlank(task.getNextTask())){
 				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
-				runKbj(nextTask.getName(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
+				runKbj(nextTask.getName(), nextTask.getMainTask(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
 			}
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
 			taskLogDao.updateTaskLog(taskLog);
@@ -70,8 +70,9 @@ public class KettleQuartzJob implements Job {
 		return taskLog;
 	}
 
-	protected void runKbj(String kbjName, List<KeyValue> kvList) throws Exception {
-		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+	protected void runKbj(String taskName, String kbjName, List<KeyValue> kvList) throws Exception {
+		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath()
+				+ File.separator + taskName;
 		FileUtil.mkdir(taskFileDir);
 		String jobPath = taskFileDir + File.separator + kbjName;
 		if (!FileUtil.exist(jobPath)) throw new RuntimeException(kbjName + "不存在");
