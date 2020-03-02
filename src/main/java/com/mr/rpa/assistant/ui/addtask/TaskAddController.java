@@ -22,11 +22,13 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
@@ -60,7 +62,9 @@ public class TaskAddController implements Initializable {
 	@FXML
 	private HBox kjbName;
 	@FXML
-	private JFXButton uploadButton;
+	private JFXButton uploadFileButton;
+	@FXML
+	private JFXButton uploadDirButton;
 
 	@FXML
 	private AnchorPane mainContainer;
@@ -80,27 +84,37 @@ public class TaskAddController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		id.visibleProperty().bind(isInEditMode);
 		final FileChooser fileChooser = new FileChooser();
-		uploadButton.setOnAction(
-				(final ActionEvent e) -> {
-					configureFileChooser(fileChooser);
-					File file = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
-					if (file != null) {
-						String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
-						if (FileUtil.exist(taskFileDir + File.separator + file.getName())) {
-							log.error(String.format("bot[%s] 已经存在", file.getName()));
-							AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", file.getName()));
-							return;
-						}
-						name.setText(file.getName());
-						FileUtil.copy(file.getAbsolutePath(), taskFileDir + File.separator + file.getName(), true);
-					}
-				});
+		uploadFileButton.setOnAction((final ActionEvent e) -> {
+			configureFileChooser(fileChooser);
+			File file = fileChooser.showOpenDialog(uploadFileButton.getScene().getWindow());
+			upload(file);
+		});
+		uploadDirButton.setOnAction((final ActionEvent e) -> {
+			DirectoryChooser directoryChooser = new DirectoryChooser();
+			directoryChooser.setTitle("Choose Folder");
+			File directory = directoryChooser.showDialog(new Stage());
+			upload(directory);
+		});
 		nextTask.setItems(nextTaskItems);
 		nextTaskItems.clear();
 		nextTaskItems.addAll(taskDao.queryTaskList()
 				.stream()
 				.map(item -> item.getName())
 				.collect(Collectors.toList()));
+	}
+
+	private void upload(File file){
+		if (file != null) {
+			String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+			if (taskDao.queryTaskByName(file.getName()) != null) {
+				log.error(String.format("bot[%s] 已经存在", file.getName()));
+				AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", file.getName()));
+				return;
+			}
+			FileUtil.del(taskFileDir + File.separator + file.getName());
+			name.setText(file.getName());
+			FileUtil.copy(file.getAbsolutePath(), taskFileDir + File.separator + file.getName(), true);
+		}
 	}
 
 	@FXML
@@ -159,7 +173,7 @@ public class TaskAddController implements Initializable {
 
 	@FXML
 	private void addTask(ActionEvent event) {
-		if (kjbName.getChildren().size() < 2) kjbName.getChildren().add(uploadButton);
+		if (kjbName.getChildren().size() < 2) kjbName.getChildren().add(uploadFileButton);
 		String taskName = StringUtils.trimToEmpty(name.getText());
 		String taskCron = StringUtils.trimToEmpty(cron.getText());
 		String taskDesp = StringUtils.trimToEmpty(desp.getText());
@@ -219,7 +233,7 @@ public class TaskAddController implements Initializable {
 		convertStringToParam(task.getParams());
 		nextTask.setValue(task.getNextTask());
 		id.setEditable(false);
-		if (kjbName.getChildren().size() == 2) kjbName.getChildren().remove(uploadButton);
+		if (kjbName.getChildren().size() == 2) kjbName.getChildren().remove(uploadFileButton);
 		//依赖任务不能是自己
 		String selectedTaskId = GlobalProperty.getInstance().getSelectedTaskId().getValue();
 		nextTaskItems.remove(taskDao.queryTaskById(selectedTaskId).getName());
