@@ -9,38 +9,38 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<SplitPane fx:id="taskSplit" orientation="VERTICAL" dividerPositions="0.6" stylesheets="@/dark-theme.css"
+<SplitPane fx:id="taskSplit" orientation="VERTICAL" dividerPositions="0.52" stylesheets="@/dark-theme.css"
            xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mr.rpa.assistant.ui.main.task.TaskBeanController">
     <items>
         <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0">
-        <top>
-            <HBox alignment="TOP_LEFT" BorderPane.alignment="CENTER">
-                <children>
-                    <VBox alignment="TOP_LEFT" prefWidth="450.0">
-                        <children>
-                            <HBox spacing="5" alignment="TOP_CENTER">
-                                <children>
-                                    <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务编号"/>
-                                    <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="90.0" text="查询" />
-                                    <JFXButton onAction="#loadAddTask" prefHeight="32.0" prefWidth="90.0" text="新建任务"/>
-                                </children>
-                            </HBox>
-                        </children>
-                    </VBox>
-                </children>
-                <BorderPane.margin>
-                    <Insets top="20.0" left="15.0" />
-                </BorderPane.margin>
-            </HBox>
-        </top>
-        <bottom>
-            <HBox alignment="CENTER" BorderPane.alignment="CENTER">
-                <children>
-                </children>
-            </HBox>
-        </bottom>
-        <center>
+            <top>
+                <HBox alignment="TOP_LEFT" BorderPane.alignment="CENTER">
+                    <children>
+                        <VBox alignment="TOP_LEFT" prefWidth="450.0">
+                            <children>
+                                <HBox spacing="5" alignment="TOP_CENTER">
+                                    <children>
+                                        <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务编号"/>
+                                        <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="90.0" text="查询" />
+                                        <JFXButton onAction="#loadAddTask" prefHeight="32.0" prefWidth="90.0" text="新建任务"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets top="20.0" left="15.0" />
+                    </BorderPane.margin>
+                </HBox>
+            </top>
+            <bottom>
+                <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                    <children>
+                    </children>
+                </HBox>
+            </bottom>
+            <center>
             <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
                 <children>
                     <VBox alignment="TOP_CENTER">
@@ -54,7 +54,7 @@
                 </BorderPane.margin>
             </HBox>
         </center>
-    </BorderPane>
+        </BorderPane>
 
         <AnchorPane>
             <children>

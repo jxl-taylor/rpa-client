@@ -32,10 +32,11 @@ public class GlobalProperty {
 	}
 
 	public final static String TITLE_PREFIX = "MR-ROBOT";
-	public final static double DEFAULT_LOG_HEIGHT = 210.0;
-	public final static double MAX_LOG_HEIGHT = 550.0;
-	public final static double DEFAULT_LOG_LIST_HEIGHT = 150.0;
+	public final static double DEFAULT_LOG_HEIGHT = 247.0;
+	public final static double MAX_LOG_HEIGHT = 570.0;
+	public final static double DEFAULT_LOG_LIST_HEIGHT = 195.0;
 	public final static double MAX_LOG_LIST_HEIGHT =495.0;
+	public final static double SPLIT_POSITION_TASK_AND_LOG =0.52;
 
 	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
 

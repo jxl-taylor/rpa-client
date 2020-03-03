@@ -15,6 +15,8 @@ import lombok.extern.log4j.Log4j;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.mr.rpa.assistant.ui.settings.GlobalProperty.SPLIT_POSITION_TASK_AND_LOG;
+
 /**
  * Created by feng on 2020/2/21
  */
@@ -41,6 +43,7 @@ public class TaskBeanController implements Initializable {
 		String taskId = taskID.getText();
 		taskDao.loadTaskList(taskId, null);
 		taskLogDao.getTaskLogList().clear();
+		taskSplit.setDividerPositions(SPLIT_POSITION_TASK_AND_LOG);
 	}
 
 	@FXML
@@ -50,6 +53,6 @@ public class TaskBeanController implements Initializable {
 	}
 
 	public void refreshSplit() {
-		this.taskSplit.setDividerPositions(0.6);
+		this.taskSplit.setDividerPositions(SPLIT_POSITION_TASK_AND_LOG);
 	}
 }
