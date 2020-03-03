@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
+import lombok.extern.log4j.Log4j;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,6 +18,7 @@ import java.util.ResourceBundle;
 /**
  * Created by feng on 2020/2/21
  */
+@Log4j
 public class TaskBeanController implements Initializable {
 
 	@FXML
