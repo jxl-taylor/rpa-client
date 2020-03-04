@@ -21,7 +21,7 @@
                 <JFXButton prefHeight="32.0" prefWidth="90.0" text="查询" onAction="#loadTaskLog" />
             </children>
             <VBox.margin>
-                <Insets top="15.0" left="15.0" />
+                <Insets top="5.0" left="5.0" />
             </VBox.margin>
         </HBox>
 

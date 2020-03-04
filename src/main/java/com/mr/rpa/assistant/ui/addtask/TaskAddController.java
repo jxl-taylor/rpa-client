@@ -104,6 +104,7 @@ public class TaskAddController implements Initializable {
 						+ taskName
 						+ File.separator
 						+ file.getName(), true);
+				mainTask.getItems().add(file.getName());
 				mainTask.setValue(file.getName());
 			}
 		});
@@ -129,12 +130,19 @@ public class TaskAddController implements Initializable {
 				}
 			}
 		});
+
+		//添加依赖任务选项
 		nextTask.setItems(nextTaskItems);
 		nextTaskItems.clear();
+		nextTaskItems.add("");
 		nextTaskItems.addAll(taskDao.queryTaskList()
 				.stream()
 				.map(item -> item.getName())
 				.collect(Collectors.toList()));
+
+
+		//添加主任务选项
+		mainTask.getItems().clear();
 	}
 
 	@FXML
@@ -259,9 +267,21 @@ public class TaskAddController implements Initializable {
 		id.setEditable(false);
 		kjbName.getChildren().clear();
 		kjbName.getChildren().add(name);
+
 		//依赖任务不能是自己
 		String selectedTaskId = GlobalProperty.getInstance().getSelectedTaskId().getValue();
-		nextTaskItems.remove(taskDao.queryTaskById(selectedTaskId).getName());
+		Task selectTask = taskDao.queryTaskById(selectedTaskId);
+		String taskName = selectTask.getName();
+
+		File mainTaskDir = new File(GlobalProperty.getInstance().getSysConfig().getTaskFilePath()
+				+ File.separator
+				+ taskName);
+		String[] fileNames = mainTaskDir.list();
+		for (int i = 0; i < fileNames.length; i++) {
+			mainTask.getItems().add(fileNames[i]);
+		}
+
+		nextTaskItems.remove(taskName);
 
 		isInEditMode.setValue(Boolean.TRUE);
 	}
