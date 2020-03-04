@@ -31,7 +31,14 @@ public class TaskBeanController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		GlobalProperty.getInstance().setTaskBeanController(this);
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.setTaskBeanController(this);
+		// Listen to the position property
+		taskSplit.getDividers().get(0).positionProperty().addListener((obs, oldVal, newVal) -> {
+			globalProperty.getLogTextArea().setMaxHeight(taskSplit.getHeight() * (1 - newVal.doubleValue()) - 30);
+			globalProperty.getLogTextArea().setMinHeight(taskSplit.getHeight() * (1 - newVal.doubleValue()) - 30);
+		});
+
 	}
 
 	@FXML
