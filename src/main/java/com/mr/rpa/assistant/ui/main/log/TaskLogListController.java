@@ -72,7 +72,6 @@ public class TaskLogListController implements Initializable {
 
 		tableView.minHeightProperty().bind(globalProperty.getLogListHeight());
 		tableView.maxHeightProperty().bind(globalProperty.getLogListHeight());
-		globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
 	}
 
 	private Stage getStage() {

@@ -22,8 +22,6 @@ import java.util.ResourceBundle;
 public class SmallTaskLogController implements Initializable, ILogShow {
 
 	@FXML
-	private VBox rootPane;
-	@FXML
 	private JFXButton logButton;
 
 	@FXML
@@ -35,8 +33,7 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
-		logTextArea.setMinHeight(globalProperty.DEFAULT_LOG_HEIGHT);
-		logTextArea.setMaxHeight(globalProperty.DEFAULT_LOG_HEIGHT);
+		globalProperty.setLogTextArea(logTextArea);
 		logButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskLogPaneVisible().set(true);
 			globalProperty.getTaskHistoryPaneVisible().set(false);

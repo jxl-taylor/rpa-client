@@ -2,16 +2,21 @@ package com.mr.rpa.assistant.ui.settings;
 
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
+import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import lombok.Data;
 
 import java.util.List;
@@ -85,6 +90,9 @@ public class GlobalProperty {
 	private SimpleDoubleProperty logListHeight = new SimpleDoubleProperty();
 	//Log Text
 	private LogTextCollector logTextCollector = new LogTextCollector();
+
+	//log text
+	private JFXTextArea logTextArea;
 
 	private SysConfig sysConfig = new SysConfig();
 

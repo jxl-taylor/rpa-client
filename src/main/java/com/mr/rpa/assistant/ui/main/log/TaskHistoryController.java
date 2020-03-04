@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import lombok.AllArgsConstructor;
 
 import java.net.URL;
@@ -22,7 +24,13 @@ import java.util.ResourceBundle;
 public class TaskHistoryController implements Initializable {
 
 	@FXML
+	private VBox historyBox;
+
+	@FXML
 	private JFXButton historyButton;
+
+	@FXML
+	private HBox logfilterBox;
 
 	@FXML
 	private ChoiceBox<Status> logStatusChoice;
@@ -39,6 +47,7 @@ public class TaskHistoryController implements Initializable {
 		));
 		logStatusChoice.setValue(logStatusChoice.getItems().get(0));
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
+
 		historyButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			boolean visible = globalProperty.getTaskHistoryPaneVisible().get();
 			globalProperty.getTaskHistoryPaneVisible().set(!visible);

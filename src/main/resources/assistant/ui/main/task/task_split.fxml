@@ -9,23 +9,27 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<SplitPane fx:id="taskSplit" orientation="VERTICAL" dividerPositions="0.52" stylesheets="@/dark-theme.css"
+<SplitPane fx:id="taskSplit" orientation="VERTICAL" dividerPositions="0.6" stylesheets="@/dark-theme.css"
            xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mr.rpa.assistant.ui.main.task.TaskBeanController">
     <items>
         <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0">
             <top>
-                <HBox alignment="TOP_LEFT" BorderPane.alignment="CENTER">
+                <HBox alignment="TOP_LEFT" spacing="10" BorderPane.alignment="CENTER">
                     <children>
                         <VBox alignment="TOP_LEFT" prefWidth="450.0">
                             <children>
-                                <HBox spacing="5" alignment="TOP_CENTER">
+                                <HBox alignment="TOP_LEFT">
                                     <children>
                                         <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务编号"/>
                                         <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="90.0" text="查询" />
-                                        <JFXButton onAction="#loadAddTask" prefHeight="32.0" prefWidth="90.0" text="新建任务"/>
                                     </children>
                                 </HBox>
+                            </children>
+                        </VBox>
+                        <VBox alignment="TOP_RIGHT" prefWidth="450.0">
+                            <children>
+                                <JFXButton onAction="#loadAddTask" prefHeight="32.0" prefWidth="90.0" text="新建任务"/>
                             </children>
                         </VBox>
                     </children>
@@ -41,24 +45,23 @@
                 </HBox>
             </bottom>
             <center>
-            <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
-                <children>
-                    <VBox alignment="TOP_CENTER">
-                        <children>
-                            <fx:include source="/assistant/ui/listtask/task_list.fxml"/>
-                        </children>
-                    </VBox>
-                </children>
-                <BorderPane.margin>
-                    <Insets top="5.0"/>
-                </BorderPane.margin>
-            </HBox>
-        </center>
+                <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <VBox alignment="TOP_CENTER">
+                            <children>
+                                <fx:include source="/assistant/ui/listtask/task_list.fxml"/>
+                            </children>
+                        </VBox>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets top="5.0"/>
+                    </BorderPane.margin>
+                </HBox>
+            </center>
         </BorderPane>
-
         <AnchorPane>
             <children>
-                <SplitPane minHeight="0" minWidth="0" dividerPositions="0.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <SplitPane dividerPositions="0.6" minHeight="30" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                         <AnchorPane>
                             <children>

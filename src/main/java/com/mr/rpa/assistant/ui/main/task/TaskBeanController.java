@@ -41,6 +41,9 @@ public class TaskBeanController implements Initializable {
 		taskSplit.getDividers().get(0).positionProperty().addListener((obs, oldVal, newVal) -> {
 			globalProperty.getLogTextArea().setMaxHeight(taskSplit.getHeight() * (1 - newVal.doubleValue()) - 30);
 			globalProperty.getLogTextArea().setMinHeight(taskSplit.getHeight() * (1 - newVal.doubleValue()) - 30);
+			double logListHeight = taskSplit.getHeight() * (1 - newVal.doubleValue()) - 80;
+			globalProperty.getLogListHeight().set(logListHeight > 0 ? logListHeight : 0);
+
 		});
 
 	}
