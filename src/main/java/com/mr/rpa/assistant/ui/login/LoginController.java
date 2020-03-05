@@ -112,6 +112,9 @@ public class LoginController implements Initializable {
 				}
 			});
 
+			stage.setFullScreen(false);
+			stage.setResizable(false);
+
 			//启动定时任务
 			JobFactory.start();
 //        Platform.runLater(new Runnable() {

@@ -74,6 +74,7 @@ public class TaskListController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.setTaskTableView(tableView);
 		initCol();
 		loadData();
 		tableView.setItems(taskDao.getTaskList());

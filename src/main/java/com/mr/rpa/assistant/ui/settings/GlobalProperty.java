@@ -4,8 +4,10 @@ import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
+import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
@@ -40,7 +42,7 @@ public class GlobalProperty {
 	public final static double DEFAULT_LOG_HEIGHT = 247.0;
 	public final static double MAX_LOG_HEIGHT = 570.0;
 	public final static double DEFAULT_LOG_LIST_HEIGHT = 195.0;
-	public final static double MAX_LOG_LIST_HEIGHT =495.0;
+	public final static double MAX_LOG_LIST_HEIGHT =519.0;
 	public final static double SPLIT_POSITION_TASK_AND_LOG =0.52;
 
 	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
@@ -93,6 +95,8 @@ public class GlobalProperty {
 
 	//log text
 	private JFXTextArea logTextArea;
+	//task tabel list
+	private TableView<TaskListController.Task> taskTableView;
 
 	private SysConfig sysConfig = new SysConfig();
 

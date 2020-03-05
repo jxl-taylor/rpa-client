@@ -122,8 +122,6 @@ public class MainController implements Initializable {
 	private void recoverLogPane() {
 		globalProperty.getTaskHistoryPaneVisible().setValue(false);
 		globalProperty.getTaskLogPaneVisible().setValue(false);
-		globalProperty.getLogAreaMinHeight().set(globalProperty.DEFAULT_LOG_HEIGHT);
-		globalProperty.getLogListHeight().set(globalProperty.DEFAULT_LOG_LIST_HEIGHT);
 		globalProperty.getTaskBeanController().refreshSplit();
 	}
 

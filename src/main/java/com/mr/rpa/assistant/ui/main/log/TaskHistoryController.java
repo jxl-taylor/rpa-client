@@ -10,6 +10,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,13 +25,7 @@ import java.util.ResourceBundle;
 public class TaskHistoryController implements Initializable {
 
 	@FXML
-	private VBox historyBox;
-
-	@FXML
-	private JFXButton historyButton;
-
-	@FXML
-	private HBox logfilterBox;
+	private Label historyLabel;
 
 	@FXML
 	private ChoiceBox<Status> logStatusChoice;
@@ -47,17 +42,17 @@ public class TaskHistoryController implements Initializable {
 		));
 		logStatusChoice.setValue(logStatusChoice.getItems().get(0));
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
-
-		historyButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+		historyLabel.setOnMouseClicked((Event event) -> {
 			boolean visible = globalProperty.getTaskHistoryPaneVisible().get();
 			globalProperty.getTaskHistoryPaneVisible().set(!visible);
 			globalProperty.getTaskLogPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(visible);
-			globalProperty.getLogListHeight().set(
-					visible ? globalProperty.DEFAULT_LOG_LIST_HEIGHT : globalProperty.MAX_LOG_LIST_HEIGHT);
-			globalProperty.getLogAreaMinHeight().set(
-					visible ? globalProperty.DEFAULT_LOG_HEIGHT : globalProperty.MAX_LOG_HEIGHT);
-			globalProperty.getTaskBeanController().refreshSplit();
+			if(!visible){
+				globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
+				globalProperty.getLogAreaMinHeight().set(globalProperty.MAX_LOG_HEIGHT);
+			}else{
+				globalProperty.getTaskBeanController().refreshSplit();
+			}
 		});
 	}
 

@@ -36,7 +36,9 @@ public class RpaApplication extends Application {
 					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License不可用", false);
 		}
 
-		stage.setScene(scene);
+		stage.setFullScreen(false);
+		stage.setResizable(false);
+ 		stage.setScene(scene);
 		stage.show();
 		stage.setTitle("MR-BOT");
 

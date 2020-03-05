@@ -9,9 +9,8 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,8 +20,11 @@ import java.util.ResourceBundle;
  */
 public class SmallTaskLogController implements Initializable, ILogShow {
 
+//	@FXML
+//	private JFXButton logButton;
+
 	@FXML
-	private JFXButton logButton;
+	private Label logLabel;
 
 	@FXML
 	private JFXTextArea logTextArea;
@@ -34,7 +36,7 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.setLogTextArea(logTextArea);
-		logButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+		logLabel.setOnMouseClicked((Event event) -> {
 			globalProperty.getTaskLogPaneVisible().set(true);
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(false);

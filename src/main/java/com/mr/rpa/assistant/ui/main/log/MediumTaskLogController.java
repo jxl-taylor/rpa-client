@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -24,7 +25,7 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 	@FXML
 	private VBox rootPane;
 	@FXML
-	private JFXButton logButton;
+	private Label logLabel;
 
 	@FXML
 	private JFXTextArea logTextArea;
@@ -37,12 +38,10 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		logTextArea.setMinHeight(globalProperty.MAX_LOG_HEIGHT);
 		logTextArea.setMaxHeight(globalProperty.MAX_LOG_HEIGHT);
-		logButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
+		logLabel.setOnMouseClicked((Event event) -> {
 			globalProperty.getTaskLogPaneVisible().set(true);
 			globalProperty.getTaskHistoryPaneVisible().set(false);
 			globalProperty.getTaskPaneVisible().set(false);
-			globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
-			globalProperty.getTaskBeanController().refreshSplit();
 		});
 
 		globalProperty.getLogShows().add(this);

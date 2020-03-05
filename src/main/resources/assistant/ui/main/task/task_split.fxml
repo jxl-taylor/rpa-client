@@ -61,7 +61,7 @@
         </BorderPane>
         <AnchorPane>
             <children>
-                <SplitPane dividerPositions="0.6" minHeight="30" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <SplitPane dividerPositions="0.6" minHeight="80" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                         <AnchorPane>
                             <children>

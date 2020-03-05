@@ -6,11 +6,16 @@ import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -37,13 +42,14 @@ public class TaskBeanController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.setTaskBeanController(this);
+
 		// Listen to the position property
 		taskSplit.getDividers().get(0).positionProperty().addListener((obs, oldVal, newVal) -> {
+			globalProperty.getTaskTableView().setMaxHeight(taskSplit.getHeight() * newVal.doubleValue() - 80);
 			globalProperty.getLogTextArea().setMaxHeight(taskSplit.getHeight() * (1 - newVal.doubleValue()) - 30);
 			globalProperty.getLogTextArea().setMinHeight(taskSplit.getHeight() * (1 - newVal.doubleValue()) - 30);
 			double logListHeight = taskSplit.getHeight() * (1 - newVal.doubleValue()) - 80;
 			globalProperty.getLogListHeight().set(logListHeight > 0 ? logListHeight : 0);
-
 		});
 
 	}
@@ -63,6 +69,16 @@ public class TaskBeanController implements Initializable {
 	}
 
 	public void refreshSplit() {
-		this.taskSplit.setDividerPositions(SPLIT_POSITION_TASK_AND_LOG);
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.getTaskTableView().setMaxHeight(taskSplit.getHeight() * taskSplit.getDividerPositions()[0] - 80);
+		globalProperty.getLogTextArea().setMaxHeight(taskSplit.getHeight() * (1 - taskSplit.getDividerPositions()[0]) - 30);
+		globalProperty.getLogTextArea().setMinHeight(taskSplit.getHeight() * (1 - taskSplit.getDividerPositions()[0]) - 30);
+		double logListHeight = taskSplit.getHeight() * (1 - taskSplit.getDividerPositions()[0]) - 80;
+		globalProperty.getLogListHeight().set(logListHeight > 0 ? logListHeight : 0);
 	}
+
+	public void refreshSplit(double position) {
+		this.taskSplit.setDividerPositions(position);
+	}
+
 }
