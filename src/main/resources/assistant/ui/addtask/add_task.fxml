@@ -9,70 +9,84 @@
 <?import javafx.scene.layout.VBox?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.control.ScrollPane?>
 <StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.addtask.TaskAddController">
    <children>
-      <AnchorPane id="AnchorPane" fx:id="mainContainer" prefHeight="338.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
-         <children>
-            <VBox fx:id="vFormBox" prefHeight="256.0" maxHeight="800" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane prefHeight="438" prefWidth="464" maxHeight="438">
+         <content>
+            <AnchorPane id="AnchorPane" fx:id="mainContainer" prefHeight="438.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
                <children>
-                  <JFXTextField fx:id="id" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="任务编号">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="20.0" />
-                     </VBox.margin>
-                  </JFXTextField>
-                  <HBox fx:id="kjbName" spacing="5" VBox.vgrow="ALWAYS">
+                  <VBox fx:id="vFormBox" prefHeight="256.0" maxHeight="800" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <JFXTextField fx:id="name" labelFloat="true" promptText="任务脚本" HBox.hgrow="ALWAYS" editable="false">
+                        <JFXTextField fx:id="id" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="任务编号">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
                         </JFXTextField>
-                        <JFXButton fx:id="uploadFileButton" prefWidth="100.0" text="上传文件"/>
-                        <JFXButton fx:id="uploadDirButton" prefWidth="100.0" text="上传文件夹"/>
+                        <HBox fx:id="kjbName" spacing="5" VBox.vgrow="ALWAYS">
+                           <children>
+                              <JFXTextField fx:id="name" labelFloat="true" promptText="任务脚本" HBox.hgrow="ALWAYS" editable="false">
+                              </JFXTextField>
+                              <JFXButton fx:id="uploadFileButton" prefWidth="100.0" text="上传文件"/>
+                              <JFXButton fx:id="uploadDirButton" prefWidth="100.0" text="上传文件夹"/>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </HBox>
+
+                        <JFXComboBox fx:id="mainTask" labelFloat="true" promptText="主任务">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </JFXComboBox>
+
+                        <JFXTextField fx:id="cron" labelFloat="true" promptText="调度策略(cron)">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </JFXTextField>
+                        <JFXTextArea fx:id="desp" labelFloat="true" style="-fx-text-fill: -fx-secondary" promptText="描述">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </JFXTextArea>
+
+                        <JFXComboBox fx:id="nextTask" labelFloat="true" promptText="依赖任务">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </JFXComboBox>
+
+                        <HBox VBox.vgrow="ALWAYS" spacing="5" alignment="CENTER_RIGHT">
+                           <children>
+                              <JFXButton prefWidth="100.0" onAction="#addParam" text="添加参数"/>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </HBox>
+
+                        <HBox alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="30.0">
+                           <children>
+                              <JFXButton onAction="#addTask" prefHeight="66.0" prefWidth="100.0" text="保存" />
+                              <JFXButton layoutX="10.0" layoutY="10.0" onAction="#cancel" prefHeight="66.0" prefWidth="100.0" text="取消" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="25.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="20.0" />
+                           </padding>
+                        </HBox>
                      </children>
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="20.0" />
-                     </VBox.margin>
-                  </HBox>
-
-                  <JFXComboBox fx:id="mainTask" labelFloat="true" promptText="主任务">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="20.0" />
-                     </VBox.margin>
-                  </JFXComboBox>
-
-                  <JFXTextField fx:id="cron" labelFloat="true" promptText="调度策略(cron)">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="20.0" />
-                     </VBox.margin>
-                  </JFXTextField>
-                  <JFXTextArea fx:id="desp" labelFloat="true" style="-fx-text-fill: -fx-secondary" promptText="描述">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="20.0" />
-                     </VBox.margin>
-                  </JFXTextArea>
-
-                  <JFXComboBox fx:id="nextTask" labelFloat="true" promptText="依赖任务">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="20.0" />
-                     </VBox.margin>
-                  </JFXComboBox>
-
-                  <HBox alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="30.0">
-                     <children>
-                        <JFXButton onAction="#addTask" prefHeight="66.0" prefWidth="100.0" text="保存" />
-                        <JFXButton layoutX="10.0" layoutY="10.0" onAction="#cancel" prefHeight="66.0" prefWidth="100.0" text="取消" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="25.0" />
-                     </VBox.margin>
                      <padding>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
-                  </HBox>
+                  </VBox>
                </children>
-               <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </padding>
-            </VBox>
-         </children>
-      </AnchorPane>
-   </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+      </children>
 </StackPane>

@@ -46,6 +46,7 @@ public class AssistantUtil {
             stage.show();
             setStageIcon(stage);
             stage.setResizable(false);
+            stage.setFullScreen(false);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
