@@ -18,6 +18,8 @@ public interface TaskLogDao {
 
 	ObservableList<TaskLogListController.TaskLog> getTaskLogList();
 
+	void setMaxRow(int row);
+
 	boolean insertNewTaskLog(TaskLog taskLog);
 
 	List<TaskLogListController.TaskLog> loadLogTask(String sql);

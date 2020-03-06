@@ -7,6 +7,7 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -16,9 +17,8 @@ import java.util.List;
 /**
  * Created by feng on 2020/2/21
  */
+@Log4j
 public class TaskLogDaoImpl implements TaskLogDao {
-
-	private final static Logger LOGGER = Logger.getLogger(TaskLogDaoImpl.class);
 
 	DatabaseHandler handler = DatabaseHandler.getInstance();
 
@@ -29,10 +29,18 @@ public class TaskLogDaoImpl implements TaskLogDao {
 		return taskLogList;
 	}
 
+	private static int maxRow = 100;
+
+	@Override
+	public void setMaxRow(int row) {
+		maxRow = row;
+	}
+
 	@Override
 	public boolean insertNewTaskLog(TaskLog taskLog) {
+		PreparedStatement statement = null;
 		try {
-			PreparedStatement statement = handler.getConnection().prepareStatement(
+			statement = handler.getConnection().prepareStatement(
 					"INSERT INTO TASK_LOG(id, task_id, status, error, startTime, endTime) VALUES(?,?,?,?,?,?)");
 			int i = 1;
 			statement.setString(i++, taskLog.getId());
@@ -43,7 +51,15 @@ public class TaskLogDaoImpl implements TaskLogDao {
 			statement.setTimestamp(i++, taskLog.getEndTime());
 			return statement.executeUpdate() > 0;
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			log.error(ex);
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
@@ -61,7 +77,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 		if (status != null) {
 			sql.append(String.format(" AND STATUS = %d", status));
 		}
-		sql.append(" ORDER BY STARTTIME DESC");
+		sql.append(String.format(" ORDER BY STARTTIME DESC OFFSET 0 ROWS FETCH NEXT %d ROWS ONLY", maxRow));
 		return loadLogTask(sql.toString());
 	}
 
@@ -84,9 +100,16 @@ public class TaskLogDaoImpl implements TaskLogDao {
 				taskLogList.add(new TaskLogListController.TaskLog(seq, id, taskId, status, error, startTime, endTime));
 
 			}
-			handler.closeStmt();
+
 		} catch (SQLException ex) {
-			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			log.error(ex);
+		} finally {
+			try {
+				rs.close();
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return taskLogList;
 	}
@@ -108,9 +131,15 @@ public class TaskLogDaoImpl implements TaskLogDao {
 				taskLog.setStartTime(rs.getTimestamp("startTime"));
 				taskLog.setEndTime(rs.getTimestamp("endTime"));
 			}
-			handler.closeStmt();
 		} catch (SQLException ex) {
-			java.util.logging.Logger.getLogger(TaskListController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			log.error(ex);
+		} finally {
+			try {
+				rs.close();
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return taskLog;
 	}
@@ -127,7 +156,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 		} finally {
 			if (stmt != null) {
 				try {
@@ -152,7 +181,7 @@ public class TaskLogDaoImpl implements TaskLogDao {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 		} finally {
 			if (stmt != null) {
 				try {
@@ -178,9 +207,9 @@ public class TaskLogDaoImpl implements TaskLogDao {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			log.error(ex);
 			return false;
-		}finally {
+		} finally {
 			if (stmt != null) {
 				try {
 					stmt.close();
