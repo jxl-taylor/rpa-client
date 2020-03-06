@@ -1,10 +1,13 @@
 package com.mr.rpa.assistant.ui.main.log;
 
+import com.google.common.collect.Lists;
+import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.addtask.TaskLogDetailController;
+import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
@@ -18,7 +21,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j;
@@ -47,7 +52,7 @@ public class TaskLogListController implements Initializable {
 	@FXML
 	private TableColumn<TaskLog, String> endTime;
 	@FXML
-	private AnchorPane rootPane;
+	private StackPane rootPane;
 
 	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
 
@@ -88,6 +93,39 @@ public class TaskLogListController implements Initializable {
 
 	private List<TaskLog> loadLogData() {
 		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
+	}
+
+	@FXML
+	private void handleDelete(ActionEvent event) {
+		//Fetch the selected row
+		TaskLog selectedForDetail = tableView.getSelectionModel().getSelectedItem();
+		if (selectedForDetail == null) {
+			AlertMaker.showErrorMessage("未选择任务日志", "请选择一条记录.");
+			return;
+		}
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			try {
+				taskLogDao.deleteTaskLogByLogId(selectedForDetail.getId());
+				AlertMaker.showSimpleAlert("删除", "删除成功.");
+			} catch (Exception e) {
+				log.error(e);
+				AlertMaker.showSimpleAlert("删除", "删除失败");
+				return;
+			}
+		});
+
+		JFXButton cancelBtn = new JFXButton("取消");
+		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+			rootPane.getChildren().get(0).setEffect(null);
+		});
+
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "删除日志",
+				String.format("确定删除日志[id=%s]么?",selectedForDetail.getId()), false);
+
 	}
 
 	@FXML

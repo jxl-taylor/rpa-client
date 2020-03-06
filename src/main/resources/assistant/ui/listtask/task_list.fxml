@@ -22,7 +22,7 @@
                         <TableColumn fx:id="cronCol" prefWidth="75.0" text="调度策略(cron)"/>
                         <TableColumn fx:id="despCol" prefWidth="75.0" maxWidth="200.0" text="描述" visible="false"/>
                         <TableColumn fx:id="runningCol" text="是否开启"/>
-                        <TableColumn fx:id="statusCol" text="状态"/>
+                        <TableColumn fx:id="statusCol" text="调度状态"/>
                         <TableColumn fx:id="successCountCol" text="成功次数"/>
                         <TableColumn fx:id="failCountCol" text="失败次数"/>
                         <TableColumn fx:id="registeredCol" text="操作" visible="false"/>
@@ -41,6 +41,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#handleRefresh" text="刷新"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskEditOption" text="编辑"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskDeleteOption" text="删除"/>
+                                <MenuItem mnemonicParsing="false" onAction="#deleteAllTaskLog" text="清空日志"/>
                             </items>
                             <styleClass>
                                 <String fx:value="table-context"/>

@@ -234,7 +234,7 @@ public class TaskAddController implements Initializable {
 
 	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
 		if (taskName.isEmpty() || mainTaskName.isEmpty()|| taskDesp.isEmpty() || taskCron.isEmpty()) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "请正确输入.");
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "任务名称、描述、CRON不能为空.");
 			return false;
 		}
 		if (!CronExpression.isValidExpression(taskCron)) {

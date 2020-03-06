@@ -24,7 +24,9 @@ public interface TaskLogDao {
 
 	TaskLog loadTaskLogById(String taskLogId);
 
-	boolean deleteTaskLog(String taskId);
+	boolean deleteTaskLogByTaskId(String taskId);
+
+	boolean deleteTaskLogByLogId(String taskLogId);
 
 	boolean updateTaskLog(TaskLog taskLog);
 }

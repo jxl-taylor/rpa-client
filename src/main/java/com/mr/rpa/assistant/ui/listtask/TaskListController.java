@@ -67,6 +67,7 @@ public class TaskListController implements Initializable {
 	private AnchorPane contentPane;
 
 	private JFXButton cancelBtn;
+
 	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
 
 	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
@@ -126,6 +127,35 @@ public class TaskListController implements Initializable {
 	}
 
 	@FXML
+	private void deleteAllTaskLog(ActionEvent event) {
+		//Fetch the selected row
+		Task selectedForDeletion = tableView.getSelectionModel().getSelectedItem();
+		if (selectedForDeletion == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务删除.");
+			return;
+		}
+
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			try {
+				taskLogDao.deleteTaskLogByTaskId(selectedForDeletion.getId());
+				AlertMaker.showSimpleAlert("清空日志", selectedForDeletion.getName() + " 操作成功.");
+			} catch (Exception e) {
+				log.error(e);
+				AlertMaker.showSimpleAlert("清空", selectedForDeletion.getName() + " 清空日志失败");
+				return;
+			}
+
+		});
+
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "情况日志",
+				"确定清空该任务的所有日志么 " + selectedForDeletion.getName() + " ?", false);
+
+	}
+
+	@FXML
 	private void handleTaskDeleteOption(ActionEvent event) {
 		//Fetch the selected row
 		Task selectedForDeletion = tableView.getSelectionModel().getSelectedItem();
@@ -150,7 +180,7 @@ public class TaskListController implements Initializable {
 			String jobPath = taskFileDir + File.separator + selectedForDeletion.getName();
 			FileUtil.del(jobPath);
 			boolean result = taskDao.deleteTask(selectedForDeletion);
-			taskLogDao.deleteTaskLog(selectedForDeletion.getId());
+			taskLogDao.deleteTaskLogByTaskId(selectedForDeletion.getId());
 			if (result) {
 				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
 				taskDao.removeTask(selectedForDeletion);

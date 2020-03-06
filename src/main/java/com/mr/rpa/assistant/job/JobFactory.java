@@ -67,6 +67,7 @@ public class JobFactory implements Runnable {
 
 			Thread thread = new Thread(() -> {
 				executor.submit(jobFactory);
+
 			});
 			thread.setDaemon(true);
 			thread.start();

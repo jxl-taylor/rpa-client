@@ -116,10 +116,36 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	}
 
 	@Override
-	public boolean deleteTaskLog(String taskId) {
+	public boolean deleteTaskLogByLogId(String taskLogId) {
+		PreparedStatement stmt = null;
+		try {
+			String deleteStatement = "DELETE FROM TASK_LOG WHERE ID = ?";
+			stmt = handler.getConnection().prepareStatement(deleteStatement);
+			stmt.setString(1, taskLogId);
+			int res = stmt.executeUpdate();
+			if (res == 1) {
+				return true;
+			}
+		} catch (SQLException ex) {
+			LOGGER.error(ex);
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean deleteTaskLogByTaskId(String taskId) {
+		PreparedStatement stmt = null;
 		try {
 			String deleteStatement = "DELETE FROM TASK_LOG WHERE TASK_ID = ?";
-			PreparedStatement stmt = handler.getConnection().prepareStatement(deleteStatement);
+			stmt = handler.getConnection().prepareStatement(deleteStatement);
 			stmt.setString(1, taskId);
 			int res = stmt.executeUpdate();
 			if (res == 1) {
@@ -127,15 +153,24 @@ public class TaskLogDaoImpl implements TaskLogDao {
 			}
 		} catch (SQLException ex) {
 			LOGGER.error(ex);
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public boolean updateTaskLog(TaskLog taskLog) {
+		PreparedStatement stmt = null;
 		try {
 			String update = "UPDATE TASK_LOG SET STATUS=?, ERROR = ?, endTime=? WHERE ID=?";
-			PreparedStatement stmt = handler.getConnection().prepareStatement(update);
+			stmt = handler.getConnection().prepareStatement(update);
 			stmt.setInt(1, taskLog.getStatus());
 			stmt.setString(2, taskLog.getError());
 			stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
@@ -145,6 +180,14 @@ public class TaskLogDaoImpl implements TaskLogDao {
 		} catch (SQLException ex) {
 			LOGGER.error("{}", ex);
 			return false;
+		}finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
