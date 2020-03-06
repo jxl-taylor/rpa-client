@@ -192,6 +192,8 @@ public class TaskListController implements Initializable {
 			stage.show();
 			AssistantUtil.setStageIcon(stage);
 
+			stage.setResizable(false);
+			stage.setFullScreen(false);
 			stage.setOnHiding((e) -> {
 				handleRefresh(new ActionEvent());
 			});
