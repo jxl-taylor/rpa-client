@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.ui.main.log;
 
+import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -19,6 +20,7 @@ import javafx.scene.layout.VBox;
 import lombok.AllArgsConstructor;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -37,6 +39,12 @@ public class TaskHistoryController implements Initializable {
 
 	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
 
+	private static int currentStatus;
+
+	private static int currentMaxRow;
+
+	private static List<TaskHistoryController> controllers = Lists.newArrayList();
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		logStatusChoice.setItems(FXCollections.observableArrayList(
@@ -45,8 +53,13 @@ public class TaskHistoryController implements Initializable {
 				new Status(1, "执行成功"),
 				new Status(2, "执行失败")
 		));
-
 		logStatusChoice.setValue(logStatusChoice.getItems().get(0));
+		logStatusChoice.getSelectionModel().selectedItemProperty().addListener(
+				(observable, oldValue, newValue) -> {
+					currentStatus = newValue.key;
+					setLogStatusChoice();
+					loadTaskLog(null);
+				});
 
 		maxRowChoice.setItems(FXCollections.observableArrayList(
 				new MaxRow(100, "最多显示100条"),
@@ -58,9 +71,11 @@ public class TaskHistoryController implements Initializable {
 		));
 
 		maxRowChoice.setValue(maxRowChoice.getItems().get(0));
-		maxRowChoice.getSelectionModel().selectedItemProperty().addListener (
+		maxRowChoice.getSelectionModel().selectedItemProperty().addListener(
 				(observable, oldValue, newValue) -> {
 					taskLogDao.setMaxRow(newValue.key);
+					currentMaxRow = newValue.key;
+					setMaxRowChoice();
 					loadTaskLog(null);
 				});
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
@@ -75,6 +90,25 @@ public class TaskHistoryController implements Initializable {
 			} else {
 				globalProperty.getTaskBeanController().refreshSplit();
 			}
+		});
+		controllers.add(this);
+	}
+
+	private void setLogStatusChoice() {
+		controllers.forEach(controller -> {
+			controller.logStatusChoice.getItems().forEach(item -> {
+				if (item.key == currentStatus) controller.logStatusChoice.setValue(item);
+			});
+		});
+
+
+	}
+
+	private void setMaxRowChoice() {
+		controllers.forEach(controller -> {
+			controller.maxRowChoice.getItems().forEach(item -> {
+				if (item.key == currentMaxRow) controller.maxRowChoice.setValue(item);
+			});
 		});
 	}
 
@@ -91,6 +125,7 @@ public class TaskHistoryController implements Initializable {
 	}
 
 	@AllArgsConstructor
+	static
 	class Status {
 		private Integer key;
 		private String value;
@@ -102,6 +137,7 @@ public class TaskHistoryController implements Initializable {
 	}
 
 	@AllArgsConstructor
+	static
 	class MaxRow {
 		private Integer key;
 		private String value;
