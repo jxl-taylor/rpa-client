@@ -236,7 +236,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mr.rpa.assistant.ui.main.RpaApplication</mainClass>
+                            <mainClass>com.mr.rpa.assistant.RpaApplication</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

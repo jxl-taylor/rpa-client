@@ -1,4 +1,4 @@
-package com.mr.rpa.assistant.ui.main;
+package com.mr.rpa.assistant;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.job.JobFactory;
@@ -18,8 +18,6 @@ import org.quartz.SchedulerException;
 
 @Log4j
 public class RpaApplication extends Application {
-
-	private SimpleStringProperty titleProperty = new SimpleStringProperty();
 
 	@Override
 	public void start(Stage stage) throws Exception {
