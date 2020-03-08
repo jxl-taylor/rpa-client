@@ -9,18 +9,26 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.concurrent.Task;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  *
  * @author Villan
  */
+@Component
 public class DatabaseExporter extends Task<Boolean> {
 
-    private final File backupDirectory;
+    private File backupDirectory;
 
-    public DatabaseExporter(File backupDirectory) {
+    public void setBackupDirectory(File backupDirectory) {
         this.backupDirectory = backupDirectory;
     }
+
+    @Resource
+    private DatabaseHandler handler;
+
 
     @Override
     protected Boolean call() {
@@ -36,7 +44,7 @@ public class DatabaseExporter extends Task<Boolean> {
     private void createBackup() throws Exception {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy_MM_dd_hh_mm_ss");
         String backupdirectory = backupDirectory.getAbsolutePath() + File.separator + LocalDateTime.now().format(dateFormat);
-        try (CallableStatement cs = DatabaseHandler.getInstance().getConnection().prepareCall("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)")) {
+        try (CallableStatement cs = handler.getConnection().prepareCall("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)")) {
             cs.setString(1, backupdirectory);
             cs.execute();
         }

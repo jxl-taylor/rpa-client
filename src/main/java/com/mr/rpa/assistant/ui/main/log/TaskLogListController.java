@@ -11,6 +11,7 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -29,7 +30,10 @@ import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -37,6 +41,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 @Log4j
+@Component
 public class TaskLogListController implements Initializable {
 
 	@FXML
@@ -53,8 +58,11 @@ public class TaskLogListController implements Initializable {
 	private TableColumn<TaskLog, String> endTime;
 	@FXML
 	private StackPane rootPane;
+	@Resource
+	private MainController mainController;
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	@Autowired
+	private TaskLogDao taskLogDao;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -117,7 +125,7 @@ public class TaskLogListController implements Initializable {
 
 		JFXButton cancelBtn = new JFXButton("取消");
 		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
-			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+			StackPane rootPane = mainController.getRootPane();
 			rootPane.getChildren().get(0).setEffect(null);
 		});
 
@@ -167,7 +175,7 @@ public class TaskLogListController implements Initializable {
 			return;
 		}
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/addtask/task_log.fxml"));
+			FXMLLoader loader = CommonUtil.getFxmlLoader(getClass().getResource("/assistant/ui/addtask/task_log.fxml"));
 			Parent parent = loader.load();
 
 			TaskLogDetailController controller = (TaskLogDetailController) loader.getController();

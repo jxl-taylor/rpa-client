@@ -2,9 +2,9 @@ package com.mr.rpa.assistant.job;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
-import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
@@ -26,9 +26,9 @@ import java.util.UUID;
 @Log4j
 public class KettleQuartzJob implements Job {
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private TaskDao taskDao = GlobalProperty.applicationContext.getBean(TaskDao.class);
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskLogDao taskLogDao = GlobalProperty.applicationContext.getBean(TaskLogDao.class);
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -71,7 +71,7 @@ public class KettleQuartzJob implements Job {
 	}
 
 	protected void runKbj(String taskName, String kbjName, List<KeyValue> kvList) throws Exception {
-		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath()
+		String taskFileDir = GlobalProperty.applicationContext.getBean(SysConfig.class).getTaskFilePath()
 				+ File.separator + taskName;
 		FileUtil.mkdir(taskFileDir);
 		String jobPath = taskFileDir + File.separator + kbjName;

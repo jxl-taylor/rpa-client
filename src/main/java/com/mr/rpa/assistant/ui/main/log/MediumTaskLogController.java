@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +21,7 @@ import java.util.ResourceBundle;
 /**
  * Created by feng on 2020/2/9 0009
  */
+@Component
 public class MediumTaskLogController implements Initializable, ILogShow {
 
 	@FXML

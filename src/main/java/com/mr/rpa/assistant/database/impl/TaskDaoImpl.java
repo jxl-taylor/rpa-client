@@ -9,20 +9,36 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by feng on 2020/2/21
  */
+@Log4j
+@Repository
 public class TaskDaoImpl implements TaskDao {
 
-	private final static Logger LOGGER = Logger.getLogger(TaskDaoImpl.class);
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	private DatabaseHandler handler = DatabaseHandler.getInstance();
+	@Autowired
+	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+	}
+
+	@Resource
+	private DatabaseHandler handler;
 
 	private static ObservableList<TaskListController.Task> taskList = FXCollections.observableArrayList();
 
@@ -43,7 +59,7 @@ public class TaskDaoImpl implements TaskDao {
 				return true;
 			}
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 		} finally {
 			if (stmt != null) {
 				try {
@@ -74,7 +90,7 @@ public class TaskDaoImpl implements TaskDao {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 		} finally {
 			if (stmt != null) {
 				try {
@@ -106,7 +122,7 @@ public class TaskDaoImpl implements TaskDao {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 			return false;
 		} finally {
 			if (stmt != null) {
@@ -131,7 +147,7 @@ public class TaskDaoImpl implements TaskDao {
 			int res = stmt.executeUpdate();
 			return (res > 0);
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 			return false;
 		} finally {
 			if (stmt != null) {
@@ -275,7 +291,7 @@ public class TaskDaoImpl implements TaskDao {
 			statement.close();
 			return true;
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			log.error("{}", ex);
 		} finally {
 			if (statement != null) {
 				try {
@@ -332,7 +348,7 @@ public class TaskDaoImpl implements TaskDao {
 			}
 			handler.closeStmt();
 		} catch (SQLException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 		}
 		return taskList;
 	}
@@ -364,11 +380,12 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	private List<Task> queryTask(String sql) {
-		List<Task> taskList = Lists.newArrayList();
-		ResultSet rs = handler.execQuery(sql);
-		try {
-			while (rs.next()) {
-				Task task = new Task(rs.getString("id"),
+		Map<String, Object> params = new HashMap<String, Object>();
+
+		return namedParameterJdbcTemplate.query(sql, params, new RowMapper<Task>() {
+			@Override
+			public Task mapRow(ResultSet rs, int i) throws SQLException {
+				return new Task(rs.getString("id"),
 						rs.getString("name"),
 						rs.getString("mainTask"),
 						rs.getString("desp"),
@@ -381,14 +398,8 @@ public class TaskDaoImpl implements TaskDao {
 						0,
 						rs.getTimestamp("createTime"),
 						rs.getTimestamp("updateTime"));
-
-				taskList.add(task);
 			}
-			handler.closeStmt();
-		} catch (SQLException ex) {
-			LOGGER.error(ex);
-		}
-		return taskList;
+		});
 	}
 
 	@Override

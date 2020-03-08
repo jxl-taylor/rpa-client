@@ -8,59 +8,71 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.database.impl.TaskDaoImpl;
 import com.mr.rpa.assistant.database.impl.TaskLogDaoImpl;
-import com.mr.rpa.assistant.ui.listbook.BookListController;
-import com.mr.rpa.assistant.ui.listmember.MemberListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public final class DatabaseHandler {
+@Log4j
+@Component
+@DependsOn("sysConfig")
+public class DatabaseHandler {
 
-	private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class);
 
-	private static DatabaseHandler handler = null;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	private static final String DB_URL = String.format("jdbc:derby:%s;create=true",
-			GlobalProperty.getInstance().getSysConfig().getDbPath());
-	private static Connection conn = null;
-	private static Statement stmt = null;
+	@Autowired
+	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+	}
 
-	private static TaskDao taskDao = new TaskDaoImpl();
-	private static TaskLogDao taskLogDao= new TaskLogDaoImpl();
+	private DatabaseHandler handler = null;
 
-	static {
+	private Connection conn = null;
+
+	private String DB_URL;
+	private Statement stmt = null;
+
+	private TaskDao taskDao = new TaskDaoImpl();
+	private TaskLogDao taskLogDao = new TaskLogDaoImpl();
+	@Resource
+	private SysConfig sysConfig;
+
+	@PostConstruct
+	private void init() {
+		DB_URL = String.format("jdbc:derby:%s;create=true",
+				sysConfig.getDbPath());
 		createConnection();
 		inflateDB();
-		DatabaseHandler.getInstance().initSysConfig();
+		initSysConfig();
 	}
 
-	private DatabaseHandler() {
-	}
-
-	public static DatabaseHandler getInstance() {
-		if (handler == null) {
-			handler = new DatabaseHandler();
-		}
-		return handler;
-	}
-
-	private static void inflateDB() {
+	private void inflateDB() {
 		List<String> tableData = new ArrayList<>();
 		try {
 			Set<String> loadedTables = getDBTables();
-			LOGGER.info("准备装载数据库表: " + loadedTables);
+			log.info("准备装载数据库表: " + loadedTables);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(DatabaseHandler.class.getClass().getResourceAsStream("/database/tables.xml"));
+			Document doc = dBuilder.parse(DatabaseHandler.class.getResourceAsStream("/database/tables.xml"));
 			NodeList nList = doc.getElementsByTagName("table-entry");
 			for (int i = 0; i < nList.getLength(); i++) {
 				Node nNode = nList.item(i);
@@ -70,22 +82,23 @@ public final class DatabaseHandler {
 				if (!loadedTables.contains(tableName.toLowerCase())) {
 					String createSQL = String.format("CREATE TABLE %s (%s)", tableName, query);
 					tableData.add(createSQL);
-					LOGGER.info(String.format("创建表成功，SQL:[%s]", createSQL));
+					log.info(String.format("创建表成功，SQL:[%s]", createSQL));
 				}
 			}
 			if (tableData.isEmpty()) {
-				LOGGER.info("数据库表已经载入");
+				log.info("数据库表已经载入");
 			} else {
-				LOGGER.info("开始创建表结构.");
+				log.info("开始创建表结构.");
 				createTables(tableData);
 			}
 		} catch (Exception ex) {
-			LOGGER.error("", ex);
+			log.error("", ex);
 		}
 	}
 
-	private static void createConnection() {
+	private void createConnection() {
 		try {
+//			conn = namedParameterJdbcTemplate.getJdbcOperations().
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
 			conn = DriverManager.getConnection(DB_URL);
 		} catch (Exception e) {
@@ -94,14 +107,14 @@ public final class DatabaseHandler {
 		}
 	}
 
-	private static Set<String> getDBTables() throws SQLException {
+	private Set<String> getDBTables() throws SQLException {
 		Set<String> set = new HashSet<>();
 		DatabaseMetaData dbmeta = conn.getMetaData();
 		readDBTable(set, dbmeta, "TABLE", null);
 		return set;
 	}
 
-	private static void readDBTable(Set<String> set, DatabaseMetaData dbmeta, String searchCriteria, String schema) throws SQLException {
+	private void readDBTable(Set<String> set, DatabaseMetaData dbmeta, String searchCriteria, String schema) throws SQLException {
 		ResultSet rs = dbmeta.getTables(null, schema, null, new String[]{searchCriteria});
 		while (rs.next()) {
 			set.add(rs.getString("TABLE_NAME").toLowerCase());
@@ -114,7 +127,7 @@ public final class DatabaseHandler {
 			stmt = conn.createStatement();
 			result = stmt.executeQuery(query);
 		} catch (SQLException ex) {
-			LOGGER.error("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
+			log.error("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
 			return null;
 		} finally {
 		}
@@ -132,115 +145,17 @@ public final class DatabaseHandler {
 			return true;
 		} catch (SQLException ex) {
 			JOptionPane.showMessageDialog(null, "Error:" + ex.getMessage(), "Error Occured", JOptionPane.ERROR_MESSAGE);
-			LOGGER.error("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
+			log.error("Exception at execQuery:dataHandler" + ex.getLocalizedMessage());
 			return false;
 		} finally {
 		}
 	}
 
-	public boolean deleteBook(BookListController.Book book) {
-		try {
-			String deleteStatement = "DELETE FROM BOOK WHERE ID = ?";
-			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
-			stmt.setString(1, book.getId());
-			int res = stmt.executeUpdate();
-			if (res == 1) {
-				return true;
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-
-
-	public boolean isBookAlreadyIssued(BookListController.Book book) {
-		try {
-			String checkstmt = "SELECT COUNT(*) FROM ISSUE WHERE bookid=?";
-			PreparedStatement stmt = conn.prepareStatement(checkstmt);
-			stmt.setString(1, book.getId());
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				LOGGER.info(count);
-				return (count > 0);
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean deleteMember(MemberListController.Member member) {
-		try {
-			String deleteStatement = "DELETE FROM MEMBER WHERE id = ?";
-			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
-			stmt.setString(1, member.getId());
-			int res = stmt.executeUpdate();
-			if (res == 1) {
-				return true;
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean isMemberHasAnyBooks(MemberListController.Member member) {
-		try {
-			String checkstmt = "SELECT COUNT(*) FROM ISSUE WHERE memberID=?";
-			PreparedStatement stmt = conn.prepareStatement(checkstmt);
-			stmt.setString(1, member.getId());
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				LOGGER.error(count);
-				return (count > 0);
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean updateBook(BookListController.Book book) {
-		try {
-			String update = "UPDATE BOOK SET TITLE=?, AUTHOR=?, PUBLISHER=? WHERE ID=?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, book.getTitle());
-			stmt.setString(2, book.getAuthor());
-			stmt.setString(3, book.getPublisher());
-			stmt.setString(4, book.getId());
-			int res = stmt.executeUpdate();
-			return (res > 0);
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean updateMember(MemberListController.Member member) {
-		try {
-			String update = "UPDATE MEMBER SET NAME=?, EMAIL=?, MOBILE=? WHERE ID=?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, member.getName());
-			stmt.setString(2, member.getEmail());
-			stmt.setString(3, member.getMobile());
-			stmt.setString(4, member.getId());
-			int res = stmt.executeUpdate();
-			return (res > 0);
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	private static void createTables(List<String> tableData) throws SQLException {
+	private void createTables(List<String> tableData) throws SQLException {
 		Statement statement = conn.createStatement();
 		statement.closeOnCompletion();
 		for (String command : tableData) {
-			LOGGER.info(command);
+			log.info(command);
 			statement.addBatch(command);
 		}
 		statement.executeBatch();
@@ -252,7 +167,6 @@ public final class DatabaseHandler {
 
 	public boolean initSysConfig() {
 		try {
-			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 			ResultSet rs = execQuery("SELECT * FROM SYS_CONFIG");
 			if (rs.next()) {
 				sysConfig.setAdminUsername(rs.getString("admin_username"));
@@ -275,7 +189,7 @@ public final class DatabaseHandler {
 			}
 			return true;
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			log.error("{}", ex);
 		}
 		return false;
 	}
@@ -289,14 +203,14 @@ public final class DatabaseHandler {
 			stmt.close();
 			return true;
 		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
+			log.error("{}", ex);
 		}
 		return false;
 	}
 
 	private void insertSysConfig() throws SQLException {
-		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
-		PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
+		SysConfig sysConfig = GlobalProperty.applicationContext.getBean(SysConfig.class);
+		PreparedStatement statement = conn.prepareStatement(
 				"INSERT INTO SYS_CONFIG(id," +
 						"admin_username," +
 						"admin_password," +
@@ -335,11 +249,11 @@ public final class DatabaseHandler {
 		statement.close();
 	}
 
-	public TaskDao getTaskDao(){
+	public TaskDao getTaskDao() {
 		return taskDao;
 	}
 
-	public TaskLogDao getTaskLogDao(){
+	public TaskLogDao getTaskLogDao() {
 		return taskLogDao;
 	}
 }

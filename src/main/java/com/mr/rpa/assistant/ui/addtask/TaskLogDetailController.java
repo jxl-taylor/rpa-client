@@ -9,11 +9,14 @@ import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 @Log4j
+@Component
 public class TaskLogDetailController implements Initializable {
 	@FXML
 	private JFXTextField id;
@@ -32,7 +35,8 @@ public class TaskLogDetailController implements Initializable {
 	@FXML
 	private JFXTextField endTime;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	@Autowired
+	private TaskDao taskDao;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {

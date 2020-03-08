@@ -2,7 +2,6 @@ package com.mr.rpa.assistant.ui.login;
 
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -14,10 +13,10 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.CommonUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -31,8 +30,10 @@ import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 @Log4j
+@Component
 public class LoginController implements Initializable {
 
 	private static final String RPA_CONTROL_CENTER = "http://microrule.com/";
@@ -46,6 +47,7 @@ public class LoginController implements Initializable {
 	private JFXPasswordField password;
 	@FXML
 	private Hyperlink applyLink;
+
 	Preferences preference;
 
 	@Override
@@ -95,7 +97,7 @@ public class LoginController implements Initializable {
 
 	private void loadMain() {
 		try {
-			Parent parent = FXMLLoader.load(getClass().getResource("/assistant/ui/main/main.fxml"));
+			Parent parent = CommonUtil.loadFXml(getClass().getResource("/assistant/ui/main/main.fxml"));
 			Stage stage = new Stage(StageStyle.DECORATED);
 			stage.setScene(new Scene(parent));
 			stage.show();

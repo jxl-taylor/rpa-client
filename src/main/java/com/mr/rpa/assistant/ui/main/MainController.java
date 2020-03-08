@@ -3,6 +3,7 @@ package com.mr.rpa.assistant.ui.main;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.ResourceBundle;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.CommonUtil;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,13 +23,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import com.mr.rpa.assistant.database.DatabaseHandler;
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
+@Log4j
+@Component
 public class MainController implements Initializable {
 
-	private final static Logger LOGGER = Logger.getLogger(MainController.class);
-
-	private DatabaseHandler databaseHandler = DatabaseHandler.getInstance();
+	@Resource
+	private DatabaseHandler databaseHandler;
 
 	@FXML
 	private StackPane rootPane;
@@ -66,14 +73,14 @@ public class MainController implements Initializable {
 
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
+	public StackPane getRootPane(){
+		return rootPane;
+	}
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		globalProperty.setRootPane(rootPane);
 		globalProperty.setMainController(this);
-
 		initShowButtonAction();
 		initDrawer();
-
 		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈荣机器人");
 	}
 
@@ -128,11 +135,10 @@ public class MainController implements Initializable {
 
 	private void initDrawer() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/main/toolbar/toolbar.fxml"));
-			VBox toolbar = loader.load();
+			VBox toolbar = CommonUtil.loadFXml(getClass().getResource("/assistant/ui/main/toolbar/toolbar.fxml"));
 			drawer.setSidePane(toolbar);
 		} catch (IOException ex) {
-			LOGGER.error(ex);
+			log.error(ex);
 		}
 		HamburgerSlideCloseTransition task = new HamburgerSlideCloseTransition(hamburger);
 		task.setRate(-1);

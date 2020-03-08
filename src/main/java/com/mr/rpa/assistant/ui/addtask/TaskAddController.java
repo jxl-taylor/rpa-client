@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
@@ -31,13 +32,17 @@ import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j
+@Component
 public class TaskAddController implements Initializable {
 
 	@FXML
@@ -67,14 +72,18 @@ public class TaskAddController implements Initializable {
 	@FXML
 	private AnchorPane mainContainer;
 
+	@Resource
+	private SysConfig sysConfig;
+
 	private LinkedHashMap<Object, HBox> paramDeleteMap = Maps.newLinkedHashMap();
 	private LinkedHashMap<Object, HBox> paramConfirmMap = Maps.newLinkedHashMap();
 
 	private SimpleBooleanProperty isInEditMode = new SimpleBooleanProperty();
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
-
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	@Autowired
+	private TaskDao taskDao;
+	@Autowired
+	private TaskLogDao taskLogDao;
 
 	private ObservableList<String> nextTaskItems = FXCollections.observableArrayList();
 
@@ -87,7 +96,7 @@ public class TaskAddController implements Initializable {
 			File file = fileChooser.showOpenDialog(uploadFileButton.getScene().getWindow());
 			if (file != null) {
 				String taskName = file.getName().substring(0, file.getName().indexOf("."));
-				String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+				String taskFileDir = sysConfig.getTaskFilePath();
 				if (taskDao.queryTaskByName(taskName) != null) {
 					log.error(String.format("bot[%s] 已经存在", taskName));
 					AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", taskName));
@@ -110,7 +119,7 @@ public class TaskAddController implements Initializable {
 			directoryChooser.setTitle("选择文件夹");
 			File directory = directoryChooser.showDialog(new Stage());
 			if (directory != null) {
-				String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+				String taskFileDir = sysConfig.getTaskFilePath();
 				if (taskDao.queryTaskByName(directory.getName()) != null) {
 					log.error(String.format("bot[%s] 已经存在", directory.getName()));
 					AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", directory.getName()));
@@ -270,7 +279,7 @@ public class TaskAddController implements Initializable {
 		Task selectTask = taskDao.queryTaskById(selectedTaskId);
 		String taskName = selectTask.getName();
 
-		File mainTaskDir = new File(GlobalProperty.getInstance().getSysConfig().getTaskFilePath()
+		File mainTaskDir = new File(sysConfig.getTaskFilePath()
 				+ File.separator
 				+ taskName);
 		String[] fileNames = mainTaskDir.list();

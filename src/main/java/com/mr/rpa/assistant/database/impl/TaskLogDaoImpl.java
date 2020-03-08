@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.database.impl;
 
+import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -10,17 +11,33 @@ import javafx.collections.ObservableList;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by feng on 2020/2/21
  */
 @Log4j
+@Repository
 public class TaskLogDaoImpl implements TaskLogDao {
 
-	DatabaseHandler handler = DatabaseHandler.getInstance();
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+	@Autowired
+	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+	}
+
+	@Resource
+	private DatabaseHandler handler;
 
 	private static ObservableList<TaskLogListController.TaskLog> taskLogList = FXCollections.observableArrayList();
 
@@ -84,11 +101,11 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	@Override
 	public List<TaskLogListController.TaskLog> loadLogTask(String sql) {
 		taskLogList.clear();
-		ResultSet rs = handler.execQuery(sql);
-		if (rs == null) return taskLogList;
-		try {
-			int i = 1;
-			while (rs.next()) {
+		Map<String, Object> params = new HashMap<String, Object>();
+
+		taskLogList.addAll(namedParameterJdbcTemplate.query(sql, params, new RowMapper<TaskLogListController.TaskLog>() {
+			@Override
+			public TaskLogListController.TaskLog mapRow(ResultSet rs, int i) throws SQLException {
 				String seq = String.valueOf(i++);
 				String id = rs.getString("id");
 				String taskId = rs.getString("task_id");
@@ -96,21 +113,9 @@ public class TaskLogDaoImpl implements TaskLogDao {
 				String error = rs.getString("error");
 				java.util.Date startTime = rs.getTimestamp("startTime");
 				java.util.Date endTime = rs.getTimestamp("endTime");
-
-				taskLogList.add(new TaskLogListController.TaskLog(seq, id, taskId, status, error, startTime, endTime));
-
+				return new TaskLogListController.TaskLog(seq, id, taskId, status, error, startTime, endTime);
 			}
-
-		} catch (SQLException ex) {
-			log.error(ex);
-		} finally {
-			try {
-				rs.close();
-				handler.closeStmt();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		}));
 		return taskLogList;
 	}
 
@@ -198,26 +203,25 @@ public class TaskLogDaoImpl implements TaskLogDao {
 	public boolean updateTaskLog(TaskLog taskLog) {
 		PreparedStatement stmt = null;
 		try {
+
 			String update = "UPDATE TASK_LOG SET STATUS=?, ERROR = ?, endTime=? WHERE ID=?";
+
 			stmt = handler.getConnection().prepareStatement(update);
 			stmt.setInt(1, taskLog.getStatus());
 			stmt.setString(2, taskLog.getError());
 			stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
 			stmt.setString(4, taskLog.getId());
-			int res = stmt.executeUpdate();
-			return (res > 0);
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("STATUS", taskLog.getStatus());
+			params.put("ERROR", taskLog.getError());
+			params.put("endTime", new Timestamp(System.currentTimeMillis()));
+			params.put("ID", taskLog.getId());
+			namedParameterJdbcTemplate.update(update, params);
 		} catch (SQLException ex) {
 			log.error(ex);
 			return false;
-		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		}
+		return true;
 	}
 
 }

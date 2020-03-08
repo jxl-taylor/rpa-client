@@ -1,6 +1,8 @@
 package com.mr.rpa.assistant.data.model;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.File;
 
@@ -8,6 +10,7 @@ import java.io.File;
  * Created by feng on 2020/2/5 0005
  */
 @Data
+@Component("sysConfig")
 public class SysConfig {
 
 	private static String DEFAULT_BOT_FILE_DIR = System.getProperty("user.dir");

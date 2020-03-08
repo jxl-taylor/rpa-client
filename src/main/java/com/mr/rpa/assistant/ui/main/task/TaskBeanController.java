@@ -16,7 +16,9 @@ import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -26,6 +28,7 @@ import static com.mr.rpa.assistant.ui.settings.GlobalProperty.SPLIT_POSITION_TAS
  * Created by feng on 2020/2/21
  */
 @Log4j
+@Component
 public class TaskBeanController implements Initializable {
 
 	@FXML
@@ -33,10 +36,10 @@ public class TaskBeanController implements Initializable {
 
 	@FXML
 	private JFXTextField taskID;
-
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
-
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	@Resource
+	private TaskDao taskDao;
+	@Resource
+	private TaskLogDao taskLogDao;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {

@@ -4,10 +4,12 @@ import com.jfoenix.controls.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Component
 public class MyInfoController implements Initializable {
 
 	@FXML

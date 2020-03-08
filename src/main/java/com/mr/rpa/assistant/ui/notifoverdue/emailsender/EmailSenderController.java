@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.email.EmailUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -23,12 +24,15 @@ import com.mr.rpa.assistant.ui.notifoverdue.NotificationItem;
 import com.mr.rpa.assistant.ui.settings.Preferences;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 /**
  * FXML Controller class
  *
  * @author Villan
  */
+
+@Component
 public class EmailSenderController implements Initializable {
 
     private final static Logger LOGGER = Logger.getLogger(EmailSenderController.class);
@@ -73,7 +77,7 @@ public class EmailSenderController implements Initializable {
     class EmailSenderHelper extends Thread implements GenericCallback {
 
         private final AtomicBoolean flag = new AtomicBoolean(true);
-        private final MailServerInfo mailServerInfo = DataHelper.loadMailServerInfo();
+        private final MailServerInfo mailServerInfo = GlobalProperty.applicationContext.getBean(DataHelper.class).loadMailServerInfo();
 
         @Override
         public void run() {

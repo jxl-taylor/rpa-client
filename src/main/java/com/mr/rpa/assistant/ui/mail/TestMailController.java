@@ -14,12 +14,14 @@ import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.util.email.EmailUtil;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 /**
  * FXML Controller class
  *
  * @author Villan
  */
+@Component
 public class TestMailController implements Initializable, GenericCallback {
 
     private final static Logger LOGGER = Logger.getLogger(TestMailController.class);

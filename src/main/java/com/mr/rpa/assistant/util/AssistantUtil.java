@@ -32,7 +32,7 @@ public class AssistantUtil {
     public static Object loadWindow(URL loc, String title, Stage parentStage) {
         Object controller = null;
         try {
-            FXMLLoader loader = new FXMLLoader(loc);
+            FXMLLoader loader = CommonUtil.getFxmlLoader(loc);
             Parent parent = loader.load();
             controller = loader.getController();
             Stage stage = null;

@@ -40,9 +40,9 @@ public class JobFactory implements Runnable {
 
 	private Scheduler userScheduler;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private TaskDao taskDao = GlobalProperty.applicationContext.getBean(TaskDao.class);
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskLogDao taskLogDao = GlobalProperty.applicationContext.getBean(TaskLogDao.class);
 
 	/**
 	 * 开启定时任务

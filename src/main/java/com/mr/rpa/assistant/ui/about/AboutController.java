@@ -16,7 +16,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AboutController implements Initializable {
 
     private static final String WEIBO = "http://microrule.com/";

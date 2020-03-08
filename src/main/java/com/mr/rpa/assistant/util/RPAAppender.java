@@ -27,11 +27,7 @@ public class RPAAppender extends WriterAppender {
 	 * or System.err made after configuration.
 	 */
 	private boolean follow = false;
-
-	private TaskLogDao geTaskLogDao() {
-		return DatabaseHandler.getInstance().getTaskLogDao();
-	}
-
+	
 	/**
 	 * Constructs an unconfigured appender.
 	 */

@@ -11,13 +11,16 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * Created by feng on 2020/2/21
  */
+@Component
 public class StatisticController implements Initializable {
 
 	@FXML
@@ -34,9 +37,10 @@ public class StatisticController implements Initializable {
 	@FXML
 	private TextField taskIDInput;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
-
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	@Resource
+	private TaskDao taskDao;
+	@Resource
+	private TaskLogDao taskLogDao;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {

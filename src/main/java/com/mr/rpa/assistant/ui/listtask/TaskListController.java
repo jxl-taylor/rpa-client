@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -13,6 +14,7 @@ import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -31,15 +33,17 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Log4j
+@Component
 public class TaskListController implements Initializable {
 	@FXML
 	private TableView<Task> tableView;
@@ -66,11 +70,19 @@ public class TaskListController implements Initializable {
 	@FXML
 	private AnchorPane contentPane;
 
+	@Resource
+	private MainController mainController;
+
+	@Resource
+	private SysConfig sysConfig;
+
 	private JFXButton cancelBtn;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	@Autowired
+	private TaskDao taskDao;
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	@Autowired
+	private TaskLogDao taskLogDao;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -97,7 +109,7 @@ public class TaskListController implements Initializable {
 		});
 		cancelBtn = new JFXButton("取消");
 		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
-			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+			StackPane rootPane = mainController.getRootPane();
 			rootPane.getChildren().get(0).setEffect(null);
 		});
 	}
@@ -176,7 +188,7 @@ public class TaskListController implements Initializable {
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
 				return;
 			}
-			String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+			String taskFileDir = sysConfig.getTaskFilePath();
 			String jobPath = taskFileDir + File.separator + selectedForDeletion.getName();
 			FileUtil.del(jobPath);
 			boolean result = taskDao.deleteTask(selectedForDeletion);
@@ -210,7 +222,7 @@ public class TaskListController implements Initializable {
 			return;
 		}
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"));
+			FXMLLoader loader = CommonUtil.getFxmlLoader(getClass().getResource("/assistant/ui/addtask/add_task.fxml"));
 			Parent parent = loader.load();
 
 			TaskAddController controller = (TaskAddController) loader.getController();

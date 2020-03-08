@@ -20,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Data;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.List;
 
@@ -28,6 +29,8 @@ import java.util.List;
  */
 @Data
 public class GlobalProperty {
+
+	public static AbstractApplicationContext applicationContext;
 
 	private static GlobalProperty globalProperty = new GlobalProperty();
 
@@ -75,8 +78,6 @@ public class GlobalProperty {
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 
-	private StackPane rootPane;
-
 	private List<JFXButton> exitBtns;
 
 	//selectd Task
@@ -98,8 +99,6 @@ public class GlobalProperty {
 	//task tabel list
 	private TableView<TaskListController.Task> taskTableView;
 
-	private SysConfig sysConfig = new SysConfig();
-
 	public void setTitle(String username) {
 		this.title.set(String.format("MR-ROBOT（用户：%s）", username));
 	}
@@ -114,7 +113,7 @@ public class GlobalProperty {
 
 			JFXButton cancelBtn = new JFXButton("取消");
 			cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
-				StackPane rootPane = getRootPane();
+				StackPane rootPane = applicationContext.getBean(MainController.class).getRootPane();
 				rootPane.getChildren().get(0).setEffect(null);
 			});
 			exitBtns = Lists.newArrayList(confirmBtn, cancelBtn);
@@ -122,7 +121,4 @@ public class GlobalProperty {
 		return exitBtns;
 	}
 
-	public SysConfig getSysConfig() {
-		return sysConfig;
-	}
 }

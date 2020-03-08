@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Created by feng on 2020/2/9 0009
  */
+@Component
 public class SmallTaskLogController implements Initializable, ILogShow {
 
 //	@FXML

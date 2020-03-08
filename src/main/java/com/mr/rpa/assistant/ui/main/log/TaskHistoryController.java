@@ -1,12 +1,8 @@
 package com.mr.rpa.assistant.ui.main.log;
 
-import com.google.common.collect.Lists;
-import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -14,18 +10,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import lombok.AllArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * Created by feng on 2020/2/9 0009
  */
+@Component
 public class TaskHistoryController implements Initializable {
 
 	@FXML
@@ -37,13 +31,12 @@ public class TaskHistoryController implements Initializable {
 	@FXML
 	private ChoiceBox<MaxRow> maxRowChoice;
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	@Autowired
+	private TaskLogDao taskLogDao;
 
 	private static int currentStatus;
 
 	private static int currentMaxRow;
-
-	private static List<TaskHistoryController> controllers = Lists.newArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -91,24 +84,17 @@ public class TaskHistoryController implements Initializable {
 				globalProperty.getTaskBeanController().refreshSplit();
 			}
 		});
-		controllers.add(this);
 	}
 
 	private void setLogStatusChoice() {
-		controllers.forEach(controller -> {
-			controller.logStatusChoice.getItems().forEach(item -> {
-				if (item.key == currentStatus) controller.logStatusChoice.setValue(item);
-			});
+		logStatusChoice.getItems().forEach(item -> {
+			if (item.key == currentStatus) logStatusChoice.setValue(item);
 		});
-
-
 	}
 
 	private void setMaxRowChoice() {
-		controllers.forEach(controller -> {
-			controller.maxRowChoice.getItems().forEach(item -> {
-				if (item.key == currentMaxRow) controller.maxRowChoice.setValue(item);
-			});
+		maxRowChoice.getItems().forEach(item -> {
+			if (item.key == currentMaxRow) maxRowChoice.setValue(item);
 		});
 	}
 
@@ -121,7 +107,6 @@ public class TaskHistoryController implements Initializable {
 		} else {
 			taskLogDao.loadTaskLogList(globalProperty.getSelectedTaskId().get(), logStatusChoice.getValue().key);
 		}
-
 	}
 
 	@AllArgsConstructor

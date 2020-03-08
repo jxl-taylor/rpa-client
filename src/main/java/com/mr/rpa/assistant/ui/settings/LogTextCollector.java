@@ -3,11 +3,14 @@ package com.mr.rpa.assistant.ui.settings;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import javafx.application.Platform;
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
 /**
  * Created by feng on 2020/2/16 0016
  */
+@Component
 public class LogTextCollector {
 
 	private StringBuilder allSb = new StringBuilder();
