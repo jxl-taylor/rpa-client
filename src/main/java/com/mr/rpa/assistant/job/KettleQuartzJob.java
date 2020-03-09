@@ -52,7 +52,7 @@ public class KettleQuartzJob implements Job {
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
 			taskLogDao.updateTaskLog(taskLog);
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run end", task.getName(), taskLog.getId()));
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			if (taskLog != null) {
 				taskLog.setError(e.getMessage());
 				taskLog.setStatus(SystemContants.TASK_LOG_STATUS_FAIL);

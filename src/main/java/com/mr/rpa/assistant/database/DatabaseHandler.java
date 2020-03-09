@@ -89,6 +89,7 @@ public final class DatabaseHandler {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
 			conn = DriverManager.getConnection(DB_URL);
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "无法载入数据库", "数据库错误", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
