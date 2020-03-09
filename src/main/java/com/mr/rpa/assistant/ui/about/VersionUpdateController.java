@@ -94,6 +94,7 @@ public class VersionUpdateController implements Initializable {
 		} catch (Exception e) {
 			log.error(e);
 			AlertMaker.showSimpleAlert("失败", "恢复失败");
+			return;
 		}
 		FileUtil.del(bakFile);
 		//提示重启
@@ -156,6 +157,7 @@ public class VersionUpdateController implements Initializable {
 						} catch (Exception e) {
 							log.error(e);
 							AlertMaker.showSimpleAlert("失败", "更新失败");
+							return;
 						}
 						needRestart = true;
 					}
