@@ -37,6 +37,8 @@ public class VersionUpdateController implements Initializable {
 	@FXML
 	private StackPane rootPane;
 	@FXML
+	private AnchorPane mainContainer;
+	@FXML
 	private JFXTextField updatePath;
 	@FXML
 	private JFXButton uploadFileButton;
@@ -116,11 +118,14 @@ public class VersionUpdateController implements Initializable {
 		//将上传文件放在update/下面
 		FileUtil.copy(file.getAbsolutePath(), updateFileDir + File.separator + file.getName(), true);
 		//将原来的jar文件放在update/bak下面
-		FileUtil.copy(sysConfig.getJarFilePath(),
-				updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME , true);
+		if(FileUtil.exist(sysConfig.getJarFilePath())){
+			FileUtil.copy(sysConfig.getJarFilePath(),
+					updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME , true);
+		}
 
 		//解压更新文件到/update/.tmp/下
 		String tmpPath = updateFileDir + File.separator + TMP_PATH;
+		FileUtil.del(tmpPath);
 		int index = file.getName().indexOf(".");
 		String srcSuffixName = file.getName().substring(0, index) + ".zip";
 		String zipPath = tmpPath + File.separator + srcSuffixName;
@@ -132,7 +137,7 @@ public class VersionUpdateController implements Initializable {
 			File setupDir = new File(tmpPath + File.separator + fileNames[i]);
 			if (setupDir.isDirectory()) {
 				String[] setupFileNames = setupDir.list();
-				for (int j = 0; j < setupFileNames.length; i++) {
+				for (int j = 0; j < setupFileNames.length; j++) {
 					File setupFile = new File(setupDir.getAbsolutePath() + File.separator + setupFileNames[i]);
 					if (setupFileNames[i].endsWith(".sql")) {    //1、数据库文件更新
 						executeUpdateSqlFile(setupFile);
@@ -148,6 +153,7 @@ public class VersionUpdateController implements Initializable {
 		FileUtil.del(tmpPath);
 		if (!needRestart) {
 			AlertMaker.showSimpleAlert("更新", "更新成功");
+			cancel(null);
 			return;
 		}
 		//提示重启

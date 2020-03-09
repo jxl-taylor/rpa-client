@@ -4,6 +4,7 @@
 /logs/
 /database/
 /kjb/
+/update/
 
 .classpath
 .project
