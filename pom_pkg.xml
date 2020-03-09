@@ -34,6 +34,9 @@
         <log4j.version>1.2.16</log4j.version>
         <quartz.version>2.3.2</quartz.version>
         <mybatis.version>3.5.4</mybatis.version>
+        <kettle.version>9.0.0.0-416</kettle.version>
+        <kettle.version>9.0.0.0-416</kettle.version>
+        <kettle.version>9.0.0.0-416</kettle.version>
     </properties>
 
     <!-- kettle中央仓库 -->
@@ -172,6 +175,7 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -184,24 +188,28 @@
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-core</artifactId>
             <version>${kettle.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-dbdialog</artifactId>
             <version>${kettle.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-engine</artifactId>
             <version>${kettle.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>pentaho</groupId>
             <artifactId>metastore</artifactId>
             <version>${kettle.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

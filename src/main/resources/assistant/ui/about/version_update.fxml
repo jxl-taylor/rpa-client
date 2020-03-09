@@ -24,9 +24,10 @@
                      </VBox.margin>
                   </HBox>
 
-                  <HBox alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="30.0">
+                  <HBox alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="20.0">
                      <children>
-                        <JFXButton onAction="#setup" prefHeight="66.0" prefWidth="100.0" text="保存" />
+                        <JFXButton fx:id="setupBtn" onAction="#setup" prefHeight="66.0" prefWidth="100.0" text="更新" />
+                        <JFXButton fx:id="rollbackBtn" onAction="#rollback" prefHeight="66.0" prefWidth="100.0" text="回退"/>
                         <JFXButton layoutX="10.0" layoutY="10.0" onAction="#cancel" prefHeight="66.0" prefWidth="100.0" text="取消" />
                      </children>
                      <VBox.margin>

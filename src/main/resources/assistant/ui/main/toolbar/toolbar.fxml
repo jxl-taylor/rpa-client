@@ -34,7 +34,7 @@
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
-                   onAction="#exit" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
+                   onAction="#loadUpdate" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
                    text="更新" textAlignment="CENTER">
             <graphic>
                 <FontAwesomeIconView glyphName="TABLE" size="25"/>

@@ -31,7 +31,7 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadUpdate(ActionEvent event) {
-        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
+        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"), "更新", null);
     }
 
     @FXML

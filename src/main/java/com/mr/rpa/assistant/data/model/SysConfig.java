@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.data.model;
 
+import com.mr.rpa.assistant.util.SystemContants;
 import lombok.Data;
 
 import java.io.File;
@@ -19,12 +20,12 @@ public class SysConfig {
 	private String mailEmailAddress;
 	private String mailEmailPassword;
 	private Boolean mailSslCheckbox = false;
-	private String taskFilePath = DEFAULT_BOT_FILE_DIR + File.separator + "kjb";
+	private String jarFilePath = DEFAULT_BOT_FILE_DIR + File.separator + SystemContants.JAR_NAME;
+	private String taskFilePath = DEFAULT_BOT_FILE_DIR + File.separator + "mbot";
 	private String logPath = DEFAULT_BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
 	private String dbPath = DEFAULT_BOT_FILE_DIR + File.separator + "database";
 	private String updatePath = DEFAULT_BOT_FILE_DIR + File.separator + "update";
 	private Integer miniteErrorLimit = 10;
 	private Integer runningLimit = 100;
-
 }

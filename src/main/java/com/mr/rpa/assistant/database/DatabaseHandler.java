@@ -90,7 +90,7 @@ public final class DatabaseHandler {
 			conn = DriverManager.getConnection(DB_URL);
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "无法载入数据库", "数据库错误", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "无法载入数据库," + Arrays.toString(e.getStackTrace()), "数据库错误:" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}
