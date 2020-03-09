@@ -10,6 +10,7 @@ import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,11 +20,11 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.quartz.SchedulerException;
 
-import java.io.File;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -57,9 +58,9 @@ public class VersionUpdateController implements Initializable {
 		updatePath.setText("");
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 		String updateFileDir = sysConfig.getUpdatePath();
-		if(FileUtil.exist(updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME)){
+		if (FileUtil.exist(updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME)) {
 			rollbackBtn.setDisable(false);
-		}else {
+		} else {
 			rollbackBtn.setDisable(true);
 		}
 
@@ -88,7 +89,12 @@ public class VersionUpdateController implements Initializable {
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 		String updateFileDir = sysConfig.getUpdatePath();
 		String bakFile = updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME;
-		FileUtil.copy(bakFile, sysConfig.getJarFilePath(), true);
+		try {
+			CommonUtil.copyAndCoverFile(bakFile, sysConfig.getJarFilePath());
+		} catch (Exception e) {
+			log.error(e);
+			AlertMaker.showSimpleAlert("失败", "恢复失败");
+		}
 		FileUtil.del(bakFile);
 		//提示重启
 		AlertMaker.showMaterialDialog(((StackPane) rootPane),
@@ -96,7 +102,7 @@ public class VersionUpdateController implements Initializable {
 				Lists.newArrayList(exitBtn), "更新", "回退成功，请重启", false);
 	}
 
-	private void initExitBtn(){
+	private void initExitBtn() {
 		exitBtn = new JFXButton("确定");
 		exitBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
@@ -118,9 +124,9 @@ public class VersionUpdateController implements Initializable {
 		//将上传文件放在update/下面
 		FileUtil.copy(file.getAbsolutePath(), updateFileDir + File.separator + file.getName(), true);
 		//将原来的jar文件放在update/bak下面
-		if(FileUtil.exist(sysConfig.getJarFilePath())){
+		if (FileUtil.exist(sysConfig.getJarFilePath())) {
 			FileUtil.copy(sysConfig.getJarFilePath(),
-					updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME , true);
+					updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME, true);
 		}
 
 		//解压更新文件到/update/.tmp/下
@@ -142,8 +148,15 @@ public class VersionUpdateController implements Initializable {
 					if (setupFileNames[i].endsWith(".sql")) {    //1、数据库文件更新
 						executeUpdateSqlFile(setupFile);
 					} else if (setupFileNames[i].equalsIgnoreCase(SystemContants.JAR_NAME)) {    //2、新的jar替换原来的jar]
-						FileUtil.copy(setupDir.getAbsolutePath() + File.separator + SystemContants.JAR_NAME,
-								sysConfig.getJarFilePath(), true);
+						try {
+							CommonUtil.copyAndCoverFile(setupDir.getAbsolutePath()
+											+ File.separator
+											+ SystemContants.JAR_NAME,
+									sysConfig.getJarFilePath());
+						} catch (Exception e) {
+							log.error(e);
+							AlertMaker.showSimpleAlert("失败", "更新失败");
+						}
 						needRestart = true;
 					}
 					//todo 可增加别的需要copy的文件
@@ -180,4 +193,5 @@ public class VersionUpdateController implements Initializable {
 				new FileChooser.ExtensionFilter("mbot", "*.mbot")
 		);
 	}
+
 }
