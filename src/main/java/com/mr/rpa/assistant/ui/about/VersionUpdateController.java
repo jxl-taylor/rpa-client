@@ -15,6 +15,9 @@ import com.mr.rpa.assistant.util.SystemContants;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
@@ -50,7 +53,7 @@ public class VersionUpdateController implements Initializable {
 	@FXML
 	private JFXButton rollbackBtn;
 
-	private JFXButton exitBtn;
+	private ArrayList<JFXButton> btns = new ArrayList<>();
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -98,13 +101,18 @@ public class VersionUpdateController implements Initializable {
 		}
 		FileUtil.del(bakFile);
 		//提示重启
-		AlertMaker.showMaterialDialog(((StackPane) rootPane),
-				((StackPane) rootPane).getChildren().get(0),
-				Lists.newArrayList(exitBtn), "更新", "回退成功，请重启", false);
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"回退成功，重启后生效",
+				new ButtonType("退出", ButtonBar.ButtonData.YES));
+//        设置窗口的标题
+		alert.setTitle("回退");
+		alert.setHeaderText("回退成功");
+		alert.showAndWait();
+		System.exit(0);
 	}
 
 	private void initExitBtn() {
-		exitBtn = new JFXButton("确定");
+
+		JFXButton exitBtn = new JFXButton("确定");
 		exitBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
 				JobFactory.pauseAll();
@@ -114,6 +122,7 @@ public class VersionUpdateController implements Initializable {
 			}
 			System.exit(0);
 		});
+		btns.add(exitBtn);
 	}
 
 	@FXML
@@ -146,9 +155,9 @@ public class VersionUpdateController implements Initializable {
 				String[] setupFileNames = setupDir.list();
 				for (int j = 0; j < setupFileNames.length; j++) {
 					File setupFile = new File(setupDir.getAbsolutePath() + File.separator + setupFileNames[i]);
-					if (setupFileNames[i].endsWith(".sql")) {    //1、数据库文件更新
+					if (setupFileNames[j].endsWith(".sql")) {    //1、数据库文件更新
 						executeUpdateSqlFile(setupFile);
-					} else if (setupFileNames[i].equalsIgnoreCase(SystemContants.JAR_NAME)) {    //2、新的jar替换原来的jar]
+					} else if (setupFileNames[j].equalsIgnoreCase(SystemContants.JAR_NAME)) {    //2、新的jar替换原来的jar]
 						try {
 							CommonUtil.copyAndCoverFile(setupDir.getAbsolutePath()
 											+ File.separator
@@ -172,9 +181,21 @@ public class VersionUpdateController implements Initializable {
 			return;
 		}
 		//提示重启
-		AlertMaker.showMaterialDialog(((StackPane) rootPane),
-				((StackPane) rootPane).getChildren().get(0),
-				Lists.newArrayList(exitBtn), "更新", "更新成功，请重启", false);
+		try{
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"更新成功，请重启后生效",
+					new ButtonType("退出", ButtonBar.ButtonData.YES));
+//        设置窗口的标题
+			alert.setTitle("更新");
+			alert.setHeaderText("更新成功");
+//			howAndWait() 将在对话框消失以前不会执行之后的代码
+			alert.showAndWait();
+
+		}catch (Throwable e){
+			e.printStackTrace();
+		}finally {
+			System.exit(0);
+		}
+
 
 	}
 
