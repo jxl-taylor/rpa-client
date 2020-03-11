@@ -13,6 +13,7 @@ import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -90,7 +91,7 @@ public class VersionUpdateController implements Initializable {
 	}
 
 	@FXML
-	private void rollback(ActionEvent event) {
+	private void rollback(ActionEvent event) throws IOException {
 		//将/update/bak/rpa-client.jar 复制回去
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 		String updateFileDir = sysConfig.getUpdatePath();
@@ -108,8 +109,14 @@ public class VersionUpdateController implements Initializable {
 			log.error(e);
 			AlertMaker.showSimpleAlert("失败", "恢复失败");
 			return;
+		}finally {
+			inputStream.close();
 		}
+
 		FileUtil.del(bakDir);
+//		Platform.runLater(() -> {
+//			FileUtil.del(bakDir);
+//		});
 		//提示重启
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "回退成功，重启后生效",
 				new ButtonType("退出", ButtonBar.ButtonData.YES));
@@ -136,7 +143,7 @@ public class VersionUpdateController implements Initializable {
 	}
 
 	@FXML
-	private void setup(ActionEvent event) {
+	private void setup(ActionEvent event) throws IOException {
 		boolean needRestart = false;
 		File file = new File(updatePath.getText());
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
@@ -180,9 +187,15 @@ public class VersionUpdateController implements Initializable {
 			log.error(e);
 			AlertMaker.showSimpleAlert("失败", "更新失败, 原因：" + e.getMessage());
 			return;
+		}finally {
+			inputStream.close();
 		}
-
 		FileUtil.del(tmpPath);
+//
+//		Platform.runLater(() -> {
+//			FileUtil.del(tmpPath);
+//		});
+
 		if (!needRestart) {
 			AlertMaker.showSimpleAlert("更新", "更新成功");
 			cancel(null);
@@ -244,8 +257,10 @@ public class VersionUpdateController implements Initializable {
 
 		}
 		//save bak checklist
-		FileUtil.writeUtf8String(CommonUtil.toPropString(bakProps),
-				bakDir + File.separator + SystemContants.UPDATE_CHECK_LIST);
+		if(bakProps.size() > 0){
+			FileUtil.writeUtf8String(CommonUtil.toPropString(bakProps),
+					bakDir + File.separator + SystemContants.UPDATE_CHECK_LIST);
+		}
 		return needRestart;
 	}
 
@@ -316,9 +331,5 @@ public class VersionUpdateController implements Initializable {
 				new FileChooser.ExtensionFilter("mbot", "*.mbot")
 		);
 	}
-
-	public static void main(String[] s){
-		FileUtil.del("D:\\other_project\\rpa-client\\update\\bak");
-
-	}
+	
 }
