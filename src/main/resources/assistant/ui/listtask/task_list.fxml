@@ -17,8 +17,8 @@
                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                            AnchorPane.topAnchor="15.0">
                     <columns>
-                        <TableColumn fx:id="idCol" maxWidth="2500.0" minWidth="280.0" text="任务编号"/>
-                        <TableColumn fx:id="nameCol" prefWidth="75.0" text="任务脚本"/>
+                        <TableColumn fx:id="idCol" maxWidth="2500.0" minWidth="280.0" text="BOT编号"/>
+                        <TableColumn fx:id="nameCol" prefWidth="75.0" text="BOT名称"/>
                         <TableColumn fx:id="cronCol" prefWidth="75.0" text="调度策略(cron)"/>
                         <TableColumn fx:id="despCol" prefWidth="75.0" maxWidth="200.0" text="描述" visible="false"/>
                         <TableColumn fx:id="runningCol" text="是否开启"/>
