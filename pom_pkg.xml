@@ -31,7 +31,7 @@
         <guava.version>26.0-jre</guava.version>
         <javax.mail.version>1.6.2</javax.mail.version>
         <pdfbox.version>2.0.18</pdfbox.version>
-        <log4j.version>1.2.16</log4j.version>
+        <log4j.version>1.2.17</log4j.version>
         <quartz.version>2.3.2</quartz.version>
         <mybatis.version>3.5.4</mybatis.version>
         <kettle.version>9.0.0.0-416</kettle.version>
@@ -175,7 +175,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

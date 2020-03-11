@@ -20,7 +20,6 @@ public class SysConfig {
 	private String mailEmailAddress;
 	private String mailEmailPassword;
 	private Boolean mailSslCheckbox = false;
-	private String jarFilePath = DEFAULT_BOT_FILE_DIR + File.separator + SystemContants.JAR_NAME;
 	private String taskFilePath = DEFAULT_BOT_FILE_DIR + File.separator + "mbot";
 	private String logPath = DEFAULT_BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
@@ -28,4 +27,8 @@ public class SysConfig {
 	private String updatePath = DEFAULT_BOT_FILE_DIR + File.separator + "update";
 	private Integer miniteErrorLimit = 10;
 	private Integer runningLimit = 100;
+
+	public String getBotRootDir(){
+		return DEFAULT_BOT_FILE_DIR;
+	}
 }

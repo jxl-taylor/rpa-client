@@ -41,6 +41,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#handleRefresh" text="刷新"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskEditOption" text="编辑"/>
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskDeleteOption" text="删除"/>
+                                <MenuItem mnemonicParsing="false" onAction="#triggerByManual" text="手动触发"/>
                                 <MenuItem mnemonicParsing="false" onAction="#deleteAllTaskLog" text="清空日志"/>
                             </items>
                             <styleClass>

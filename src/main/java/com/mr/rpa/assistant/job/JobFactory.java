@@ -150,6 +150,10 @@ public class JobFactory implements Runnable {
 		jobFactory.userScheduler.resumeJob(JobKey.jobKey(taskId));
 	}
 
+	public static void triggerByManual(String taskId) throws SchedulerException {
+		executor.submit(()-> new KettleQuartzJob().triggerByManual(taskId));
+	}
+
 	static class JobThreadFactory implements ThreadFactory {
 		private static final AtomicInteger poolNumber = new AtomicInteger(1);
 		private final ThreadGroup group;

@@ -62,6 +62,31 @@ public class KettleQuartzJob implements Job {
 		}
 	}
 
+	public void triggerByManual(String taskId){
+		Task task = taskDao.queryTaskById(taskId);
+		TaskLog taskLog = null;
+		try {
+			taskLog = addLog(taskId);
+			log.info(String.format("taskId=[%s], taskLogId=[%s]: trgger by manual", task.getName(), taskLog.getId()));
+			runKbj(task.getName(), task.getMainTask(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
+			//执行依赖任务
+			if(StringUtils.isNotBlank(task.getNextTask())){
+				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
+				runKbj(nextTask.getName(), nextTask.getMainTask(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
+			}
+			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
+			taskLogDao.updateTaskLog(taskLog);
+			log.info(String.format("taskId=[%s], taskLogId=[%s]: trgger by manual run end", task.getName(), taskLog.getId()));
+		} catch (Throwable e) {
+			if (taskLog != null) {
+				taskLog.setError(e.getMessage());
+				taskLog.setStatus(SystemContants.TASK_LOG_STATUS_FAIL);
+				taskLogDao.updateTaskLog(taskLog);
+			}
+			log.error(e);
+		}
+	}
+
 	private TaskLog addLog(String taskId) {
 		TaskLog taskLog = new TaskLog(UUID.randomUUID().toString(), taskId,
 				SystemContants.TASK_LOG_STATUS_RUNNING, "",

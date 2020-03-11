@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.util;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Properties;
 
 /**
  * Created by feng on 2020/3/10 0010
@@ -43,5 +44,13 @@ public class CommonUtil {
 
 		}
 
+	}
+
+	public static String toPropString(Properties props) {
+		StringBuilder reuslt = new StringBuilder();
+		for (String key : props.stringPropertyNames()) {
+			reuslt.append(key).append("=").append(props.get(key)).append("\n");
+		}
+		return reuslt.toString();
 	}
 }

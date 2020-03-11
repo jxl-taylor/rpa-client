@@ -370,6 +370,23 @@ public class TaskListController implements Initializable {
 		loadData();
 	}
 
+	@FXML
+	private void triggerByManual(ActionEvent event) {
+		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		if (selectedTask == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
+			return;
+		}
+		try {
+			JobFactory.triggerByManual(selectedTask.getId());
+		} catch (SchedulerException e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("手动触发", selectedTask.getId() + " 触发成功");
+			return;
+		}
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "手动触发", selectedTask.getId() + " 触发成功");
+	}
+
 	public static class Task {
 
 		private final SimpleStringProperty id;

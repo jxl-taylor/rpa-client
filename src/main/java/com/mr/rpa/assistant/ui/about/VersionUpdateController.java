@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.ui.about;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
@@ -38,6 +39,8 @@ public class VersionUpdateController implements Initializable {
 
 	private static final String BAK_PATH = "bak";
 
+	private static final String COLON = ":";
+
 	@FXML
 	private StackPane rootPane;
 	@FXML
@@ -61,7 +64,7 @@ public class VersionUpdateController implements Initializable {
 		updatePath.setText("");
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 		String updateFileDir = sysConfig.getUpdatePath();
-		if (FileUtil.exist(updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME)) {
+		if (FileUtil.exist(updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.UPDATE_CHECK_LIST)) {
 			rollbackBtn.setDisable(false);
 		} else {
 			rollbackBtn.setDisable(true);
@@ -91,17 +94,24 @@ public class VersionUpdateController implements Initializable {
 		//将/update/bak/rpa-client.jar 复制回去
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 		String updateFileDir = sysConfig.getUpdatePath();
-		String bakFile = updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME;
+		String bakDir = updateFileDir + File.separator + BAK_PATH;
+		Properties bakListProp = new Properties();
+		BufferedInputStream inputStream = FileUtil.getInputStream(bakDir + File.separator + SystemContants.UPDATE_CHECK_LIST);
 		try {
-			CommonUtil.copyAndCoverFile(bakFile, sysConfig.getJarFilePath());
+			bakListProp.load(inputStream);
+			for (Object key : bakListProp.keySet()) {
+				CommonUtil.copyAndCoverFile(bakDir + File.separator + key,
+						String.valueOf(key).replace(SystemContants.SEPARATER, File.separator)
+								.replace(SystemContants.COLON, COLON));
+			}
 		} catch (Exception e) {
 			log.error(e);
 			AlertMaker.showSimpleAlert("失败", "恢复失败");
 			return;
 		}
-		FileUtil.del(bakFile);
+		FileUtil.del(bakDir);
 		//提示重启
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"回退成功，重启后生效",
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "回退成功，重启后生效",
 				new ButtonType("退出", ButtonBar.ButtonData.YES));
 //        设置窗口的标题
 		alert.setTitle("回退");
@@ -133,12 +143,6 @@ public class VersionUpdateController implements Initializable {
 		String updateFileDir = sysConfig.getUpdatePath();
 		//将上传文件放在update/下面
 		FileUtil.copy(file.getAbsolutePath(), updateFileDir + File.separator + file.getName(), true);
-		//将原来的jar文件放在update/bak下面
-		if (FileUtil.exist(sysConfig.getJarFilePath())) {
-			FileUtil.copy(sysConfig.getJarFilePath(),
-					updateFileDir + File.separator + BAK_PATH + File.separator + SystemContants.JAR_NAME, true);
-		}
-
 		//解压更新文件到/update/.tmp/下
 		String tmpPath = updateFileDir + File.separator + TMP_PATH;
 		FileUtil.del(tmpPath);
@@ -146,34 +150,38 @@ public class VersionUpdateController implements Initializable {
 		String srcSuffixName = file.getName().substring(0, index) + ".zip";
 		String zipPath = tmpPath + File.separator + srcSuffixName;
 		FileUtil.copy(file.getAbsolutePath(), zipPath, true);
-		//将安装包解压到.tmp
+		//将安装包解压到.tmp， 解压后的更新文件夹放在tmpPath下
 		ZipUtil.unzip(zipPath, tmpPath);
+
+		//更新文件夹的全路径
+		String theUpdateDir = "";
 		String[] fileNames = new File(tmpPath).list();
 		for (int i = 0; i < fileNames.length; i++) {
 			File setupDir = new File(tmpPath + File.separator + fileNames[i]);
-			if (setupDir.isDirectory()) {
-				String[] setupFileNames = setupDir.list();
-				for (int j = 0; j < setupFileNames.length; j++) {
-					File setupFile = new File(setupDir.getAbsolutePath() + File.separator + setupFileNames[i]);
-					if (setupFileNames[j].endsWith(".sql")) {    //1、数据库文件更新
-						executeUpdateSqlFile(setupFile);
-					} else if (setupFileNames[j].equalsIgnoreCase(SystemContants.JAR_NAME)) {    //2、新的jar替换原来的jar]
-						try {
-							CommonUtil.copyAndCoverFile(setupDir.getAbsolutePath()
-											+ File.separator
-											+ SystemContants.JAR_NAME,
-									sysConfig.getJarFilePath());
-						} catch (Exception e) {
-							log.error(e);
-							AlertMaker.showSimpleAlert("失败", "更新失败");
-							return;
-						}
-						needRestart = true;
-					}
-					//todo 可增加别的需要copy的文件
-				}
-			}
+			if (setupDir.isDirectory()) theUpdateDir = setupDir.getAbsolutePath();
 		}
+		if (StringUtils.isEmpty(theUpdateDir)) {
+			log.error("更新文件错误,更新文件是一个文件夹结构");
+			AlertMaker.showSimpleAlert("失败", "更新失败");
+			return;
+		}
+		if (!FileUtil.exist(theUpdateDir + File.separator + SystemContants.UPDATE_CHECK_LIST)) {
+			log.error("更新文件错误,找不到 checklist.properties");
+			AlertMaker.showSimpleAlert("失败", "更新失败");
+			return;
+		}
+
+		Properties checkListProp = new Properties();
+		BufferedInputStream inputStream = FileUtil.getInputStream(theUpdateDir + File.separator + SystemContants.UPDATE_CHECK_LIST);
+		try {
+			checkListProp.load(inputStream);
+			needRestart = updateByCheckList(checkListProp, theUpdateDir, updateFileDir + File.separator + BAK_PATH, sysConfig.getBotRootDir());
+		} catch (Exception e) {
+			log.error(e);
+			AlertMaker.showSimpleAlert("失败", "更新失败, 原因：" + e.getMessage());
+			return;
+		}
+
 		FileUtil.del(tmpPath);
 		if (!needRestart) {
 			AlertMaker.showSimpleAlert("更新", "更新成功");
@@ -181,22 +189,114 @@ public class VersionUpdateController implements Initializable {
 			return;
 		}
 		//提示重启
-		try{
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"更新成功，请重启后生效",
+		try {
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "更新成功，请重启后生效",
 					new ButtonType("退出", ButtonBar.ButtonData.YES));
 //        设置窗口的标题
 			alert.setTitle("更新");
 			alert.setHeaderText("更新成功");
 //			howAndWait() 将在对话框消失以前不会执行之后的代码
 			alert.showAndWait();
-
-		}catch (Throwable e){
+		} catch (Throwable e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			System.exit(0);
 		}
 
 
+	}
+
+	private boolean updateByCheckList(Properties checkListProp, String theUpdateDir, String bakDir, String rootDir) throws Exception {
+		boolean needRestart = false;
+		Properties bakProps = new Properties();
+		for (Object key : checkListProp.keySet()) {
+			String sKey = String.valueOf(key);
+			String[] keyArray = sKey.split("\\|");
+			if (keyArray[0].startsWith(SystemContants.UPDATE_CHECK_LIST_TYPE_SQL)) {
+				executeUpdateSqlFile(new File(theUpdateDir + File.separator + keyArray[1]));
+			} else if (keyArray[0].startsWith(SystemContants.UPDATE_CHECK_LIST_TYPE_FILE)) {
+				needRestart = true;
+				String pathValue = getPropValue(checkListProp, key);
+				String desFilePath = rootDir
+						+ (StringUtils.isEmpty(pathValue) ? "" : File.separator + pathValue)
+						+ File.separator + keyArray[1];
+				if (FileUtil.exist(desFilePath)) {
+					bakProps.put(convertPath(desFilePath), desFilePath);
+					//备份、将文件放在update/bak下面
+					FileUtil.copy(desFilePath, bakDir + File.separator + convertPath(desFilePath), true);
+					//替换文件
+					CommonUtil.copyAndCoverFile(theUpdateDir + File.separator + keyArray[1],
+							desFilePath);
+				} else {
+					//替换文件
+					FileUtil.copy(theUpdateDir + File.separator + keyArray[1],
+							desFilePath, true);
+				}
+
+			} else if (keyArray[0].startsWith(SystemContants.UPDATE_CHECK_LIST_TYPE_DIR)) {
+				needRestart = true;
+				String pathValue = getPropValue(checkListProp, key);
+				copyFilesFromDir(bakDir,
+						theUpdateDir + File.separator + keyArray[1],
+						rootDir + (StringUtils.isEmpty(pathValue) ? "" : File.separator + pathValue),
+						bakProps);
+			}
+
+		}
+		//save bak checklist
+		FileUtil.writeUtf8String(CommonUtil.toPropString(bakProps),
+				bakDir + File.separator + SystemContants.UPDATE_CHECK_LIST);
+		return needRestart;
+	}
+
+	private Object convertPath(String desFilePath) {
+		return desFilePath
+				.replace(File.separator, SystemContants.SEPARATER)
+				.replace(COLON, SystemContants.COLON);
+	}
+
+	private String getPropValue(Properties checkListProp, Object key) {
+		Object v = checkListProp.get(String.valueOf(key));
+		if (v == null) return "";
+		String value = String.valueOf(v).trim();
+
+		if (value.startsWith(".")) value = value.substring(1);
+		else if (value.startsWith("/")) value = value.substring(1);
+		if (value.endsWith("/")) value = value.substring(0, value.length() - 1);
+
+		if (value.startsWith("\\")) value = value.substring(1);
+		if (value.endsWith("\\")) value = value.substring(0, value.length() - 1);
+
+		return value;
+	}
+
+	/**
+	 * @param bakDir     备份文件夹全路径
+	 * @param currentDir 当前处理文件夹全路径
+	 * @param desPath    复制目的地的全路径
+	 */
+	private void copyFilesFromDir(String bakDir, String currentDir, String desPath, Properties bakProps) throws Exception {
+		String[] fileNames = new File(currentDir).list();
+		for (int i = 0; i < fileNames.length; i++) {
+			File setupFile = new File(currentDir + File.separator + fileNames[i]);
+			if (setupFile.isDirectory()) {
+				copyFilesFromDir(bakDir, setupFile.getAbsolutePath(), desPath + File.separator + fileNames[i], bakProps);
+			} else {
+				String desFilePath = desPath + File.separator + fileNames[i];
+				if (FileUtil.exist(desFilePath)) {
+					bakProps.put(convertPath(desFilePath), desFilePath);
+					//备份、将文件放在update/bak下面
+					FileUtil.copy(desFilePath, bakDir + File.separator + convertPath(desFilePath), true);
+					//替换文件
+					CommonUtil.copyAndCoverFile(setupFile.getAbsolutePath(), desFilePath);
+				} else {
+					//替换文件
+					FileUtil.copy(setupFile.getAbsolutePath(), desFilePath, true);
+				}
+
+
+			}
+		}
 	}
 
 	@FXML
@@ -217,4 +317,8 @@ public class VersionUpdateController implements Initializable {
 		);
 	}
 
+	public static void main(String[] s){
+		FileUtil.del("D:\\other_project\\rpa-client\\update\\bak");
+
+	}
 }
