@@ -23,12 +23,12 @@
                         <Insets left="10.0" right="10.0" top="20.0" />
                      </VBox.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="taskId" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="任务编号" visible="false" editable="false">
+                  <JFXTextField fx:id="taskId" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="BOT编号" visible="false" editable="false">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" top="20.0" />
                      </VBox.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="taskName" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="任务脚本" editable="false">
+                  <JFXTextField fx:id="taskName" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="机器人名称" editable="false">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" top="20.0" />
                      </VBox.margin>

@@ -18,14 +18,14 @@
                <children>
                   <VBox fx:id="vFormBox" prefHeight="256.0" maxHeight="800" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <JFXTextField fx:id="id" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="任务编号">
+                        <JFXTextField fx:id="id" labelFloat="true" layoutX="20.0" layoutY="30.0" promptText="BOT编号">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
                         </JFXTextField>
                         <HBox fx:id="kjbName" spacing="5" maxHeight="50" VBox.vgrow="ALWAYS">
                            <children>
-                              <JFXTextField fx:id="name" labelFloat="true" promptText="任务脚本" HBox.hgrow="ALWAYS" editable="false">
+                              <JFXTextField fx:id="name" labelFloat="true" promptText="BOT名称" HBox.hgrow="ALWAYS" editable="false">
                               </JFXTextField>
                               <JFXButton fx:id="uploadFileButton" prefWidth="100.0" text="上传文件"/>
                               <JFXButton fx:id="uploadDirButton" prefWidth="100.0" text="上传文件夹"/>
@@ -35,7 +35,7 @@
                            </VBox.margin>
                         </HBox>
 
-                        <JFXComboBox fx:id="mainTask" labelFloat="true" promptText="主任务">
+                        <JFXComboBox fx:id="mainTask" labelFloat="true" promptText="上级BOT">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
@@ -52,7 +52,7 @@
                            </VBox.margin>
                         </JFXTextArea>
 
-                        <JFXComboBox fx:id="nextTask" labelFloat="true" promptText="依赖任务">
+                        <JFXComboBox fx:id="nextTask" labelFloat="true" promptText="依赖BOT">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>

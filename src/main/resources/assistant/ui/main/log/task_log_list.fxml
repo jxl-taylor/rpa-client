@@ -15,8 +15,8 @@
                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                        AnchorPane.topAnchor="0.0">
                 <columns>
-                    <TableColumn fx:id="idCol" text="编号"/>
-                    <TableColumn fx:id="statusCol" text="状态"/>
+                    <TableColumn fx:id="idCol" text="BOT编号"/>
+                    <TableColumn fx:id="statusCol" text="运行状态"/>
                     <TableColumn fx:id="startTime" minWidth="150" text="开始时间"/>
                     <TableColumn fx:id="endTime" minWidth="150" text="结束时间"/>
                     <TableColumn visible="false" fx:id="errorCol" prefWidth="75.0" text="错误信息"/>
