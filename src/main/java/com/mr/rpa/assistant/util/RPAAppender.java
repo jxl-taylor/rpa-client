@@ -1,7 +1,5 @@
 package com.mr.rpa.assistant.util;
 
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.LogTextCollector;
 import org.apache.log4j.Layout;
@@ -27,10 +25,6 @@ public class RPAAppender extends WriterAppender {
 	 * or System.err made after configuration.
 	 */
 	private boolean follow = false;
-
-	private TaskLogDao geTaskLogDao() {
-		return DatabaseHandler.getInstance().getTaskLogDao();
-	}
 
 	/**
 	 * Constructs an unconfigured appender.
