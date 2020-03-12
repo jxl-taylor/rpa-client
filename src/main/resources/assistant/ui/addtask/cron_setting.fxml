@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.addtask.CronSettingController">
+    <children>
+        <AnchorPane fx:id="mainContainer" prefHeight="168" prefWidth="464.0" styleClass="custom-pane"
+                    stylesheets="@/dark-theme.css">
+            <children>
+                <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                      AnchorPane.topAnchor="0.0">
+                    <children>
+                        <JFXTabPane fx:id="cronTabPane" >
+                            <Tab closable="false" styleClass="tab-main" text="秒">
+                                <content>
+                                    <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                        <children>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab closable="false" styleClass="tab-main" text="分钟">
+                                <content>
+                                    <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                        <children>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab closable="false" styleClass="tab-main" text="小时">
+                                <content>
+                                    <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                        <children>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab closable="false" styleClass="tab-main" text="日">
+                                <content>
+                                    <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                        <children>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab closable="false" styleClass="tab-main" text="月">
+                                <content>
+                                    <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                        <children>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab closable="false" styleClass="tab-main" text="年">
+                                <content>
+                                    <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                          AnchorPane.topAnchor="0.0">
+                                        <children>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                        </JFXTabPane>
+                        <HBox VBox.vgrow="ALWAYS" alignment="CENTER">
+                            <children>
+                                <JFXTextField fx:id="cronResult" text="*/5 * * * * ?" labelFloat="true" promptText="CRON" HBox.hgrow="ALWAYS"></JFXTextField>
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>

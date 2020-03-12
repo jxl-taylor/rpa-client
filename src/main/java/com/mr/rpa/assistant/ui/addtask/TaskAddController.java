@@ -12,6 +12,7 @@ import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.application.Platform;
@@ -140,6 +141,11 @@ public class TaskAddController implements Initializable {
 
 		//添加主任务选项
 		mainTask.getItems().clear();
+	}
+
+	@FXML
+	private void setCron(ActionEvent event){
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"), "CRON设置", null);
 	}
 
 	@FXML

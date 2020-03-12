@@ -41,11 +41,17 @@
                            </VBox.margin>
                         </JFXComboBox>
 
-                        <JFXTextField fx:id="cron" labelFloat="true" promptText="调度策略(cron)">
+                        <HBox spacing="5" maxHeight="50" VBox.vgrow="ALWAYS">
+                           <children>
+                              <JFXTextField fx:id="cron" labelFloat="true" promptText="调度策略(cron)" HBox.hgrow="ALWAYS">
+                              </JFXTextField>
+                              <JFXButton prefWidth="100.0" text="配置" onAction="#setCron"/>
+                           </children>
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
-                        </JFXTextField>
+                        </HBox>
+
                         <JFXTextArea fx:id="desp" maxHeight="100" labelFloat="true" style="-fx-text-fill: -fx-secondary" promptText="描述">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
