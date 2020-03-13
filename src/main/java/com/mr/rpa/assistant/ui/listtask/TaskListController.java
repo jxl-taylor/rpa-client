@@ -17,6 +17,7 @@ import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,6 +30,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
 import org.quartz.SchedulerException;
 
@@ -226,6 +228,10 @@ public class TaskListController implements Initializable {
 			stage.setFullScreen(false);
 			stage.setOnHiding((e) -> {
 				handleRefresh(new ActionEvent());
+			});
+
+			stage.setOnCloseRequest((event) -> {
+				AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
 			});
 
 		} catch (IOException ex) {

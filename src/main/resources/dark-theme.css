@@ -463,3 +463,21 @@
     -fx-font-size: 10pt;
     -fx-padding: 0 0 0 0;
 }
+
+.jfx-radio-button{
+    -jfx-selected-color: -fx-secondary;
+    -jfx-unselected-color: #5A5A5A;
+}
+
+.jfx-slider {
+    -jfx-default-thumb: -fx-secondary;
+    -jfx-default-track: -fx-primarytext;
+}
+.jfx-slider .slider-value {
+    -fx-stroke: -fx-primary;
+    -fx-font-size: 10;
+}
+
+.jfx-check-box {
+    -fx-text-fill: -fx-secondary;
+}

@@ -11,8 +11,6 @@ import java.util.*;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.database.impl.TaskDaoImpl;
 import com.mr.rpa.assistant.database.impl.TaskLogDaoImpl;
-import com.mr.rpa.assistant.ui.listbook.BookListController;
-import com.mr.rpa.assistant.ui.listmember.MemberListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -137,104 +135,6 @@ public final class DatabaseHandler {
 			return false;
 		} finally {
 		}
-	}
-
-	public boolean deleteBook(BookListController.Book book) {
-		try {
-			String deleteStatement = "DELETE FROM BOOK WHERE ID = ?";
-			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
-			stmt.setString(1, book.getId());
-			int res = stmt.executeUpdate();
-			if (res == 1) {
-				return true;
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-
-
-	public boolean isBookAlreadyIssued(BookListController.Book book) {
-		try {
-			String checkstmt = "SELECT COUNT(*) FROM ISSUE WHERE bookid=?";
-			PreparedStatement stmt = conn.prepareStatement(checkstmt);
-			stmt.setString(1, book.getId());
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				LOGGER.info(count);
-				return (count > 0);
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean deleteMember(MemberListController.Member member) {
-		try {
-			String deleteStatement = "DELETE FROM MEMBER WHERE id = ?";
-			PreparedStatement stmt = conn.prepareStatement(deleteStatement);
-			stmt.setString(1, member.getId());
-			int res = stmt.executeUpdate();
-			if (res == 1) {
-				return true;
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean isMemberHasAnyBooks(MemberListController.Member member) {
-		try {
-			String checkstmt = "SELECT COUNT(*) FROM ISSUE WHERE memberID=?";
-			PreparedStatement stmt = conn.prepareStatement(checkstmt);
-			stmt.setString(1, member.getId());
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				LOGGER.error(count);
-				return (count > 0);
-			}
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean updateBook(BookListController.Book book) {
-		try {
-			String update = "UPDATE BOOK SET TITLE=?, AUTHOR=?, PUBLISHER=? WHERE ID=?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, book.getTitle());
-			stmt.setString(2, book.getAuthor());
-			stmt.setString(3, book.getPublisher());
-			stmt.setString(4, book.getId());
-			int res = stmt.executeUpdate();
-			return (res > 0);
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
-	}
-
-	public boolean updateMember(MemberListController.Member member) {
-		try {
-			String update = "UPDATE MEMBER SET NAME=?, EMAIL=?, MOBILE=? WHERE ID=?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, member.getName());
-			stmt.setString(2, member.getEmail());
-			stmt.setString(3, member.getMobile());
-			stmt.setString(4, member.getId());
-			int res = stmt.executeUpdate();
-			return (res > 0);
-		} catch (SQLException ex) {
-			LOGGER.error("{}", ex);
-		}
-		return false;
 	}
 
 	private static void createTables(List<String> tableData) throws SQLException {

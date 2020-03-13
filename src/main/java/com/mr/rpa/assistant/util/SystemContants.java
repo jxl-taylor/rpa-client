@@ -35,4 +35,10 @@ public class SystemContants {
 	 */
 	public static final String SEPARATER = "${SEPARATER}";
 
+	public static final String CRON_TYEP_EVERY = "every";
+	public static final String CRON_TYEP_RANGE = "range";
+	public static final String CRON_TYEP_NO_SPECIFIED = "no_specified";
+	public static final String CRON_TYEP_SPECIFIED = "specified";
+	public static final String CRON_TYEP_SPECIFIED_ITEM = "specified_item";
+
 }

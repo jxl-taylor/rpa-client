@@ -14,6 +14,7 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.KeyValue;
+import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -144,8 +145,11 @@ public class TaskAddController implements Initializable {
 	}
 
 	@FXML
-	private void setCron(ActionEvent event){
-		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"), "CRON设置", null);
+	private void setCron(ActionEvent event) {
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
+				.getResource("assistant/ui/addtask/cron_setting.fxml"), "CRON设置", null);
+		CronSettingController controller = (CronSettingController) pair.getObject2();
+		controller.setCronUI(cron.getText());
 	}
 
 	@FXML
@@ -238,7 +242,7 @@ public class TaskAddController implements Initializable {
 	}
 
 	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
-		if (taskName.isEmpty() || mainTaskName.isEmpty()|| taskDesp.isEmpty() || taskCron.isEmpty()) {
+		if (taskName.isEmpty() || mainTaskName.isEmpty() || taskDesp.isEmpty() || taskCron.isEmpty()) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "任务名称、描述、CRON不能为空.");
 			return false;
 		}
