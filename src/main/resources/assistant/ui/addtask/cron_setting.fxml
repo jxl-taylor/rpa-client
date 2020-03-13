@@ -11,12 +11,11 @@
 <?import com.jfoenix.controls.JFXRadioButton?>
 <?import javafx.scene.control.Label?>
 <?import com.jfoenix.controls.JFXComboBox?>
-<?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXMasonryPane?>
 <StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.addtask.CronSettingController">
     <children>
-        <AnchorPane fx:id="mainContainer" prefHeight="368" prefWidth="464.0" styleClass="custom-pane"
+        <AnchorPane fx:id="mainContainer" prefHeight="300" prefWidth="464.0" styleClass="custom-pane"
                     stylesheets="@/dark-theme.css">
             <children>
                 <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -34,7 +33,6 @@
                                                     <Label text="每秒" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
-
                                             <HBox alignment="CENTER_LEFT" >
                                                 <children>
                                                     <JFXRadioButton userData="range"/>
@@ -45,7 +43,6 @@
                                                     <Label text="秒执行一次" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
-
                                             <HBox alignment="CENTER_LEFT" >
                                                 <children>
                                                     <JFXRadioButton userData="specified"/>
@@ -54,10 +51,9 @@
                                             </HBox>
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
-                                                    <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="300" prefWidth="464.0"/>
+                                                    <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="260" prefWidth="464.0"/>
                                                 </children>
                                             </HBox>
-
                                         </children>
                                         <padding>
                                             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
@@ -65,6 +61,7 @@
                                     </VBox>
                                 </content>
                             </Tab>
+
                             <Tab closable="false" styleClass="tab-main" text="分钟">
                                 <content>
                                     <VBox fx:id="miniteVBox" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -76,7 +73,6 @@
                                                     <Label text="每分钟" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
-
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
                                                     <JFXRadioButton userData="range"/>
@@ -87,7 +83,6 @@
                                                     <Label text="分钟执行一次" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
-
                                             <HBox alignment="CENTER_LEFT" >
                                                 <children>
                                                     <JFXRadioButton userData="specified"/>
@@ -96,7 +91,7 @@
                                             </HBox>
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
-                                                    <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="300" prefWidth="464.0"/>
+                                                    <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="260" prefWidth="464.0"/>
                                                 </children>
                                             </HBox>
                                         </children>
@@ -106,6 +101,7 @@
                                     </VBox>
                                 </content>
                             </Tab>
+
                             <Tab closable="false" styleClass="tab-main" text="小时">
                                 <content>
                                     <VBox fx:id="hourVBox" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -117,7 +113,6 @@
                                                     <Label text="每小时" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
-
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
                                                     <JFXRadioButton userData="range"/>
@@ -128,7 +123,6 @@
                                                     <Label text="小时执行一次" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
-
                                             <HBox alignment="CENTER_LEFT" >
                                                 <children>
                                                     <JFXRadioButton userData="specified"/>
@@ -137,7 +131,7 @@
                                             </HBox>
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
-                                                    <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="300" prefWidth="464.0"/>
+                                                    <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="260" prefWidth="464.0"/>
                                                 </children>
                                             </HBox>
                                         </children>
@@ -147,6 +141,7 @@
                                     </VBox>
                                 </content>
                             </Tab>
+
                             <Tab closable="false" styleClass="tab-main" text="日">
                                 <VBox fx:id="dayVBox" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                       AnchorPane.topAnchor="0.0">
@@ -175,7 +170,6 @@
                                                 <Label text="天执行一次" HBox.hgrow="ALWAYS"/>
                                             </children>
                                         </HBox>
-
                                         <HBox alignment="CENTER_LEFT" >
                                             <children>
                                                 <JFXRadioButton userData="specified"/>
@@ -184,7 +178,7 @@
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="300" prefWidth="464.0"/>
+                                                <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="260" prefWidth="464.0"/>
                                             </children>
                                         </HBox>
                                     </children>
@@ -193,6 +187,7 @@
                                     </padding>
                                 </VBox>
                             </Tab>
+
                             <Tab closable="false" styleClass="tab-main" text="月份">
                                 <VBox fx:id="monthVBox" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                       AnchorPane.topAnchor="0.0">
@@ -223,7 +218,7 @@
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="300" prefWidth="464.0"/>
+                                                <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="260" prefWidth="464.0"/>
                                             </children>
                                         </HBox>
                                     </children>
@@ -232,6 +227,7 @@
                                     </padding>
                                 </VBox>
                             </Tab>
+
                             <Tab closable="false" styleClass="tab-main" text="周（星期）">
                                 <VBox fx:id="weekVBox" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                       AnchorPane.topAnchor="0.0">
@@ -258,7 +254,7 @@
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="300" prefWidth="464.0"/>
+                                                <JFXMasonryPane HSpacing="0" VSpacing="0" cellHeight="15" cellWidth="30" prefHeight="260" prefWidth="464.0"/>
                                             </children>
                                         </HBox>
                                     </children>

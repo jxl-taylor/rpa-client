@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Log4j
 public class CronSettingController implements Initializable {
@@ -73,11 +74,11 @@ public class CronSettingController implements Initializable {
 	private void initRadioButton(VBox vBox, Map<String, HBox> hboxMap, int min, int max) {
 		hBoxMapList.add(hboxMap);
 		final ToggleGroup secondGroup = new ToggleGroup();
-		for (int i = min; i < vBox.getChildren().size(); i++) {
+		for (int i = 0; i < vBox.getChildren().size(); i++) {
 			HBox node = (HBox) vBox.getChildren().get(i);
 			//指定的checkbox
 			if (!(node.getChildren().get(0) instanceof JFXRadioButton)) {
-				initCheckBox((JFXMasonryPane) node.getChildren().get(0), max);
+				initCheckBox((JFXMasonryPane) node.getChildren().get(0), min, max);
 				hboxMap.put(SystemContants.CRON_TYEP_SPECIFIED_ITEM, node);
 				return;
 			}
@@ -87,11 +88,13 @@ public class CronSettingController implements Initializable {
 			String radioKey = String.valueOf(secondRadio.getUserData());
 			//range 处理
 			if (radioKey.equals(SystemContants.CRON_TYEP_RANGE)) {
-				JFXComboBox<Integer> monthBeginComboBox = (JFXComboBox<Integer>) node.getChildren().get(2);
-				JFXComboBox<Integer> monthRateComboBox = (JFXComboBox<Integer>) node.getChildren().get(4);
+				JFXComboBox<String> monthBeginComboBox = (JFXComboBox<String>) node.getChildren().get(2);
+				JFXComboBox<String> monthRateComboBox = (JFXComboBox<String>) node.getChildren().get(4);
+				monthBeginComboBox.getItems().add("");
+				monthRateComboBox.getItems().add("");
 				for (int j = min; j <= max; j++) {
-					monthBeginComboBox.getItems().add(j);
-					if (j != 0) monthRateComboBox.getItems().add(j);
+					monthBeginComboBox.getItems().add(String.valueOf(j));
+					if (j != 0) monthRateComboBox.getItems().add(String.valueOf(j));
 				}
 			}
 			//默认复制第一个，匹配 *
@@ -108,8 +111,8 @@ public class CronSettingController implements Initializable {
 				});
 	}
 
-	private void initCheckBox(JFXMasonryPane masonryPane, int max) {
-		for (int i = 0; i <= max; i++) {
+	private void initCheckBox(JFXMasonryPane masonryPane, int min, int max) {
+		for (int i = min; i <= max; i++) {
 			JFXCheckBox checkBox = new JFXCheckBox(String.valueOf(i));
 			checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 				public void changed(ObservableValue<? extends Boolean> ov,
@@ -126,18 +129,18 @@ public class CronSettingController implements Initializable {
 
 	}
 
+	/**
+	 * 通过cron表达式反向设置UI
+	 * 0: second
+	 * 1: minite
+	 * 2: hour
+	 * 3: day
+	 * 4: month
+	 * 5: year
+	 */
 	public void setCronUI(String cron) {
 		if (StringUtils.isBlank(cron)) return;
-		/**
-		 * 0: second
-		 * 1: minite
-		 * 2: hour
-		 * 3: day
-		 * 4: month
-		 * 5: year
-		 */
-
-		String[] cronArray = cron.trim().split("\\\\s+");
+		String[] cronArray = cron.trim().split("\\s+");
 		if (cronArray.length != 6) return;
 		for (int i = 0; i < cronArray.length; i++) {
 			if (cronArray[i].equals(CRON_START)) {
@@ -148,21 +151,20 @@ public class CronSettingController implements Initializable {
 				String[] ranges = cronArray[i].split(CRON_SEPARATOR);
 				HBox hBox = hBoxMapList.get(i).get(SystemContants.CRON_TYEP_RANGE);
 				((JFXRadioButton) hBox.getChildren().get(0)).setSelected(true);
-				JFXComboBox<Integer> monthBeginComboBox = (JFXComboBox<Integer>) hBox.getChildren().get(2);
-				JFXComboBox<Integer> monthRateComboBox = (JFXComboBox<Integer>) hBox.getChildren().get(4);
+				JFXComboBox<String> monthBeginComboBox = (JFXComboBox<String>) hBox.getChildren().get(2);
+				JFXComboBox<String> monthRateComboBox = (JFXComboBox<String>) hBox.getChildren().get(4);
 				// check input
-				int begin = Integer.parseInt(ranges[0]);
-				int rate = Integer.parseInt(ranges[1]);
-				monthBeginComboBox.setValue(begin);
-				monthRateComboBox.setValue(rate);
-			} else if (cronArray[i].contains(CRON_COMMA)) {
+				monthBeginComboBox.setValue(ranges[0].equals(CRON_START) ? "" : ranges[0]);
+				monthRateComboBox.setValue(ranges[1].equals(CRON_START) ? "" : ranges[1]);
+			} else if (cronArray[i].contains(CRON_COMMA) || Pattern.matches("^[1-9]\\d*$", cronArray[i])) {
 				String[] specifieds = cronArray[i].split(CRON_COMMA);
 				HBox hBox = hBoxMapList.get(i).get(SystemContants.CRON_TYEP_SPECIFIED);
 				((JFXRadioButton) hBox.getChildren().get(0)).setSelected(true);
 				JFXMasonryPane masonryPane = (JFXMasonryPane) hBoxMapList.get(i).get(SystemContants.CRON_TYEP_SPECIFIED_ITEM).getChildren().get(0);
 				masonryPane.getChildren().forEach(item -> {
-					for (int k = 0; k < specifieds.length; k++){
-						if(((JFXCheckBox)item).getText().equals(specifieds[k])) ((JFXCheckBox)item).setSelected(true);
+					for (int k = 0; k < specifieds.length; k++) {
+						if (((JFXCheckBox) item).getText().equals(specifieds[k]))
+							((JFXCheckBox) item).setSelected(true);
 					}
 				});
 			}
@@ -170,7 +172,7 @@ public class CronSettingController implements Initializable {
 	}
 
 	private void initComponents() {
-		cronTabPane.tabMinWidthProperty().bind(cronTabPane.widthProperty().divide(cronTabPane.getTabs().size()).subtract(3));
+		cronTabPane.tabMinWidthProperty().bind(cronTabPane.widthProperty().divide(cronTabPane.getTabs().size()).subtract(6));
 	}
 
 }

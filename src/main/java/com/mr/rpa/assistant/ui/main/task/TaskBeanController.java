@@ -6,6 +6,7 @@ import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.Pair;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -64,8 +66,11 @@ public class TaskBeanController implements Initializable {
 
 	@FXML
 	private void loadAddTask(ActionEvent event) {
-		AssistantUtil.loadWindow(getClass().getClassLoader()
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
 				.getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
+		pair.getObject1().setOnCloseRequest((e) -> {
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
+		});
 
 	}
 
