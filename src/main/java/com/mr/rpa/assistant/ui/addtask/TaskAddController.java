@@ -25,6 +25,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -150,6 +152,14 @@ public class TaskAddController implements Initializable {
 				.getResource("assistant/ui/addtask/cron_setting.fxml"), "CRON设置", null);
 		CronSettingController controller = (CronSettingController) pair.getObject2();
 		controller.setCronUI(cron.getText());
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+		mainContainer.setEffect(blur);
+		mainContainer.setDisable(true);
+		pair.getObject1().setOnCloseRequest((e) -> {
+			mainContainer.setEffect(null);
+			mainContainer.setDisable(false);
+		});
+
 	}
 
 	@FXML
@@ -376,6 +386,8 @@ public class TaskAddController implements Initializable {
 
 	public void setCronFromConfig(String cronString) {
 		cron.setText(cronString);
+		mainContainer.setEffect(null);
+		mainContainer.setDisable(false);
 	}
 
 	public void convertStringToParam(String paramString) {

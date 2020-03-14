@@ -79,6 +79,7 @@ public class CronSettingController implements Initializable {
 		initRadioButton(dayVBox, dayHboxMap, 1, 31);
 		initRadioButton(monthVBox, monthHboxMap, 1, 12);
 		initRadioButton(weekVBox, weekHboxMap, 1, 7);
+		setCronResult();
 	}
 
 	@FXML
@@ -94,7 +95,6 @@ public class CronSettingController implements Initializable {
 
 		JFXButton cancelBtn = new JFXButton("取消");
 		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
 			rootPane.getChildren().get(0).setEffect(null);
 		});
 		AlertMaker.showMaterialDialog(rootPane,
@@ -123,9 +123,9 @@ public class CronSettingController implements Initializable {
 				return;
 			}
 
-			JFXRadioButton secondRadio = (JFXRadioButton) node.getChildren().get(0);
-			secondRadio.setToggleGroup(toggleGroup);
-			String radioKey = String.valueOf(secondRadio.getUserData());
+			JFXRadioButton radioButton = (JFXRadioButton) node.getChildren().get(0);
+			radioButton.setToggleGroup(toggleGroup);
+			String radioKey = String.valueOf(radioButton.getUserData());
 			//range 处理
 			if (radioKey.equals(SystemContants.CRON_TYEP_RANGE)) {
 				JFXComboBox<String> beginComboBox = (JFXComboBox<String>) node.getChildren().get(2);
@@ -145,8 +145,8 @@ public class CronSettingController implements Initializable {
 					if (j != 0) rateComboBox.getItems().add(String.valueOf(j));
 				}
 			}
-			//默认复制第一个，匹配 *
-			if (i == 0) secondRadio.setSelected(true);
+			//默认复制第一个，匹配 * 周类型默认为？
+			if (i == 0 && vBox != weekVBox) radioButton.setSelected(true);
 			hboxMap.put(radioKey, node);
 		}
 

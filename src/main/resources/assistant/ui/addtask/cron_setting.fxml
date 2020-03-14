@@ -30,7 +30,7 @@
                                         <children>
                                             <HBox alignment="CENTER_LEFT" >
                                                 <children>
-                                                    <JFXRadioButton userData="every"/>
+                                                    <JFXRadioButton userData="every" selected="true"/>
                                                     <Label text="每秒" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
@@ -70,7 +70,7 @@
                                         <children>
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
-                                                    <JFXRadioButton userData="every"/>
+                                                    <JFXRadioButton userData="every" selected="true" />
                                                     <Label text="每分钟" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
@@ -110,7 +110,7 @@
                                         <children>
                                             <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                                 <children>
-                                                    <JFXRadioButton userData="every"/>
+                                                    <JFXRadioButton userData="every" selected="true"/>
                                                     <Label text="每小时" HBox.hgrow="ALWAYS"/>
                                                 </children>
                                             </HBox>
@@ -149,7 +149,7 @@
                                     <children>
                                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <JFXRadioButton userData="every"/>
+                                                <JFXRadioButton userData="every" selected="true"/>
                                                 <Label text="每天" HBox.hgrow="ALWAYS"/>
                                             </children>
                                         </HBox>
@@ -195,7 +195,7 @@
                                     <children>
                                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <JFXRadioButton userData="every"/>
+                                                <JFXRadioButton userData="every" selected="true"/>
                                                 <Label text="每月" HBox.hgrow="ALWAYS"/>
                                             </children>
                                         </HBox>
@@ -242,7 +242,7 @@
 
                                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <JFXRadioButton userData="no_specified"/>
+                                                <JFXRadioButton userData="no_specified" selected="true"/>
                                                 <Label text="不指定" HBox.hgrow="ALWAYS"/>
                                             </children>
                                         </HBox>
