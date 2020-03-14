@@ -4,6 +4,7 @@
 /logs/
 /database/
 /kjb/
+/mbot/
 /update/
 
 .classpath
