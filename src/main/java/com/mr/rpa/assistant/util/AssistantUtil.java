@@ -73,6 +73,10 @@ public class AssistantUtil {
 		return stages.get(loc.getPath());
 	}
 
+	public static Pair<Stage, Object> getWindow(URL loc) {
+		return stages.get(loc.getPath());
+	}
+
 	public static void closeWinow(URL loc) {
 		Stage stage = stages.get(loc.getPath()).getObject1();
 		if (stage != null && stage.isShowing()) {

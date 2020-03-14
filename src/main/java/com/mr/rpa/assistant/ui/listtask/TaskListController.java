@@ -13,6 +13,7 @@ import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -211,32 +212,20 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务编辑.");
 			return;
 		}
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"));
-			Parent parent = loader.load();
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
+				.getResource("assistant/ui/addtask/add_task.fxml"), "编辑任务", null);
 
-			TaskAddController controller = (TaskAddController) loader.getController();
-			controller.inflateUI(selectedForEdit);
+		TaskAddController controller = (TaskAddController) pair.getObject2();
+		controller.inflateUI(selectedForEdit);
+		Stage stage = pair.getObject1();
+		stage.setOnHiding((e) -> {
+			handleRefresh(new ActionEvent());
+		});
 
-			Stage stage = new Stage(StageStyle.DECORATED);
-			stage.setTitle("编辑任务");
-			stage.setScene(new Scene(parent));
-			stage.show();
-			AssistantUtil.setStageIcon(stage);
+		stage.setOnCloseRequest((event) -> {
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
+		});
 
-			stage.setResizable(false);
-			stage.setFullScreen(false);
-			stage.setOnHiding((e) -> {
-				handleRefresh(new ActionEvent());
-			});
-
-			stage.setOnCloseRequest((event) -> {
-				AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
-			});
-
-		} catch (IOException ex) {
-			log.error(ex);
-		}
 	}
 
 	@FXML

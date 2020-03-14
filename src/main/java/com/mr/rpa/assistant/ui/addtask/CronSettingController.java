@@ -3,17 +3,24 @@ package com.mr.rpa.assistant.ui.addtask;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
+import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +35,9 @@ public class CronSettingController implements Initializable {
 	private static final String CRON_ASK = "?";
 	private static final String CRON_COMMA = ",";
 	private static final String CRON_SEPARATOR = "/";
+
+	@FXML
+	private StackPane rootPane;
 
 	@FXML
 	private AnchorPane mainContainer;
@@ -71,9 +81,39 @@ public class CronSettingController implements Initializable {
 		initRadioButton(weekVBox, weekHboxMap, 1, 7);
 	}
 
+	@FXML
+	private void saveCron(ActionEvent event) {
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+			Pair<Stage, Object> pair = AssistantUtil.getWindow(getClass()
+					.getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"));
+			TaskAddController controller = (TaskAddController) pair.getObject2();
+			controller.setCronFromConfig(cronResult.getText());
+			closeWindow();
+		});
+
+		JFXButton cancelBtn = new JFXButton("取消");
+		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
+			rootPane.getChildren().get(0).setEffect(null);
+		});
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "CRON", "保存CRON配置", false);
+	}
+
+	private void closeWindow() {
+		Stage stage = (Stage) rootPane.getScene().getWindow();
+		stage.close();
+	}
+
 	private void initRadioButton(VBox vBox, Map<String, HBox> hboxMap, int min, int max) {
+		ToggleGroup toggleGroup = new ToggleGroup();
+		toggleGroup.selectedToggleProperty().addListener((ov, oldToggle, newToggle) -> {
+			if (toggleGroup.getSelectedToggle() != null) setCronResult();
+
+		});
 		hBoxMapList.add(hboxMap);
-		final ToggleGroup secondGroup = new ToggleGroup();
 		for (int i = 0; i < vBox.getChildren().size(); i++) {
 			HBox node = (HBox) vBox.getChildren().get(i);
 			//指定的checkbox
@@ -84,31 +124,32 @@ public class CronSettingController implements Initializable {
 			}
 
 			JFXRadioButton secondRadio = (JFXRadioButton) node.getChildren().get(0);
-			secondRadio.setToggleGroup(secondGroup);
+			secondRadio.setToggleGroup(toggleGroup);
 			String radioKey = String.valueOf(secondRadio.getUserData());
 			//range 处理
 			if (radioKey.equals(SystemContants.CRON_TYEP_RANGE)) {
-				JFXComboBox<String> monthBeginComboBox = (JFXComboBox<String>) node.getChildren().get(2);
-				JFXComboBox<String> monthRateComboBox = (JFXComboBox<String>) node.getChildren().get(4);
-				monthBeginComboBox.getItems().add("");
-				monthRateComboBox.getItems().add("");
+				JFXComboBox<String> beginComboBox = (JFXComboBox<String>) node.getChildren().get(2);
+				beginComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+					log.info(newValue);
+					setCronResult();
+				});
+				JFXComboBox<String> rateComboBox = (JFXComboBox<String>) node.getChildren().get(4);
+				rateComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+					log.info(newValue);
+					setCronResult();
+				});
+				beginComboBox.getItems().add("");
+				rateComboBox.getItems().add("");
 				for (int j = min; j <= max; j++) {
-					monthBeginComboBox.getItems().add(String.valueOf(j));
-					if (j != 0) monthRateComboBox.getItems().add(String.valueOf(j));
+					beginComboBox.getItems().add(String.valueOf(j));
+					if (j != 0) rateComboBox.getItems().add(String.valueOf(j));
 				}
 			}
 			//默认复制第一个，匹配 *
 			if (i == 0) secondRadio.setSelected(true);
 			hboxMap.put(radioKey, node);
 		}
-		secondGroup.selectedToggleProperty().addListener(
-				(ObservableValue<? extends Toggle> ov, Toggle old_toggle,
-				 Toggle new_toggle) -> {
-					if (secondGroup.getSelectedToggle() != null) {
-						String selected = secondGroup.getSelectedToggle().getUserData().toString();
-						log.info(selected);
-					}
-				});
+
 	}
 
 	private void initCheckBox(JFXMasonryPane masonryPane, int min, int max) {
@@ -118,14 +159,11 @@ public class CronSettingController implements Initializable {
 				public void changed(ObservableValue<? extends Boolean> ov,
 									Boolean old_val, Boolean new_val) {
 					log.info(checkBox.getText());
+					setCronResult();
 				}
 			});
 			masonryPane.getChildren().add(checkBox);
 		}
-
-	}
-
-	private void setCronValue() {
 
 	}
 
@@ -151,11 +189,11 @@ public class CronSettingController implements Initializable {
 				String[] ranges = cronArray[i].split(CRON_SEPARATOR);
 				HBox hBox = hBoxMapList.get(i).get(SystemContants.CRON_TYEP_RANGE);
 				((JFXRadioButton) hBox.getChildren().get(0)).setSelected(true);
-				JFXComboBox<String> monthBeginComboBox = (JFXComboBox<String>) hBox.getChildren().get(2);
-				JFXComboBox<String> monthRateComboBox = (JFXComboBox<String>) hBox.getChildren().get(4);
+				JFXComboBox<String> beginComboBox = (JFXComboBox<String>) hBox.getChildren().get(2);
+				JFXComboBox<String> rateComboBox = (JFXComboBox<String>) hBox.getChildren().get(4);
 				// check input
-				monthBeginComboBox.setValue(ranges[0].equals(CRON_START) ? "" : ranges[0]);
-				monthRateComboBox.setValue(ranges[1].equals(CRON_START) ? "" : ranges[1]);
+				beginComboBox.setValue(ranges[0].equals(CRON_START) ? "" : ranges[0]);
+				rateComboBox.setValue(ranges[1].equals(CRON_START) ? "" : ranges[1]);
 			} else if (cronArray[i].contains(CRON_COMMA) || Pattern.matches("^[1-9]\\d*$", cronArray[i])) {
 				String[] specifieds = cronArray[i].split(CRON_COMMA);
 				HBox hBox = hBoxMapList.get(i).get(SystemContants.CRON_TYEP_SPECIFIED);
@@ -169,6 +207,43 @@ public class CronSettingController implements Initializable {
 				});
 			}
 		}
+	}
+
+	private void setCronResult() {
+		StringBuilder cronStr = new StringBuilder();
+		//不指定的次数，有且仅有一次
+		int specifiedCount = 0;
+		for (Map<String, HBox> hBoxMap : hBoxMapList)
+			for (Map.Entry<String, HBox> entry : hBoxMap.entrySet()) {
+				String cronType = entry.getKey();
+				HBox hBox = entry.getValue();
+				if (hBox.getChildren().get(0) instanceof JFXRadioButton
+						&& ((JFXRadioButton) hBox.getChildren().get(0)).isSelected()) {
+					if (cronType.equals(SystemContants.CRON_TYEP_EVERY)) {
+						cronStr.append(" ").append(CRON_START);
+					} else if (cronType.equals(SystemContants.CRON_TYEP_RANGE)) {
+						String begin = ((JFXComboBox<String>) hBox.getChildren().get(2)).getValue();
+						String rate = ((JFXComboBox<String>) hBox.getChildren().get(4)).getValue();
+						if (StringUtils.isEmpty(rate)) return;
+						cronStr.append(" ").append(String.format("%s/%s", StringUtils.isEmpty(begin) ? CRON_START : begin, rate));
+					} else if (cronType.equals(SystemContants.CRON_TYEP_NO_SPECIFIED)) {
+						cronStr.append(" ").append(CRON_ASK);
+						specifiedCount++;
+					} else if (cronType.equals(SystemContants.CRON_TYEP_SPECIFIED)) {
+						JFXMasonryPane masonryPane = (JFXMasonryPane) hBoxMap
+								.get(SystemContants.CRON_TYEP_SPECIFIED_ITEM).getChildren().get(0);
+						List<String> chList = Lists.newArrayList();
+						masonryPane.getChildren().forEach((item) -> {
+							JFXCheckBox checkBox = (JFXCheckBox) item;
+							if (checkBox.isSelected()) chList.add(checkBox.getText());
+						});
+						if (chList.isEmpty()) return;
+						cronStr.append(" ").append(StringUtils.join(chList, ","));
+					}
+				}
+			}
+		if(specifiedCount == 1) cronResult.setText(cronStr.toString().trim());
+
 	}
 
 	private void initComponents() {

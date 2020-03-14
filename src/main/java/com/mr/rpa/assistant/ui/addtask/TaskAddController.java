@@ -374,6 +374,10 @@ public class TaskAddController implements Initializable {
 		return JSON.toJSONString(keyValues);
 	}
 
+	public void setCronFromConfig(String cronString) {
+		cron.setText(cronString);
+	}
+
 	public void convertStringToParam(String paramString) {
 		vFormBox.getChildren().removeAll(paramDeleteMap.values());
 		List<KeyValue> keyValues = JSON.parseArray(paramString).toJavaList(KeyValue.class);
