@@ -91,21 +91,21 @@ public class MainController implements Initializable {
 			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
 			globalProperty.getStatisticPaneVisible().setValue(false);
-			recoverLogPane();
+			recoverPane();
 		});
 		settingShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
 			globalProperty.getSettingPaneVisible().setValue(true);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
 			globalProperty.getStatisticPaneVisible().setValue(false);
-			recoverLogPane();
+			recoverPane();
 		});
 		myInfoShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
 			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(true);
 			globalProperty.getStatisticPaneVisible().setValue(false);
-			recoverLogPane();
+			recoverPane();
 
 		});
 		statisticShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
@@ -114,15 +114,16 @@ public class MainController implements Initializable {
 			globalProperty.getMyInfoPaneVisible().setValue(false);
 			globalProperty.getStatisticPaneVisible().setValue(true);
 			globalProperty.getStatisticController().refreshGraphs();
-			recoverLogPane();
+			recoverPane();
 
 		});
 	}
 
-	private void recoverLogPane() {
+	private void recoverPane() {
 		globalProperty.getTaskHistoryPaneVisible().setValue(false);
 		globalProperty.getTaskLogPaneVisible().setValue(false);
 		globalProperty.getTaskBeanController().refreshSplit();
+		globalProperty.refreshRunningDuration();
 	}
 
 

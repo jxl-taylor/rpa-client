@@ -16,7 +16,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
                   </Label>
-                  <JFXTextField fx:id="userNick" labelFloat="true" >
+                  <JFXTextField fx:id="userNick" labelFloat="true" editable="false">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
@@ -30,7 +30,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
                   </Label>
-                  <JFXTextField fx:id="expireTime" labelFloat="true" >
+                  <JFXTextField fx:id="expireTime" labelFloat="true" editable="false">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
@@ -44,7 +44,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
                   </Label>
-                  <JFXTextField fx:id="connectStatus" labelFloat="true">
+                  <JFXTextField fx:id="connectStatus" labelFloat="true" editable="false">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
@@ -63,7 +63,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
                   </Label>
-                  <JFXTextField fx:id="username" labelFloat="true" >
+                  <JFXTextField fx:id="username" labelFloat="true" editable="false">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
@@ -78,7 +78,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
                   </Label>
-                  <JFXTextField fx:id="connectTime" labelFloat="true" >
+                  <JFXTextField fx:id="connectTime" labelFloat="true" editable="false">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
@@ -92,7 +92,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>
                   </Label>
-                  <JFXTextField fx:id="duration" labelFloat="true" >
+                  <JFXTextField fx:id="duration" labelFloat="true" editable="false">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                      </HBox.margin>

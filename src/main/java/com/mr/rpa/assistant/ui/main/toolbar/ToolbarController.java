@@ -7,12 +7,14 @@ import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.Pair;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 public class ToolbarController implements Initializable {
 
@@ -31,7 +33,10 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadUpdate(ActionEvent event) {
-        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"), "更新", null);
+        Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"), "更新", null);
+        pair.getObject1().setOnCloseRequest((e) -> {
+            AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"));
+        });
     }
 
     @FXML
@@ -63,12 +68,6 @@ public class ToolbarController implements Initializable {
         globalProperty.getTaskPaneVisible().setValue(false);
         globalProperty.getSettingPaneVisible().setValue(true);
         globalProperty.getMyInfoPaneVisible().setValue(false);
-    }
-
-    @FXML
-    private void loadLogin(ActionEvent event) {
-        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"), "登录", null);
-
     }
 
 }

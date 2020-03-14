@@ -1,11 +1,14 @@
 package com.mr.rpa.assistant.ui.settings;
 
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
 import com.jfoenix.controls.*;
+import de.schlichtherle.license.LicenseContent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.lang3.time.DateFormatUtils;
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class MyInfoController implements Initializable {
@@ -23,15 +26,17 @@ public class MyInfoController implements Initializable {
 	@FXML
 	private JFXTextField duration;
 
-	private final static Logger LOGGER = Logger.getLogger(MyInfoController.class.getName());
-
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		LicenseContent licenseContent = globalProperty.getLicenseContent();
 		userNick.setText("管理员");
-		expireTime.setText("2021-01-01");
+		expireTime.setText(DateFormatUtils.format(licenseContent.getNotAfter(), "yyyy-MM-dd"));
 		username.setText("admin");
-		connectTime.setText("2020-02-05 15:00:00");
+		connectTime.setText("");
 		connectStatus.setText("未连接");
-		duration.setText("10小时20分钟");
+		duration.textProperty().bind(globalProperty.getRunningDuration());
+
 	}
+
 }

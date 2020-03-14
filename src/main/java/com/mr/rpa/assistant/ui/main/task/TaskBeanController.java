@@ -69,7 +69,10 @@ public class TaskBeanController implements Initializable {
 		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
 				.getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
 		pair.getObject1().setOnCloseRequest((e) -> {
-			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"));
+			Pair<Stage, Object> cronPair = AssistantUtil.getWindow(getClass()
+					.getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
+			if(cronPair != null) cronPair.getObject1().close();
 		});
 
 	}

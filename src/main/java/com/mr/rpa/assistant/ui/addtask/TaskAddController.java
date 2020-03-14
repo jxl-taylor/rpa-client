@@ -276,7 +276,6 @@ public class TaskAddController implements Initializable {
 	public void inflateUI(TaskListController.Task task) {
 		id.setText(task.getId());
 		name.setText(task.getName());
-		mainTask.setValue(task.getMainTask());
 		cron.setText(task.getCron());
 		desp.setText(task.getDesp());
 		convertStringToParam(task.getParams());
@@ -297,7 +296,7 @@ public class TaskAddController implements Initializable {
 		for (int i = 0; i < fileNames.length; i++) {
 			mainTask.getItems().add(fileNames[i]);
 		}
-
+		mainTask.setValue(task.getMainTask());
 		nextTaskItems.remove(taskName);
 
 		isInEditMode.setValue(Boolean.TRUE);

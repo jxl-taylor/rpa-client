@@ -198,8 +198,9 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	@Override
-	public ObservableList<PieChart.Data> getTaskGraphStatistics(String taskId) {
-		String sTaskId = StringUtils.isNotBlank(taskId) ? taskId : "undefined";
+	public ObservableList<PieChart.Data> getTaskGraphStatistics(String taskName ) {
+		Task task = queryTaskByName(taskName);
+		String sTaskId = task != null ? task.getId() : "undefined";
 		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
 		int succCount = querySuccCount(sTaskId);
 		int failCount = queryFailCount(sTaskId);

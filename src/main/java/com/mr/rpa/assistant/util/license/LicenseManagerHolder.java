@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.util.license;
 
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.SystemContants;
 import de.schlichtherle.license.*;
 import lombok.extern.log4j.Log4j;
@@ -89,7 +90,8 @@ public class LicenseManagerHolder {
 	 */
 	public boolean verifyCert() {
 		try {
-			licenseManager.verify();
+			LicenseContent licenseContent = licenseManager.verify();
+			GlobalProperty.getInstance().setLicenseContent(licenseContent);
 			System.out.println("客户端验证证书成功!");
 		} catch (Exception e) {
 			e.printStackTrace();

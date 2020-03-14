@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.ui.main.statistic;
 
+import com.jfoenix.controls.JFXComboBox;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Created by feng on 2020/2/21
@@ -32,7 +34,7 @@ public class StatisticController implements Initializable {
 	private PieChart taskChart;
 
 	@FXML
-	private TextField taskIDInput;
+	private JFXComboBox<String> taskNameCbx;
 
 	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
 
@@ -42,20 +44,20 @@ public class StatisticController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		initGraphs();
 		GlobalProperty.getInstance().setStatisticController(this);
+
 	}
 
 	private void initGraphs() {
 		totalTaskChart.setData(taskDao.getTotalTaskGraphStatistics());
 		totalTaskLogChart.setData(taskDao.getTotalTaskLogGraphStatistics());
-		taskChart.setData(taskDao.getTaskGraphStatistics(taskIDInput.getText()));
+		setTaskNameCbx();
 		enableDisableGraph(false);
 
 	}
 
 	public void refreshGraphs() {
-		taskIDInput.setText("");
 		enableDisableGraph(false);
-		taskChart.setData(taskDao.getTaskGraphStatistics(taskIDInput.getText()));
+		setTaskNameCbx();
 		totalTaskChart.setData(taskDao.getTotalTaskGraphStatistics());
 		totalTaskLogChart.setData(taskDao.getTotalTaskLogGraphStatistics());
 	}
@@ -70,12 +72,17 @@ public class StatisticController implements Initializable {
 
 	@FXML
 	private void loadTaskStatistic(ActionEvent event) {
-		taskChart.setData(taskDao.getTaskGraphStatistics(taskIDInput.getText()));
-		if (StringUtils.isNotBlank(taskIDInput.getText())) {
+		setTaskNameCbx();
+		if (StringUtils.isNotBlank(taskNameCbx.getValue())) {
 			enableDisableGraph(true);
 		} else {
 			enableDisableGraph(false);
 		}
 	}
 
+	private void setTaskNameCbx(){
+		taskNameCbx.getItems().clear();
+		taskDao.queryTaskList().forEach(task -> taskNameCbx.getItems().add(task.getName()));
+		taskChart.setData(taskDao.getTaskGraphStatistics(taskNameCbx.getValue()));
+	}
 }

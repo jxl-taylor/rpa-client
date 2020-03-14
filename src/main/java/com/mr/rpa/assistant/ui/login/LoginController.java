@@ -138,10 +138,10 @@ public class LoginController implements Initializable {
 //			AlertMaker.showMaterialDialog(((StackPane) parent),
 //					((StackPane) parent).getChildren().get(0),
 //					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License无效", true);
-
+			GlobalProperty.getInstance().setStartDate(new java.util.Date());
 		} catch (Exception ex) {
 			log.error(ex);
-			AlertMaker.showErrorMessage("初始化环境", String.format("初始化环境失败， 原因：%s"));
+			AlertMaker.showErrorMessage("初始化环境", String.format("初始化环境失败， 原因：%s", ex.getMessage()));
 		}
 	}
 }

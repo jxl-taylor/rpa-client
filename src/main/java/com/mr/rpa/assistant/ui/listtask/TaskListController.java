@@ -223,7 +223,10 @@ public class TaskListController implements Initializable {
 		});
 
 		stage.setOnCloseRequest((event) -> {
-			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"));
+			Pair<Stage, Object> cronPair = AssistantUtil.getWindow(getClass()
+					.getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
+			if(cronPair != null) cronPair.getObject1().close();
 		});
 
 	}

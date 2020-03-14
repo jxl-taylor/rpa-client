@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.control.Label?>
 <VBox fx:id="rootPane" prefHeight="412.0" prefWidth="557.0" stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mr.rpa.assistant.ui.main.statistic.StatisticController">
@@ -36,21 +36,25 @@
         <HBox fx:id="task_info" alignment="CENTER" prefHeight="600.0" prefWidth="1000.0">
             <children>
                 <VBox alignment="CENTER" spacing="20.0" prefWidth="450">
+                    <children>
+                        <HBox alignment="CENTER" prefWidth="400">
+                            <children>
+                                <Label text="BOT名称" textFill="#FFFF8D" style="-fx-font-size: 14"/>
+                                <JFXComboBox HBox.hgrow="ALWAYS" fx:id="taskNameCbx" labelFloat="false" onAction="#loadTaskStatistic"/>
+                            </children>
+                        </HBox>
+                    </children>
                     <HBox.margin>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                     </HBox.margin>
-                    <children>
-                        <FontAwesomeIconView glyphName="USER" size="30"/>
-                        <JFXTextField fx:id="taskIDInput" labelFloat="true" onAction="#loadTaskStatistic" prefWidth="230.0" promptText="任务编号"/>
-                    </children>
                 </VBox>
                 <VBox alignment="CENTER" spacing="20.0">
-                    <HBox.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                    </HBox.margin>
                     <children>
                         <PieChart fx:id="taskChart"/>
                     </children>
+                    <HBox.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                    </HBox.margin>
                 </VBox>
             </children>
             <VBox.margin>

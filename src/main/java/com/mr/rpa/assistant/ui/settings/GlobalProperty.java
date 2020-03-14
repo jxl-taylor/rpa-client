@@ -1,5 +1,7 @@
 package com.mr.rpa.assistant.ui.settings;
 
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
@@ -11,6 +13,7 @@ import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
+import de.schlichtherle.license.LicenseContent;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,6 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +49,10 @@ public class GlobalProperty {
 	public final static double MAX_LOG_LIST_HEIGHT =519.0;
 	public final static double SPLIT_POSITION_TASK_AND_LOG =0.52;
 
+	private LicenseContent licenseContent;
+	private java.util.Date startDate;
+	private SimpleStringProperty runningDuration = new SimpleStringProperty();
+
 	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
 
 	private SimpleStringProperty stmpServerName = new SimpleStringProperty();
@@ -54,29 +62,20 @@ public class GlobalProperty {
 	private SimpleBooleanProperty sslEnabled = new SimpleBooleanProperty();
 
 	//右角菜单显示控制
-
 	private SimpleBooleanProperty taskPaneVisible = new SimpleBooleanProperty(true);
-
 	private SimpleBooleanProperty settingPaneVisible = new SimpleBooleanProperty(false);
-
 	private SimpleBooleanProperty myInfoPaneVisible = new SimpleBooleanProperty(false);
-
 	private SimpleBooleanProperty statisticPaneVisible = new SimpleBooleanProperty(false);
-
 	private SimpleBooleanProperty taskHistoryPaneVisible = new SimpleBooleanProperty(false);
-
 	private SimpleBooleanProperty taskLogPaneVisible = new SimpleBooleanProperty(false);
 
 	private MainController mainController;
-
 	private StatisticController statisticController;
-
 	private TaskBeanController taskBeanController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 
 	private StackPane rootPane;
-
 	private List<JFXButton> exitBtns;
 
 	//selectd Task
@@ -124,5 +123,11 @@ public class GlobalProperty {
 
 	public SysConfig getSysConfig() {
 		return sysConfig;
+	}
+
+	public void refreshRunningDuration(){
+		runningDuration.set(DateUtil.formatBetween(globalProperty.getStartDate(),
+				new Date(),
+				BetweenFormater.Level.MINUTE));
 	}
 }
