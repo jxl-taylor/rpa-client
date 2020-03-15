@@ -9,6 +9,7 @@
 
 .classpath
 .project
+.cache
 /.settings/
 
  ##filter databfile、sln file##
