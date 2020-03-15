@@ -21,6 +21,7 @@ public class SysConfig {
 	private String mailEmailPassword;
 	private Boolean mailSslCheckbox = false;
 	private String taskFilePath = DEFAULT_BOT_FILE_DIR + File.separator + "mbot";
+	private String taskFilePathTmp = taskFilePath + File.separator + "tmp";
 	private String logPath = DEFAULT_BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
 	private String dbPath = DEFAULT_BOT_FILE_DIR + File.separator + "database";

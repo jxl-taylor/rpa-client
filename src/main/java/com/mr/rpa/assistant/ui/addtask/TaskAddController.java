@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.ui.addtask;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
@@ -25,8 +26,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.Effect;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -69,7 +71,7 @@ public class TaskAddController implements Initializable {
 	private JFXButton uploadDirButton;
 
 	@FXML
-	private AnchorPane mainContainer;
+	private ScrollPane mainContainer;
 
 	private LinkedHashMap<Object, HBox> paramDeleteMap = Maps.newLinkedHashMap();
 	private LinkedHashMap<Object, HBox> paramConfirmMap = Maps.newLinkedHashMap();
@@ -82,49 +84,83 @@ public class TaskAddController implements Initializable {
 
 	private ObservableList<String> nextTaskItems = FXCollections.observableArrayList();
 
+	private String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
+	private String taskFileDirTmp = GlobalProperty.getInstance().getSysConfig().getTaskFilePathTmp();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		id.visibleProperty().bind(isInEditMode);
+
 		final FileChooser fileChooser = new FileChooser();
 		uploadFileButton.setOnAction((final ActionEvent e) -> {
 			configureFileChooser(fileChooser);
 			File file = fileChooser.showOpenDialog(uploadFileButton.getScene().getWindow());
 			if (file != null) {
 				String taskName = file.getName().substring(0, file.getName().indexOf("."));
-				String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
-				if (taskDao.queryTaskByName(taskName) != null) {
-					log.error(String.format("bot[%s] 已经存在", taskName));
-					AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", taskName));
+
+				if (!isInEditMode.get() && taskDao.queryTaskByName(taskName) != null) {
+					log.error(String.format("BOT[%s] 已经存在", taskName));
+					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 已经存在", taskName));
+					return;
+				}
+				if (isInEditMode.get() &&  !name.getText().equals(taskName)) {
+					log.error(String.format("BOT[%s] 不正确，请确认BOT名称, BOT名称必须为[%s]", taskName, name.getText()));
+					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 不正确，请确认BOT名称, BOT名称必须为[%s]",
+							taskName, name.getText()));
 					return;
 				}
 
-				FileUtil.del(taskFileDir + File.separator + name);
-				name.setText(taskName);
-				FileUtil.copy(file.getAbsolutePath(), taskFileDir
-						+ File.separator
-						+ taskName
-						+ File.separator
-						+ file.getName(), true);
+				//编辑任务时将上传的bot脚本放在临时文件夹中，待保存时写入
+				if (isInEditMode.get()) {
+					FileUtil.del(taskFileDirTmp);
+					FileUtil.copy(file.getAbsolutePath(), taskFileDirTmp
+							+ File.separator
+							+ taskName
+							+ File.separator
+							+ file.getName(), true);
+				} else {
+					FileUtil.del(taskFileDir + File.separator + name.getText());
+					name.setText(taskName);
+					FileUtil.copy(file.getAbsolutePath(), taskFileDir
+							+ File.separator
+							+ taskName
+							+ File.separator
+							+ file.getName(), true);
+				}
+				mainTask.getItems().clear();
 				mainTask.getItems().add(file.getName());
 				mainTask.setValue(file.getName());
 			}
 		});
+
 		uploadDirButton.setOnAction((final ActionEvent e) -> {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			directoryChooser.setTitle("选择文件夹");
 			File directory = directoryChooser.showDialog(new Stage());
 			if (directory != null) {
-				String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
-				if (taskDao.queryTaskByName(directory.getName()) != null) {
-					log.error(String.format("bot[%s] 已经存在", directory.getName()));
-					AlertMaker.showErrorMessage("上传Bot", String.format("bot[%s] 已经存在", directory.getName()));
+				if (!isInEditMode.get() && taskDao.queryTaskByName(directory.getName()) != null) {
+					log.error(String.format("BOT[%s] 已经存在", directory.getName()));
+					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 已经存在", directory.getName()));
 					return;
 				}
-				FileUtil.del(taskFileDir + File.separator + directory.getName());
-				name.setText(directory.getName());
-				FileUtil.copy(directory.getAbsolutePath(), taskFileDir + File.separator
-						, true);
+				if (isInEditMode.get() && !name.getText().equals(directory.getName())) {
+					log.error(String.format(String.format("BOT[%s] 不正确，请确认BOT名称, BOT名称必须为[%s]",
+							directory.getName(), name.getText())));
+					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 不正确，请确认BOT名称, BOT名称必须为[%s]",
+							directory.getName(), name.getText()));
+					return;
+				}
+				//编辑任务时将上传的bot脚本放在临时文件夹中，待保存时写入
+				if (isInEditMode.get()) {
+					FileUtil.del(taskFileDirTmp);
+					FileUtil.copy(directory.getAbsolutePath(), taskFileDirTmp + File.separator, true);
+				} else {
+					FileUtil.del(taskFileDir + File.separator + directory.getName());
+					name.setText(directory.getName());
+					FileUtil.copy(directory.getAbsolutePath(), taskFileDir + File.separator, true);
+				}
 				//添加主任务选项
+				mainTask.getItems().clear();
 				String[] fileNames = directory.list();
 				for (int i = 0; i < fileNames.length; i++) {
 					mainTask.getItems().add(fileNames[i]);
@@ -140,7 +176,6 @@ public class TaskAddController implements Initializable {
 				.stream()
 				.map(item -> item.getName())
 				.collect(Collectors.toList()));
-
 
 		//添加主任务选项
 		mainTask.getItems().clear();
@@ -218,8 +253,6 @@ public class TaskAddController implements Initializable {
 
 	@FXML
 	private void addTask(ActionEvent event) {
-		kjbName.getChildren().clear();
-		kjbName.getChildren().addAll(name, uploadFileButton, uploadDirButton);
 		String taskName = StringUtils.trimToEmpty(name.getText());
 		String mainTaskName = StringUtils.trimToEmpty(mainTask.getValue());
 		String taskCron = StringUtils.trimToEmpty(cron.getText());
@@ -229,13 +262,13 @@ public class TaskAddController implements Initializable {
 			handleEditOperation();
 			return;
 		}
+
 		if (!checkInput(taskName, mainTaskName, taskCron, taskDesp)) return;
 		if (taskDao.queryTaskByName(taskName) != null) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
 					"输入有误", "Job已存在，请重新选择.");
 			return;
 		}
-
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
 		Task task = new Task(id.getText(), name.getText(), mainTaskName, desp.getText(), converParamToString(), nextTask.getValue(),
 				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
@@ -252,7 +285,8 @@ public class TaskAddController implements Initializable {
 	}
 
 	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
-		if (taskName.isEmpty() || mainTaskName.isEmpty() || taskDesp.isEmpty() || taskCron.isEmpty()) {
+		if (StringUtils.isBlank(taskName) || StringUtils.isBlank(mainTaskName) ||  StringUtils.isBlank(taskDesp)
+				|| StringUtils.isBlank(taskCron)) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "任务名称、描述、CRON不能为空.");
 			return false;
 		}
@@ -269,11 +303,13 @@ public class TaskAddController implements Initializable {
 	}
 
 	private void closeWindow() {
+		FileUtil.del(taskFileDirTmp);
 		Stage stage = (Stage) rootPane.getScene().getWindow();
 		stage.close();
 	}
 
 	public void inflateUI(TaskListController.Task task) {
+		FileUtil.del(taskFileDirTmp);
 		id.setText(task.getId());
 		name.setText(task.getName());
 		cron.setText(task.getCron());
@@ -281,8 +317,6 @@ public class TaskAddController implements Initializable {
 		convertStringToParam(task.getParams());
 		nextTask.setValue(task.getNextTask());
 		id.setEditable(false);
-		kjbName.getChildren().clear();
-		kjbName.getChildren().add(name);
 
 		//依赖任务不能是自己
 		String selectedTaskId = GlobalProperty.getInstance().getSelectedTaskId().getValue();
@@ -298,7 +332,6 @@ public class TaskAddController implements Initializable {
 		}
 		mainTask.setValue(task.getMainTask());
 		nextTaskItems.remove(taskName);
-
 		isInEditMode.setValue(Boolean.TRUE);
 	}
 
@@ -318,24 +351,50 @@ public class TaskAddController implements Initializable {
 				desp.getText(), converParamToString(),
 				nextTask.getValue(), false, 0, cron.getText(), 0, 0);
 		if (!checkInput(task.getName(), mainTask.getValue(), task.getCron(), task.getDesp())) return;
-		try {
-			Task taskModel = taskDao.queryTaskById(task.getId());
-			taskModel.setMainTask(mainTask.getValue());
-			taskModel.setCron(task.getCron());
-			taskModel.setDesp(task.getDesp());
-			taskModel.setParams(task.getParams());
-			taskModel.setNextTask(nextTask.getValue());
-			JobFactory.update(taskModel);
-		} catch (SchedulerException e) {
-			log.error(e);
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
+
+		//将临时文件夹中的BOT脚本复制到真是文件夹中
+		File tmpDir = new File(taskFileDirTmp);
+		if (FileUtil.exist(tmpDir)) {
+			String[] dirNames = tmpDir.list();
+			for (int i = 0; i < dirNames.length; i++) {
+				if (task.getName().equals(dirNames[i])) {
+					FileUtil.del(taskFileDir + File.separator + dirNames[i]);
+					FileUtil.copy(taskFileDirTmp + File.separator + dirNames[i],
+							taskFileDir + File.separator, true);
+				}
+			}
 		}
-		if (taskDao.updateTask(task)) {
-			AlertMaker.showSimpleAlert("Success", "修改成功");
-			closeWindow();
-		} else {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
-		}
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			try {
+				Task taskModel = taskDao.queryTaskById(task.getId());
+				taskModel.setMainTask(mainTask.getValue());
+				taskModel.setCron(task.getCron());
+				taskModel.setDesp(task.getDesp());
+				taskModel.setParams(task.getParams());
+				taskModel.setNextTask(nextTask.getValue());
+				JobFactory.update(taskModel);
+			} catch (SchedulerException e) {
+				log.error(e);
+				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
+				return;
+			}
+			if (taskDao.updateTask(task)) {
+				AlertMaker.showSimpleAlert("Success", "修改成功");
+				FileUtil.del(taskFileDirTmp);
+				closeWindow();
+			} else {
+				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
+			}
+		});
+		JFXButton cancelBtn = new JFXButton("取消");
+		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			rootPane.getChildren().get(0).setEffect(null);
+		});
+		AlertMaker.showMaterialDialog(rootPane,
+				rootPane.getChildren().get(0),
+				Lists.newArrayList(confirmBtn, cancelBtn), "修改BOT",
+				"修改BOT后立即生效，确定执行么?", false);
 	}
 
 	private static void configureFileChooser(

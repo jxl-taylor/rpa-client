@@ -84,7 +84,6 @@ public class AssistantUtil {
 			stages.remove(loc.getPath());
 		}
 	}
-
 	public static String formatDateTimeString(Date date) {
 		return DATE_TIME_FORMAT.format(date);
 	}

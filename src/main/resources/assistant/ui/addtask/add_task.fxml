@@ -12,9 +12,9 @@
 <?import javafx.scene.control.ScrollPane?>
 <StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.addtask.TaskAddController">
    <children>
-      <ScrollPane vbarPolicy="AS_NEEDED" hbarPolicy="NEVER" prefHeight="668" prefWidth="464" maxHeight="668" style="-fx-border-color: -fx-primary; -fx-background-color: -fx-primary;">
+      <ScrollPane fx:id="mainContainer" vbarPolicy="AS_NEEDED" hbarPolicy="NEVER" prefHeight="668" prefWidth="464" maxHeight="668" style="-fx-border-color: -fx-primary; -fx-background-color: -fx-primary;">
          <content>
-            <AnchorPane id="AnchorPane" fx:id="mainContainer" prefHeight="668.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
+            <AnchorPane id="AnchorPane" prefHeight="668.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
                <children>
                   <VBox fx:id="vFormBox" prefHeight="256.0" maxHeight="800" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>

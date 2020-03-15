@@ -198,7 +198,7 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	@Override
-	public ObservableList<PieChart.Data> getTaskGraphStatistics(String taskName ) {
+	public ObservableList<PieChart.Data> getTaskGraphStatistics(String taskName) {
 		Task task = queryTaskByName(taskName);
 		String sTaskId = task != null ? task.getId() : "undefined";
 		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
@@ -210,20 +210,27 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	private int querySuccCount(String taskId) {
-		String succSqL = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 1 AND TASK_id = '%s'";
+		String succSqL = "SELECT COUNT(1) FROM TASK_LOG WHERE STATUS = 1 AND TASK_id = '%s'";
 		int count = 0;
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
-			ResultSet rs = handler.execQuery(String.format(succSqL, taskId));
+			stmt = handler.getConnection().createStatement();
+			rs = stmt.executeQuery(String.format(succSqL, taskId));
 			if (rs.next()) {
 				count = rs.getInt(1);
 			}
-			rs.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				handler.closeStmt();
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				stmt.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -233,20 +240,26 @@ public class TaskDaoImpl implements TaskDao {
 	}
 
 	private int queryFailCount(String taskId) {
-		String failSql = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 2 AND TASK_id = '%s'";
-		ResultSet rs = handler.execQuery(String.format(failSql, taskId));
+		String failSql = "SELECT COUNT(1) FROM TASK_LOG WHERE STATUS = 2 AND TASK_id = '%s'";
 		int count = 0;
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
+			stmt = handler.getConnection().createStatement();
+			rs = stmt.executeQuery(String.format(failSql, taskId));
 			if (rs.next()) {
 				count = rs.getInt(1);
 			}
-			rs.close();
-			handler.closeStmt();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				handler.closeStmt();
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				stmt.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
