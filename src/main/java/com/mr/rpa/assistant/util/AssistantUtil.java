@@ -85,16 +85,6 @@ public class AssistantUtil {
 		}
 	}
 
-	public static Float getFineAmount(int totalDays) {
-		Preferences pref = Preferences.getPreferences();
-		Integer fineDays = totalDays - pref.getnDaysWithoutFine();
-		Float fine = 0f;
-		if (fineDays > 0) {
-			fine = fineDays * pref.getFinePerDay();
-		}
-		return fine;
-	}
-
 	public static String formatDateTimeString(Date date) {
 		return DATE_TIME_FORMAT.format(date);
 	}

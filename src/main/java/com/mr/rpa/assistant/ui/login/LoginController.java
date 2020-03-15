@@ -1,9 +1,12 @@
 package com.mr.rpa.assistant.ui.login;
 
+import cn.hutool.core.io.FileUtil;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +17,7 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -36,6 +40,8 @@ import org.apache.commons.lang3.StringUtils;
 public class LoginController implements Initializable {
 
 	private static final String RPA_CONTROL_CENTER = "http://microrule.com/";
+	private static final String CACHE_FILE = System.getProperty("user.dir") + File.separator + ".cache";
+	private static final String DEFAULT_USERNAME_ADMIN = "admin";
 
 	@FXML
 	private AnchorPane loginPane;
@@ -46,27 +52,59 @@ public class LoginController implements Initializable {
 	private JFXPasswordField password;
 	@FXML
 	private Hyperlink applyLink;
-	Preferences preference;
+	@FXML
+	private JFXCheckBox saveChx;
+
+	private Preferences preference;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		preference = Preferences.getPreferences();
+		username.setText(DEFAULT_USERNAME_ADMIN);
+		try{
+			if (FileUtil.exist(CACHE_FILE)) {
+				String cacheContent = FileUtil.readUtf8String(CACHE_FILE);
+				String[] arr = cacheContent.split("=");
+				username.setText(arr[0]);
+				password.setText(arr[1]);
+			}
+		}catch (Throwable e){
+			log.error(e);
+		}
+
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				password.requestFocus();
+			}
+		});
+
 	}
 
 	@FXML
 	private void handleLoginButtonAction(ActionEvent event) {
 		String uname = StringUtils.trimToEmpty(username.getText());
-		String pword = DigestUtils.shaHex(password.getText());
+		String pword = password.getText();
 
 		if (uname.equals(preference.getUsername()) && pword.equals(preference.getPassword())) {
 			closeStage();
 			setUserInfo();
 			loadMain();
+			if (saveChx.isSelected()) {
+				cachePwd();
+			} else {
+				FileUtil.del(CACHE_FILE);
+			}
 			log.info(String.format("User successfully logged in %s", uname));
 		} else {
 			username.getStyleClass().add("wrong-credentials");
 			password.getStyleClass().add("wrong-credentials");
 		}
+	}
+
+	private void cachePwd() {
+		FileUtil.del(CACHE_FILE);
+		FileUtil.writeUtf8String(username.getText() + "=" + password.getText(), new File(CACHE_FILE));
 	}
 
 	private void setUserInfo() {

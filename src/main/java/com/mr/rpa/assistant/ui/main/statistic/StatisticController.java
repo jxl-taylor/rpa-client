@@ -72,7 +72,7 @@ public class StatisticController implements Initializable {
 
 	@FXML
 	private void loadTaskStatistic(ActionEvent event) {
-		setTaskNameCbx();
+		taskChart.setData(taskDao.getTaskGraphStatistics(taskNameCbx.getValue()));
 		if (StringUtils.isNotBlank(taskNameCbx.getValue())) {
 			enableDisableGraph(true);
 		} else {
@@ -83,6 +83,5 @@ public class StatisticController implements Initializable {
 	private void setTaskNameCbx(){
 		taskNameCbx.getItems().clear();
 		taskDao.queryTaskList().forEach(task -> taskNameCbx.getItems().add(task.getName()));
-		taskChart.setData(taskDao.getTaskGraphStatistics(taskNameCbx.getValue()));
 	}
 }

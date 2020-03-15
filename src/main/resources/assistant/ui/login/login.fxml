@@ -6,10 +6,10 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
            prefHeight="367.0" prefWidth="419.0" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.login.LoginController">
@@ -28,9 +28,14 @@
                   <Font size="16.0" />
                </font>
             </JFXPasswordField>
+            <JFXCheckBox fx:id="saveChx" text="记住密码" layoutX="64.0" layoutY="255.0" selected="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXCheckBox>
             <Hyperlink fx:id="applyLink" text="申请账号" layoutX="106.0" layoutY="255.0" style="-fx-border-width: 0; -fx-font: #1976D2" onAction="#linkToApply" AnchorPane.rightAnchor="75">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font>
             </Hyperlink>
             <JFXButton layoutX="106.0" layoutY="298.0" onAction="#handleLoginButtonAction" prefHeight="40.0" prefWidth="90.0" styleClass="login-button" text="登录" />
