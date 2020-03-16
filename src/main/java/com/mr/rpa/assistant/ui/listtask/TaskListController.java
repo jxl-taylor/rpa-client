@@ -17,6 +17,7 @@ import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -326,6 +327,7 @@ public class TaskListController implements Initializable {
 		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
 		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "恢复执行", selectedTask.getName() + " 已恢复");
+		loadData();
 	}
 
 	@FXML

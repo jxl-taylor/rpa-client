@@ -481,3 +481,18 @@
 .jfx-check-box {
     -fx-text-fill: -fx-secondary;
 }
+.jfx-text-field,
+.jfx-text-field:focused {
+    -fx-prompt-text-fill: #0F9D58;
+}
+.jfx-password-field,
+.jfx-password-field:focused {
+    -fx-prompt-text-fill: #0F9D58;
+}
+.jfx-combo-box {
+    -fx-prompt-text-fill: #0F9D58;
+}
+.jfx-text-area,
+.jfx-text-area:focused {
+    -fx-prompt-text-fill: #0F9D58;
+}

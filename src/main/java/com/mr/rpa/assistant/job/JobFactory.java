@@ -18,9 +18,7 @@ import org.pentaho.di.core.logging.KettleLoggingEventListener;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -33,7 +31,7 @@ public class JobFactory implements Runnable {
 
 	private static JobFactory jobFactory = new JobFactory();
 
-	private static ExecutorService executor = Executors.newFixedThreadPool(2, new JobThreadFactory());
+	private static ExecutorService executor = Executors.newFixedThreadPool(5, new JobThreadFactory());
 
 	private JobFactory() {
 	}
@@ -66,8 +64,14 @@ public class JobFactory implements Runnable {
 			});
 
 			Thread thread = new Thread(() -> {
-				executor.submit(jobFactory);
-
+				Future future = executor.submit(jobFactory);
+				try {
+					future.get();
+					executor.submit(new HeartBeat());
+				} catch (Exception e) {
+					log.error(e);
+					return;
+				}
 			});
 			thread.setDaemon(true);
 			thread.start();

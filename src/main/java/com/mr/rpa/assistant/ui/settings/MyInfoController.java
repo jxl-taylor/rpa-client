@@ -17,10 +17,7 @@ public class MyInfoController implements Initializable {
 	private JFXTextField expireTime;
 	@FXML
 	private JFXTextField username;
-	@FXML
-	private JFXTextField connectDuration;
-	@FXML
-	private JFXTextField connectStatus;
+
 	@FXML
 	private JFXTextField duration;
 
@@ -29,8 +26,6 @@ public class MyInfoController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		LicenseContent licenseContent = globalProperty.getLicenseContent();
 		expireTime.setText(DateFormatUtils.format(licenseContent.getNotAfter(), "yyyy-MM-dd"));
-		connectDuration.setText("");
-		connectStatus.setText("未连接");
 		duration.textProperty().bind(globalProperty.getRunningDuration());
 		globalProperty.setMyInfoController(this);
 	}

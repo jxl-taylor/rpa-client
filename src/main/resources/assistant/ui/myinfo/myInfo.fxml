@@ -37,20 +37,7 @@
                   </JFXTextField>
                </children>
             </HBox>
-            <HBox alignment="CENTER" >
-               <children>
-                  <Label text="连接状态" textFill="#FFFF8D" style="-fx-font-size: 16">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="connectStatus" labelFloat="true" editable="false">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-               </children>
-            </HBox>
+
          </children>
       </VBox>
 
@@ -70,21 +57,7 @@
                   </JFXTextField>
                </children>
             </HBox>
-
-            <HBox alignment="CENTER" >
-               <children>
-                  <Label text="连接时间" textFill="#FFFF8D" style="-fx-font-size: 16">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="connectDuration" labelFloat="true" editable="false">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-               </children>
-            </HBox>
+            
             <HBox alignment="CENTER" >
                <children>
                   <Label text="运行时长" textFill="#FFFF8D" style="-fx-font-size: 16">
