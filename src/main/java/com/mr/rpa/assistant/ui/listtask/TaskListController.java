@@ -2,9 +2,11 @@ package com.mr.rpa.assistant.ui.listtask;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskDao;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -12,6 +14,7 @@ import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -26,18 +29,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 @Log4j
 public class TaskListController implements Initializable {
 	@FXML
 	private TableView<Task> tableView;
 	@FXML
-	private TableColumn<Task, String> idCol;
+	private TableColumn<Task, Integer> seqCol;
 	@FXML
 	private TableColumn<Task, String> nameCol;
 	@FXML
@@ -100,7 +107,7 @@ public class TaskListController implements Initializable {
 	}
 
 	private void initCol() {
-		idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+		seqCol.setCellValueFactory(new PropertyValueFactory<>("seq"));
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 		cronCol.setCellValueFactory(new PropertyValueFactory<>("cron"));
 		despCol.setCellValueFactory(new PropertyValueFactory<>("desp"));
@@ -216,7 +223,7 @@ public class TaskListController implements Initializable {
 			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"));
 			Pair<Stage, Object> cronPair = AssistantUtil.getWindow(getClass()
 					.getClassLoader().getResource("assistant/ui/addtask/cron_setting.fxml"));
-			if(cronPair != null) cronPair.getObject1().close();
+			if (cronPair != null) cronPair.getObject1().close();
 		});
 
 	}
@@ -318,7 +325,7 @@ public class TaskListController implements Initializable {
 		}
 		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
 		loadData();
-		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "恢复执行", selectedTask.getId() + " 已恢复");
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "恢复执行", selectedTask.getName() + " 已恢复");
 	}
 
 	@FXML
@@ -349,7 +356,7 @@ public class TaskListController implements Initializable {
 		}
 		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_PAUSE);
 		loadData();
-		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "暂停执行", selectedTask.getId() + " 已暂停 ");
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "暂停执行", selectedTask.getName() + " 已暂停 ");
 	}
 
 	@FXML
@@ -369,14 +376,55 @@ public class TaskListController implements Initializable {
 			JobFactory.triggerByManual(selectedTask.getId());
 		} catch (SchedulerException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("手动触发", selectedTask.getId() + " 触发成功");
+			AlertMaker.showErrorMessage("手动触发", selectedTask.getName() + " 触发成功");
 			return;
 		}
-		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "手动触发", selectedTask.getId() + " 触发成功");
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "手动触发", selectedTask.getName() + " 触发成功");
+	}
+
+	@FXML
+	private void showResult(ActionEvent event) {
+		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+		Task selectedTask = tableView.getSelectionModel().getSelectedItem();
+		if (selectedTask == null) {
+			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
+			return;
+		}
+		List<KeyValue> keyValues = JSON.parseArray(selectedTask.params.get())
+				.toJavaList(KeyValue.class);
+		String code = "";
+		for (KeyValue kv : keyValues) {
+			kv.getObject1().equals(SystemContants.RESULT_PATH_CODE);
+			code = kv.getObject2();
+		}
+
+		if (StringUtils.isNotBlank(code)) {
+			String resultPath = String.format(sysConfig.getRunResultPath(), code);
+			if (FileUtil.exist(resultPath) && FileUtil.isDirectory(resultPath)) {
+				try {
+					Desktop.getDesktop().open(new File(resultPath));
+				} catch (IOException e) {
+					log.error(e);
+					AlertMaker.showErrorMessage("结果查看失败", e.getMessage());
+				}
+				return;
+			}
+		}
+
+		AlertMaker.showErrorMessage("结果查看", "CODE未设置，请自行查找运行结果");
+		try {
+			Desktop.getDesktop().open(new File(sysConfig.getDefaultResultPath()));
+		} catch (IOException e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("结果查看失败", e.getMessage());
+		}
+		return;
+
 	}
 
 	public static class Task {
 
+		private final SimpleIntegerProperty seq;
 		private final SimpleStringProperty id;
 		private final SimpleStringProperty name;
 		private final SimpleStringProperty mainTask;
@@ -391,7 +439,8 @@ public class TaskListController implements Initializable {
 
 		private CheckBox checkBox = new CheckBox();
 
-		public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+		public Task(int seq, String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+			this.seq = new SimpleIntegerProperty(seq);
 			this.id = new SimpleStringProperty(id);
 			this.name = new SimpleStringProperty(name);
 			this.mainTask = new SimpleStringProperty(mainTask);
@@ -411,6 +460,14 @@ public class TaskListController implements Initializable {
 			}
 			this.successCount = new SimpleIntegerProperty(successCount);
 			this.failCount = new SimpleIntegerProperty(failCount);
+		}
+
+		public int getSeq() {
+			return seq.get();
+		}
+
+		public SimpleIntegerProperty seqProperty() {
+			return seq;
 		}
 
 		public String getId() {

@@ -21,7 +21,7 @@
                             <children>
                                 <HBox alignment="TOP_LEFT">
                                     <children>
-                                        <JFXTextField fx:id="taskID" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="任务编号"/>
+                                        <JFXTextField fx:id="taskName" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="BOT名称"/>
                                         <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="90.0" text="查询" />
                                     </children>
                                 </HBox>

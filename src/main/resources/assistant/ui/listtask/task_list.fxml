@@ -17,7 +17,7 @@
                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                            AnchorPane.topAnchor="15.0">
                     <columns>
-                        <TableColumn fx:id="idCol" maxWidth="2500.0" minWidth="280.0" text="BOT编号"/>
+                        <TableColumn fx:id="seqCol" text="BOT编号"/>
                         <TableColumn fx:id="nameCol" prefWidth="75.0" text="BOT名称"/>
                         <TableColumn fx:id="cronCol" prefWidth="75.0" text="调度策略(cron)"/>
                         <TableColumn fx:id="despCol" prefWidth="75.0" maxWidth="200.0" text="描述" visible="false"/>
@@ -43,6 +43,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#handleTaskDeleteOption" text="删除"/>
                                 <MenuItem mnemonicParsing="false" onAction="#triggerByManual" text="手动触发"/>
                                 <MenuItem mnemonicParsing="false" onAction="#deleteAllTaskLog" text="清空日志"/>
+                                <MenuItem mnemonicParsing="false" onAction="#showResult" text="查看结果"/>
                             </items>
                             <styleClass>
                                 <String fx:value="table-context"/>

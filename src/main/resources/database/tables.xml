@@ -11,6 +11,8 @@
                  running boolean default false,
                  status integer default 0,
                  cron varchar(200) default '0 0 0/1 * * ?',
+                 createBy varchar(100),
+                 updateBy varchar(100),
                  createTime timestamp default CURRENT_TIMESTAMP,
                  updateTime timestamp"/>
     <table-entry name="TASK_LOG"
@@ -40,4 +42,16 @@
                  control_server varchar(255),
                  minite_error_limit integer,
                  running_limit integer"/>
+    <table-entry name="SYS_USER"
+                 col-data="id varchar(200) primary key,
+                 username varchar(100),
+                 password varchar(100),
+                 nick varchar(200),
+                 phone varchar(50),
+                 mail varchar(100),
+                 locking boolean default false,
+                 createBy varchar(100),
+                 updateBy varchar(100),
+                 createTime timestamp default CURRENT_TIMESTAMP,
+                 updateTime timestamp"/>
 </tables>

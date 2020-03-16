@@ -2,11 +2,9 @@ package com.mr.rpa.assistant.ui.settings;
 
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.ui.settings.Preferences;
 
 import java.io.File;
 import java.net.URL;
-import java.security.InvalidParameterException;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

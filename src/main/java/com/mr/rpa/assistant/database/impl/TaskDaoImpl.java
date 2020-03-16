@@ -148,10 +148,11 @@ public class TaskDaoImpl implements TaskDao {
 	@Override
 	public ObservableList<PieChart.Data> getTotalTaskGraphStatistics() {
 		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+		ResultSet rs = null;
 		try {
 			String runSqL = "SELECT COUNT(*) FROM TASK WHERE RUNNING = TRUE ";
 			String stopSql = "SELECT COUNT(*) FROM TASK WHERE RUNNING = FALSE ";
-			ResultSet rs = handler.execQuery(runSqL);
+			rs = handler.execQuery(runSqL);
 			if (rs.next()) {
 				int count = rs.getInt(1);
 				data.add(new PieChart.Data("已启动数 (" + count + ")", count));
@@ -163,10 +164,16 @@ public class TaskDaoImpl implements TaskDao {
 				int count = rs.getInt(1);
 				data.add(new PieChart.Data("未启动数 (" + count + ")", count));
 			}
-			rs.close();
-			handler.closeStmt();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
 		}
 		return data;
 	}
@@ -174,10 +181,11 @@ public class TaskDaoImpl implements TaskDao {
 	@Override
 	public ObservableList<PieChart.Data> getTotalTaskLogGraphStatistics() {
 		ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+		ResultSet rs = null;
 		try {
 			String succSqL = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 1 ";
 			String failSql = "SELECT COUNT(*) FROM TASK_LOG WHERE STATUS = 2 ";
-			ResultSet rs = handler.execQuery(succSqL);
+			rs = handler.execQuery(succSqL);
 			if (rs.next()) {
 				int count = rs.getInt(1);
 				data.add(new PieChart.Data("成功总次数 (" + count + ")", count));
@@ -190,9 +198,14 @@ public class TaskDaoImpl implements TaskDao {
 				data.add(new PieChart.Data("失败总次数 (" + count + ")", count));
 			}
 			rs.close();
-			handler.closeStmt();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return data;
 	}
@@ -326,6 +339,7 @@ public class TaskDaoImpl implements TaskDao {
 		if (rs == null) {
 			return taskList;
 		}
+		int i = 1;
 		try {
 			while (rs.next()) {
 				String id = rs.getString("id");
@@ -337,16 +351,23 @@ public class TaskDaoImpl implements TaskDao {
 				String nextTask = rs.getString("nextTask");
 				Boolean running = rs.getBoolean("running");
 				Integer status = rs.getInt("status");
-
-
-				taskList.add(new TaskListController.Task(id, name, mainTask, desp, params, nextTask,
+				taskList.add(new TaskListController.Task(i++, id, name, mainTask, desp, params, nextTask,
 						running, status, cron,
 						querySuccCount(id), queryFailCount(id)));
 
 			}
-			handler.closeStmt();
+
 		} catch (SQLException ex) {
 			LOGGER.error(ex);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+					handler.closeStmt();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return taskList;
 	}
@@ -398,9 +419,18 @@ public class TaskDaoImpl implements TaskDao {
 
 				taskList.add(task);
 			}
-			handler.closeStmt();
 		} catch (SQLException ex) {
 			LOGGER.error(ex);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+					handler.closeStmt();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
 		}
 		return taskList;
 	}

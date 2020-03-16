@@ -103,7 +103,7 @@ public class TaskAddController implements Initializable {
 					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 已经存在", taskName));
 					return;
 				}
-				if (isInEditMode.get() &&  !name.getText().equals(taskName)) {
+				if (isInEditMode.get() && !name.getText().equals(taskName)) {
 					log.error(String.format("BOT[%s] 不正确，请确认BOT名称, BOT名称必须为[%s]", taskName, name.getText()));
 					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 不正确，请确认BOT名称, BOT名称必须为[%s]",
 							taskName, name.getText()));
@@ -285,7 +285,7 @@ public class TaskAddController implements Initializable {
 	}
 
 	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
-		if (StringUtils.isBlank(taskName) || StringUtils.isBlank(mainTaskName) ||  StringUtils.isBlank(taskDesp)
+		if (StringUtils.isBlank(taskName) || StringUtils.isBlank(mainTaskName) || StringUtils.isBlank(taskDesp)
 				|| StringUtils.isBlank(taskCron)) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "任务名称、描述、CRON不能为空.");
 			return false;
@@ -347,7 +347,7 @@ public class TaskAddController implements Initializable {
 	}
 
 	private void handleEditOperation() {
-		TaskListController.Task task = new TaskListController.Task(id.getText(), name.getText(), mainTask.getValue(),
+		TaskListController.Task task = new TaskListController.Task(0, id.getText(), name.getText(), mainTask.getValue(),
 				desp.getText(), converParamToString(),
 				nextTask.getValue(), false, 0, cron.getText(), 0, 0);
 		if (!checkInput(task.getName(), mainTask.getValue(), task.getCron(), task.getDesp())) return;

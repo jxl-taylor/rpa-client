@@ -19,7 +19,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import com.mr.rpa.assistant.ui.settings.Preferences;
 import com.mr.rpa.assistant.ui.main.MainController;
 
 public class AssistantUtil {

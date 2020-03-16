@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
@@ -55,11 +56,7 @@ public class GlobalProperty {
 
 	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
 
-	private SimpleStringProperty stmpServerName = new SimpleStringProperty();
-	private SimpleStringProperty stmpPort = new SimpleStringProperty();
-	private SimpleStringProperty emailUsername = new SimpleStringProperty();
-	private SimpleStringProperty emailPassword = new SimpleStringProperty();
-	private SimpleBooleanProperty sslEnabled = new SimpleBooleanProperty();
+	private User currentUser;
 
 	//右角菜单显示控制
 	private SimpleBooleanProperty taskPaneVisible = new SimpleBooleanProperty(true);
@@ -69,9 +66,13 @@ public class GlobalProperty {
 	private SimpleBooleanProperty taskHistoryPaneVisible = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty taskLogPaneVisible = new SimpleBooleanProperty(false);
 
+	/**
+	 * controller
+	 */
 	private MainController mainController;
 	private StatisticController statisticController;
 	private TaskBeanController taskBeanController;
+	private MyInfoController myInfoController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 

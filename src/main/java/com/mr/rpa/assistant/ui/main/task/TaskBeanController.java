@@ -34,7 +34,7 @@ public class TaskBeanController implements Initializable {
 	private SplitPane taskSplit;
 
 	@FXML
-	private JFXTextField taskID;
+	private JFXTextField taskName;
 
 	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
 
@@ -58,8 +58,7 @@ public class TaskBeanController implements Initializable {
 
 	@FXML
 	private void loadTaskInfo(ActionEvent event) {
-		String taskId = taskID.getText();
-		taskDao.loadTaskList(taskId, null);
+		taskDao.loadTaskList(null, taskName.getText());
 		taskLogDao.getTaskLogList().clear();
 		taskSplit.setDividerPositions(SPLIT_POSITION_TASK_AND_LOG);
 	}

@@ -41,4 +41,5 @@ public class SystemContants {
 	public static final String CRON_TYEP_SPECIFIED = "specified";
 	public static final String CRON_TYEP_SPECIFIED_ITEM = "specified_item";
 
+	public static final String RESULT_PATH_CODE = "bankcode";
 }

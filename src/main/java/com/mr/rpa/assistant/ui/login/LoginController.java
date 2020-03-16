@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
@@ -29,11 +31,9 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import com.mr.rpa.assistant.ui.settings.Preferences;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Log4j
@@ -41,7 +41,6 @@ public class LoginController implements Initializable {
 
 	private static final String RPA_CONTROL_CENTER = "http://microrule.com/";
 	private static final String CACHE_FILE = System.getProperty("user.dir") + File.separator + ".cache";
-	private static final String DEFAULT_USERNAME_ADMIN = "admin";
 
 	@FXML
 	private AnchorPane loginPane;
@@ -55,20 +54,20 @@ public class LoginController implements Initializable {
 	@FXML
 	private JFXCheckBox saveChx;
 
-	private Preferences preference;
+	private SysConfig sysConfig;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		preference = Preferences.getPreferences();
-		username.setText(DEFAULT_USERNAME_ADMIN);
-		try{
+		sysConfig = GlobalProperty.getInstance().getSysConfig();
+		username.setText(sysConfig.getAdminUsername());
+		try {
 			if (FileUtil.exist(CACHE_FILE)) {
 				String cacheContent = FileUtil.readUtf8String(CACHE_FILE);
 				String[] arr = cacheContent.split("=");
 				username.setText(arr[0]);
 				password.setText(arr[1]);
 			}
-		}catch (Throwable e){
+		} catch (Throwable e) {
 			log.error(e);
 		}
 
@@ -83,10 +82,11 @@ public class LoginController implements Initializable {
 
 	@FXML
 	private void handleLoginButtonAction(ActionEvent event) {
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		String uname = StringUtils.trimToEmpty(username.getText());
 		String pword = password.getText();
-
-		if (uname.equals(preference.getUsername()) && pword.equals(preference.getPassword())) {
+		User user = sysConfig.getAdminUser();
+		if (uname.equals(user.getUsername()) && pword.equals(user.getPassword())) {
 			closeStage();
 			setUserInfo();
 			loadMain();
@@ -95,6 +95,8 @@ public class LoginController implements Initializable {
 			} else {
 				FileUtil.del(CACHE_FILE);
 			}
+			globalProperty.setCurrentUser(user);
+			globalProperty.getMyInfoController().initCurrentUser();
 			log.info(String.format("User successfully logged in %s", uname));
 		} else {
 			username.getStyleClass().add("wrong-credentials");
