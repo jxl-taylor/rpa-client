@@ -112,7 +112,8 @@ public class JobFactory implements Runnable {
 				withIdentity(taskId)
 				.build();
 		Trigger jobTrigger = TriggerBuilder.newTrigger().withIdentity(taskId)
-				.withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+				.withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())
+						.withMisfireHandlingInstructionDoNothing()).build();
 		if (task.isRunning()) {
 			jobFactory.userScheduler.scheduleJob(jobDetail, jobTrigger);
 			if (task.getStatus() == SystemContants.TASK_RUNNING_STATUS_PAUSE) pause(task);
@@ -197,7 +198,8 @@ public class JobFactory implements Runnable {
 							withIdentity(task.getId())
 							.build();
 					Trigger jobTrigger = TriggerBuilder.newTrigger().withIdentity(task.getId())
-							.withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+							.withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())
+									.withMisfireHandlingInstructionDoNothing()).build();
 					userScheduler.scheduleJob(jobDetail, jobTrigger);
 					log.info(String.format("JOB 添加并启动，TASK=[%s]", task));
 					//暂停的任务
