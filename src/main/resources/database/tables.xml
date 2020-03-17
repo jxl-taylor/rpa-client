@@ -6,7 +6,7 @@
                  name varchar(200),
                  mainTask varchar(200),
                  desp varchar(200),
-                 params varchar(200),
+                 params varchar(3000),
                  nextTask varchar(200),
                  running boolean default false,
                  status integer default 0,
