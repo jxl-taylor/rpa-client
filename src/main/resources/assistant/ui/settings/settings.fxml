@@ -85,12 +85,12 @@
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <JFXTextField fx:id="connectStatus" labelFloat="true" promptText="连接状态">
+                        <JFXTextField fx:id="connectStatus" labelFloat="true" promptText="连接状态" editable="false">
                            <VBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                            </VBox.margin>
                         </JFXTextField>
-                        <JFXTextField fx:id="connectDuration" labelFloat="true" promptText="连接时长">
+                        <JFXTextField fx:id="connectDuration" labelFloat="true" promptText="连接时长" editable="false">
                            <VBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                            </VBox.margin>

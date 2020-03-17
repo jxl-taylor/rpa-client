@@ -19,7 +19,7 @@ public class Task {
 	private String nextTask;
 	//是否启动 已开启|未开启
 	private boolean running;
-	//运行状态 运行中|暂停中
+	//运行状态 1:运行中 | 0:暂停中
 	private Integer status;
 	private Integer successCount;
 	private Integer failCount;

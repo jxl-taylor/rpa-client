@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import com.mr.rpa.assistant.job.HeartBeat;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,8 +19,11 @@ import javafx.stage.Stage;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.export.DatabaseExporter;
+import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+@Log4j
 public class SettingsController implements Initializable {
 
 	@FXML
@@ -71,7 +75,23 @@ public class SettingsController implements Initializable {
 
 	@FXML
 	private void testConnection(ActionEvent event){
-		AlertMaker.showSimpleAlert("测试连接", "连接成功");
+		HeartBeat heartBeat = new HeartBeat();
+		try {
+			if(StringUtils.isBlank(controlServer.getText())) {
+				AlertMaker.showErrorMessage("测试连接", "控制中心地址为空，请输入地址");
+				return;
+			}
+			if(heartBeat.action(controlServer.getText())){
+				AlertMaker.showSimpleAlert("测试连接", "连接成功");
+				return;
+			}else{
+				AlertMaker.showSimpleAlert("测试连接", "连接失败");
+				return;
+			}
+		} catch (Exception e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("测试连接", "连接失败，原因：" + e.getMessage());
+		}
 	}
 
 	@FXML
@@ -139,6 +159,7 @@ public class SettingsController implements Initializable {
 					BetweenFormater.Level.MINUTE));
 		} else {
 			connectStatus.setText("未连接");
+			connectDuration.setText("");
 		}
 		dbPath.setText(sysConfig.getDbPath());
 		dbPath.setEditable(false);

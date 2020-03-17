@@ -6,6 +6,8 @@ package com.mr.rpa.assistant.util;
 public class SystemContants {
 
 	public static final long HEARTBEAT_INTERVAL = 5000;
+	public static final String API_SUCCESS = "1";
+	public static final String API_FAIL = "0";
 
 	public static final int TASK_RUNNING_STATUS_RUN = 1;
 	public static final int TASK_RUNNING_STATUS_PAUSE = 0;
@@ -43,4 +45,8 @@ public class SystemContants {
 	public static final String CRON_TYEP_SPECIFIED_ITEM = "specified_item";
 
 	public static final String RESULT_PATH_CODE = "bankcode";
+
+	public static final String PRIVATE_KEY = "MR-BOT";
+	public static final String 	CLIENT_VERSION_1_0 = "1.0";
+
 }
