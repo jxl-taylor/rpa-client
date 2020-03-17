@@ -71,8 +71,8 @@ public class HeartBeat implements Runnable {
 		LinkedHashMap<String, Object> jsonMap = Maps.newLinkedHashMap();
 		jsonMap.put("cpuLoad", CommonUtil.getCpuLoad());
 		jsonMap.put("freeMemory", CommonUtil.getFreeMemory());
-		jsonMap.put("totalMemory", CommonUtil.getCpuLoad());
-		jsonMap.put("freeDisk", CommonUtil.getCpuLoad());
+		jsonMap.put("totalMemory", CommonUtil.getTotalMemory());
+		jsonMap.put("freeDisk", CommonUtil.getFreeDisk());
 
 		List<LinkedHashMap<String, Object>> botContentList = Lists.newArrayList();
 		taskDao.queryTaskList().forEach(task -> {
