@@ -80,8 +80,8 @@ public class HeartBeat implements Runnable {
 			taskMap.put("botName", task.getName());
 			taskMap.put("mainBot", task.getMainTask());
 			taskMap.put("botStatus", task.isRunning() && task.getStatus() == SystemContants.TASK_RUNNING_STATUS_RUN);
-			taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogDao.getTaskLogList()) ?
-					SystemContants.TASK_LOG_STATUS_RUNNING : taskLogDao.getTaskLogList().get(0).getStatus()
+			taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogDao.loadTaskLogList(task.getId())) ?
+					SystemContants.TASK_LOG_STATUS_RUNNING : taskLogDao.loadTaskLogList(task.getId()).get(0).getStatus()
 			);
 			botContentList.add(taskMap);
 		});
