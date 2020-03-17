@@ -11,7 +11,7 @@
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadAddTask"
                    prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="添加任务" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="TASK" size="25"/>
+                <FontAwesomeIconView glyphName="TASKS" size="25"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="223.0" mnemonicParsing="false" onAction="#loadSettings"
@@ -23,21 +23,21 @@
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="81.0" mnemonicParsing="false" onAction="#LoadAboutUs"
                    prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="关于我们" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="TABLE" size="25"/>
+                <FontAwesomeIconView glyphName="CHILD" size="25"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
                    onAction="#exit" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
                    text="退出" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="TABLE" size="25"/>
+                <FontAwesomeIconView glyphName="CLOSE" size="25"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
                    onAction="#loadUpdate" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
                    text="更新" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="TABLE" size="25"/>
+                <FontAwesomeIconView glyphName="GLOBE" size="25"/>
             </graphic>
         </JFXButton>
     </children>
