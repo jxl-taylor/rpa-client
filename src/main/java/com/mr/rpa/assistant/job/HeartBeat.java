@@ -98,6 +98,7 @@ public class HeartBeat implements Runnable {
 					.body(JSON.toJSONString(jsonMap))
 					.execute().body();
 			JSONObject resultJson = JSON.parseObject(result);
+			if(resultJson == null) throw new RuntimeException(String.format("[%s]控制中心地址无法识别", controlUrl));
 			String resultCode = resultJson.getString("resultcode");
 			if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
 				if (sysConfig.getConnectTime() == null) {
