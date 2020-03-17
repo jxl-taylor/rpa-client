@@ -371,7 +371,7 @@ public class TaskAddController implements Initializable {
 				taskModel.setMainTask(mainTask.getValue());
 				taskModel.setCron(task.getCron());
 				taskModel.setDesp(task.getDesp());
-				taskModel.setParams(task.getParams());
+				taskModel.setParams(converParamToString());
 				taskModel.setNextTask(nextTask.getValue());
 				JobFactory.update(taskModel);
 			} catch (SchedulerException e) {
@@ -471,6 +471,7 @@ public class TaskAddController implements Initializable {
 			deleteButton.setOnAction((final ActionEvent e) -> {
 				HBox selectedHBox = paramDeleteMap.get(e.getSource());
 				vFormBox.getChildren().remove(selectedHBox);
+				paramDeleteMap.remove(e.getSource());
 			});
 			paramBox.getChildren().add(deleteButton);
 			paramDeleteMap.put(deleteButton, paramBox);
