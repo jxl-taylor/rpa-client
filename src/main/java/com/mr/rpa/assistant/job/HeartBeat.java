@@ -68,44 +68,50 @@ public class HeartBeat implements Runnable {
 			if(StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
 			return false;
 		}
-		LinkedHashMap<String, Object> jsonMap = Maps.newLinkedHashMap();
-		jsonMap.put("cpuLoad", CommonUtil.getCpuLoad());
-		jsonMap.put("freeMemory", CommonUtil.getFreeMemory());
-		jsonMap.put("totalMemory", CommonUtil.getTotalMemory());
-		jsonMap.put("freeDisk", CommonUtil.getFreeDisk());
+		try{
+			LinkedHashMap<String, Object> jsonMap = Maps.newLinkedHashMap();
+			jsonMap.put("cpuLoad", CommonUtil.getCpuLoad());
+			jsonMap.put("freeMemory", CommonUtil.getFreeMemory());
+			jsonMap.put("totalMemory", CommonUtil.getTotalMemory());
+			jsonMap.put("freeDisk", CommonUtil.getFreeDisk());
 
-		List<LinkedHashMap<String, Object>> botContentList = Lists.newArrayList();
-		taskDao.queryTaskList().forEach(task -> {
-			LinkedHashMap<String, Object> taskMap = Maps.newLinkedHashMap();
-			taskMap.put("botName", task.getName());
-			taskMap.put("mainBot", task.getMainTask());
-			taskMap.put("botStatus", task.isRunning() && task.getStatus() == SystemContants.TASK_RUNNING_STATUS_RUN);
-			taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogDao.loadTaskLogList(task.getId())) ?
-					SystemContants.TASK_LOG_STATUS_RUNNING : taskLogDao.loadTaskLogList(task.getId()).get(0).getStatus()
-			);
-			botContentList.add(taskMap);
-		});
+			List<LinkedHashMap<String, Object>> botContentList = Lists.newArrayList();
+			taskDao.queryTaskList().forEach(task -> {
+				LinkedHashMap<String, Object> taskMap = Maps.newLinkedHashMap();
+				taskMap.put("botName", task.getName());
+				taskMap.put("mainBot", task.getMainTask());
+				taskMap.put("botStatus", task.isRunning() && task.getStatus() == SystemContants.TASK_RUNNING_STATUS_RUN);
+				taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogDao.loadTaskLogList(task.getId())) ?
+						SystemContants.TASK_LOG_STATUS_RUNNING : taskLogDao.loadTaskLogList(task.getId()).get(0).getStatus()
+				);
+				botContentList.add(taskMap);
+			});
 
-		jsonMap.put("botContent", botContentList);
+			jsonMap.put("botContent", botContentList);
 
-		String result = HttpRequest.post(url)
-				.header("serviceId", SERVICE_ID_HEARTBEAT)
-				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
-				.header("privateKey", SystemContants.PRIVATE_KEY)
-				.header("mac", CommonUtil.getLocalMac())
-				.header("processId", CommonUtil.getProcessID())
-				.body(JSON.toJSONString(jsonMap))
-				.execute().body();
-		JSONObject resultJson = JSON.parseObject(result);
-		String resultCode = resultJson.getString("resultcode");
-		if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
-			if (sysConfig.getConnectTime() == null) {
-				if(StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(new java.util.Date());
+			String result = HttpRequest.post(url)
+					.header("serviceId", SERVICE_ID_HEARTBEAT)
+					.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
+					.header("privateKey", SystemContants.PRIVATE_KEY)
+					.header("mac", CommonUtil.getLocalMac())
+					.header("processId", CommonUtil.getProcessID())
+					.body(JSON.toJSONString(jsonMap))
+					.execute().body();
+			JSONObject resultJson = JSON.parseObject(result);
+			String resultCode = resultJson.getString("resultcode");
+			if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
+				if (sysConfig.getConnectTime() == null) {
+					if(StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(new java.util.Date());
+				}
+				return true;
 			}
-			return true;
+			if(StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
+			log.error(resultJson.getString("message"));
+		}catch (Exception e){
+			e.printStackTrace();
+			throw e;
 		}
-		if(StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
-		log.error(resultJson.getString("message"));
+
 		return false;
 	}
 
