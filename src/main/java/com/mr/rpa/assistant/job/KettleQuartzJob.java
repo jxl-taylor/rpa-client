@@ -10,6 +10,7 @@ import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
+import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.pentaho.di.job.JobMeta;
@@ -96,6 +97,9 @@ public class KettleQuartzJob implements Job {
 	}
 
 	protected void runKbj(String taskName, String kbjName, List<KeyValue> kvList) throws Exception {
+		if(!LicenseManagerHolder.getLicenseManagerHolder().verifyCert())
+			throw new RuntimeException("License已失效");
+
 		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath()
 				+ File.separator + taskName;
 		FileUtil.mkdir(taskFileDir);
