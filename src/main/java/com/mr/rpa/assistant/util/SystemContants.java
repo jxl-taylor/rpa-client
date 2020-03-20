@@ -11,7 +11,7 @@ public class SystemContants {
 	public static final String API_SUCCESS = "1";
 	public static final String API_FAIL = "0";
 
-	public static final long MAX_LOG_OUTPUT_DURATION = 30*1000;
+	public static final long MAX_LOG_OUTPUT_DURATION = 2*60*1000;
 
 	public static final int TASK_RUNNING_STATUS_RUN = 1;
 	public static final int TASK_RUNNING_STATUS_PAUSE = 0;
