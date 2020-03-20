@@ -124,7 +124,8 @@ public class TaskListController implements Initializable {
 	}
 
 	private void loadLogData(String taskId) {
-		taskLogDao.loadTaskLogList(taskId);
+		int choice = GlobalProperty.getInstance().getTaskHistoryController().getStatusChoice();
+		taskLogDao.loadTaskLogList(taskId, choice);
 	}
 
 	@FXML

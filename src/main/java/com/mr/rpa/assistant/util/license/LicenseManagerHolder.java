@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.util.license;
 
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.SystemContants;
+import com.mr.rpa.assistant.util.encryption.Encipher;
 import de.schlichtherle.license.*;
 import lombok.extern.log4j.Log4j;
 
@@ -47,7 +48,7 @@ public class LicenseManagerHolder {
 			System.err.println(e);
 		}
 		PUBLICALIAS = prop.getProperty("PUBLICALIAS");
-		STOREPWD = prop.getProperty("STOREPWD");
+		STOREPWD = Encipher.DecodePasswd(SystemContants.LIC_KEY_PWD);
 		SUBJECT = prop.getProperty("SUBJECT");
 		licPath = prop.getProperty("licPath");
 		pubPath = prop.getProperty("pubPath");

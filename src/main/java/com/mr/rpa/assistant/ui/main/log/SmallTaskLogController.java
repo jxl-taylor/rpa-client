@@ -74,4 +74,9 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 		});
 	}
 
+	@Override
+	public void setMenuName(String name) {
+		logMenu.setText(name);
+	}
+
 }

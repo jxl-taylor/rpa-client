@@ -92,6 +92,7 @@ public class TaskHistoryController implements Initializable {
 			}
 		});
 		controllers.add(this);
+		globalProperty.setTaskHistoryController(this);
 	}
 
 	private void setLogStatusChoice() {
@@ -100,8 +101,6 @@ public class TaskHistoryController implements Initializable {
 				if (item.key == currentStatus) controller.logStatusChoice.setValue(item);
 			});
 		});
-
-
 	}
 
 	private void setMaxRowChoice() {
@@ -122,6 +121,10 @@ public class TaskHistoryController implements Initializable {
 			taskLogDao.loadTaskLogList(globalProperty.getSelectedTaskId().get(), logStatusChoice.getValue().key);
 		}
 
+	}
+
+	public int getStatusChoice(){
+		return logStatusChoice.getValue().key;
 	}
 
 	@AllArgsConstructor

@@ -92,7 +92,8 @@ public class TaskLogListController implements Initializable {
 	}
 
 	private List<TaskLog> loadLogData() {
-		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
+		int choice = GlobalProperty.getInstance().getTaskHistoryController().getStatusChoice();
+		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get(), choice);
 	}
 
 	@FXML
@@ -124,7 +125,7 @@ public class TaskLogListController implements Initializable {
 		AlertMaker.showMaterialDialog(rootPane,
 				rootPane.getChildren().get(0),
 				Lists.newArrayList(confirmBtn, cancelBtn), "删除日志",
-				String.format("确定删除日志[id=%s]么?",selectedForDetail.getId()), false);
+				String.format("确定删除日志[id=%s]么?", selectedForDetail.getId()), false);
 
 	}
 

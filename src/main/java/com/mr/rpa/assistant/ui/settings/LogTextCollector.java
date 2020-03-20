@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.ui.settings;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import com.mr.rpa.assistant.util.SystemContants;
 import javafx.application.Platform;
 import java.util.Date;
 
@@ -16,12 +17,21 @@ public class LogTextCollector {
 
 	private boolean logAble = true;
 
+	private long logOutPutTime = System.currentTimeMillis();
+
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
 	public void addLog(String logText) {
 		Platform.runLater(() -> {
 			if(globalProperty == null) globalProperty = GlobalProperty.getInstance();
 			if(!logAble) return;
+			if(System.currentTimeMillis() - logOutPutTime > SystemContants.MAX_LOG_OUTPUT_DURATION){
+				logAble = false;
+				globalProperty.getLogShows().forEach(item-> item.setMenuName("开启日志"));
+				//做一次 full gc
+				System.gc();
+				return;
+			}
 			//超过限制，删除第一条
 			if (allLogRowLimit > 200) {
 				allSb.delete(0, allSb.indexOf("\n") + 1);
@@ -47,6 +57,7 @@ public class LogTextCollector {
 	}
 
 	public void setLogAble(boolean logAble) {
+		logOutPutTime = System.currentTimeMillis();
 		this.logAble = logAble;
 	}
 }
