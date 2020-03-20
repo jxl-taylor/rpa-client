@@ -26,3 +26,10 @@ file|rpa-client.jar=/
 dir|dir1=dir/dir2   表明将dir1下的内容放在安装目录的 dir\dir2下面
 属性值为文件所方目录
 3、将这个文件夹压缩为zip包，并改后缀名为mbot
+
+
+### 启动命令
+测试  
+java -server -XX:+HeapDumpOnOutOfMemoryError -Xmx2g -Xms2g -XX:+UseParallelGC -jar rpa-client.jar 
+生产  
+java -server -XX:+HeapDumpOnOutOfMemoryError -Xmx2g -Xms2g -XX:+UseParallelGC -jar rpa-client.jar 
