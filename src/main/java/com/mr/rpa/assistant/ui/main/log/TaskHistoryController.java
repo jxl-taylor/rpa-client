@@ -123,7 +123,7 @@ public class TaskHistoryController implements Initializable {
 
 	}
 
-	public int getStatusChoice(){
+	public Integer getStatusChoice(){
 		return logStatusChoice.getValue().key;
 	}
 

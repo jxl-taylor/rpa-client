@@ -90,7 +90,7 @@ public class TaskListController implements Initializable {
 					String taskId = row.getItem().getId();
 					globalProperty.getSelectedTaskId().set(taskId);
 					//load task log
-					loadLogData(taskId);
+					loadLogData();
 					globalProperty.getSelectedTaskLogId().set("");
 				}
 			});
@@ -123,9 +123,8 @@ public class TaskListController implements Initializable {
 		taskDao.loadTaskList();
 	}
 
-	private void loadLogData(String taskId) {
-		int choice = GlobalProperty.getInstance().getTaskHistoryController().getStatusChoice();
-		taskLogDao.loadTaskLogList(taskId, choice);
+	private void loadLogData() {
+		GlobalProperty.getInstance().getTaskHistoryController().loadTaskLog(null);
 	}
 
 	@FXML
