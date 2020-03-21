@@ -122,8 +122,8 @@ public class SettingsController implements Initializable {
 	}
 	@FXML
 	private void addToMailAction(ActionEvent event) {
-		toMailBox.getChildren();
 		HBox paramBox = new HBox();
+		paramBox.setStyle("-fx-border-color: #2A2E37; -fx-background-color: #2A2E37");
 		paramBox.setSpacing(5);
 
 		JFXTextField mailField = new JFXTextField();
@@ -131,6 +131,7 @@ public class SettingsController implements Initializable {
 		mailField.setPromptText("收件人");
 		mailField.setPrefWidth(330);
 		paramBox.getChildren().add(mailField);
+		HBox.setHgrow(mailField, Priority.ALWAYS);
 
 		//删除事件
 		JFXButton deleteButton = new JFXButton("删除");
@@ -209,6 +210,8 @@ public class SettingsController implements Initializable {
 
 		miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
 		runningLimit.setText(sysConfig.getRunningLimit().toString());
+
+		if(toMailBox.getChildren().size() == 0) addToMailAction(null);
 	}
 
 	private Stage getStage() {
