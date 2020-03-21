@@ -2,18 +2,25 @@ package com.mr.rpa.assistant.ui.settings;
 
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
+import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.data.model.SysConfig;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
 import com.mr.rpa.assistant.job.HeartBeat;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.alert.AlertMaker;
@@ -39,6 +46,8 @@ public class SettingsController implements Initializable {
 	@FXML
 	private JFXCheckBox mailSslCheckbox;
 	@FXML
+	private VBox toMailBox;
+	@FXML
 	private JFXTextField taskFilePath;
 	@FXML
 	private JFXTextField logPath;
@@ -59,6 +68,8 @@ public class SettingsController implements Initializable {
 
 	@FXML
 	private JFXTabPane settingTabPane;
+
+	private LinkedHashMap<Object, HBox> paramDeleteMap = Maps.newLinkedHashMap();
 
 	private SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 
@@ -105,6 +116,38 @@ public class SettingsController implements Initializable {
 		AlertMaker.showSimpleAlert("保存", "基础配置修改成功");
 	}
 
+	@FXML
+	private void setDefaultAdminEmailAction(ActionEvent event) {
+
+	}
+	@FXML
+	private void addToMailAction(ActionEvent event) {
+		toMailBox.getChildren();
+		HBox paramBox = new HBox();
+		paramBox.setSpacing(5);
+
+		JFXTextField mailField = new JFXTextField();
+		mailField.setLabelFloat(false);
+		mailField.setPromptText("收件人");
+		mailField.setPrefWidth(330);
+		paramBox.getChildren().add(mailField);
+
+		//删除事件
+		JFXButton deleteButton = new JFXButton("删除");
+		deleteButton.setPrefWidth(100);
+		deleteButton.setOnAction((final ActionEvent e) -> {
+			HBox selectedHBox = paramDeleteMap.get(e.getSource());
+			toMailBox.getChildren().remove(selectedHBox);
+			paramDeleteMap.remove(e.getSource());
+		});
+		paramBox.getChildren().add(deleteButton);
+		paramDeleteMap.put(deleteButton, paramBox);
+		toMailBox.getChildren().add(paramBox);
+	}
+	@FXML
+	private void testMailAction(ActionEvent event) {
+
+	}
 	@FXML
 	private void handleSaverRunningAction(ActionEvent event) {
 		sysConfig.setTaskFilePath(taskFilePath.getText());
