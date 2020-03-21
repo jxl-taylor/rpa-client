@@ -210,8 +210,6 @@ public class SettingsController implements Initializable {
 
 		miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
 		runningLimit.setText(sysConfig.getRunningLimit().toString());
-
-		if(toMailBox.getChildren().size() == 0) addToMailAction(null);
 	}
 
 	private Stage getStage() {
