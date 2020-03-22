@@ -163,6 +163,7 @@ public final class DatabaseHandler {
 				sysConfig.setMailEmailAddress(rs.getString("mail_user_email"));
 				sysConfig.setMailEmailPassword(rs.getString("mail_user_password"));
 				sysConfig.setMailSslCheckbox(rs.getBoolean("mail_ssl_enabled"));
+				sysConfig.setToMails(rs.getString("to_mails"));
 				sysConfig.setTaskFilePath(rs.getString("task_file_path"));
 				sysConfig.setLogPath(rs.getString("log_path"));
 				sysConfig.setControlServer(rs.getString("control_server"));
@@ -206,12 +207,13 @@ public final class DatabaseHandler {
 						"mail_user_email," +
 						"mail_user_password," +
 						"mail_ssl_enabled," +
+						"to_mails," +
 						"task_file_path," +
 						"log_path," +
 						"db_path," +
 						"control_server," +
 						"minite_error_limit," +
-						"running_limit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+						"running_limit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		int i = 1;
 		statement.setString(i++, UUID.randomUUID().toString());
 		//用户
@@ -223,6 +225,7 @@ public final class DatabaseHandler {
 		statement.setString(i++, sysConfig.getMailEmailAddress());
 		statement.setString(i++, sysConfig.getMailEmailPassword());
 		statement.setBoolean(i++, sysConfig.getMailSslCheckbox());
+		statement.setString(i++, sysConfig.getToMails());
 		//path
 		statement.setString(i++, sysConfig.getTaskFilePath());
 		statement.setString(i++, sysConfig.getLogPath());

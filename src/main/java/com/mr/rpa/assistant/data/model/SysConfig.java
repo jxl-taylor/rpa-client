@@ -25,6 +25,7 @@ public class SysConfig {
 	private Integer mailSmtpPort = 25;
 	private String mailEmailAddress;
 	private String mailEmailPassword;
+	private String toMails;
 	private Boolean mailSslCheckbox = false;
 	private String taskFilePath = DEFAULT_BOT_FILE_DIR + File.separator + "mbot";
 	private String taskFilePathTmp = taskFilePath + File.separator + "tmp";

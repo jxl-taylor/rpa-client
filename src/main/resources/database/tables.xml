@@ -36,6 +36,7 @@
                  mail_user_email varchar(1024),
                  mail_user_password varchar(1024),
                  mail_ssl_enabled boolean,
+                 to_mails varchar(2048) default '',
                  task_file_path varchar(255),
                  log_path varchar(255),
                  db_path varchar(255),

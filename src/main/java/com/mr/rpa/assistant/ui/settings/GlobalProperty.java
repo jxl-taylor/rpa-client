@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
+import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
@@ -46,8 +47,8 @@ public class GlobalProperty {
 	public final static double DEFAULT_LOG_HEIGHT = 247.0;
 	public final static double MAX_LOG_HEIGHT = 570.0;
 	public final static double DEFAULT_LOG_LIST_HEIGHT = 195.0;
-	public final static double MAX_LOG_LIST_HEIGHT =519.0;
-	public final static double SPLIT_POSITION_TASK_AND_LOG =0.52;
+	public final static double MAX_LOG_LIST_HEIGHT = 519.0;
+	public final static double SPLIT_POSITION_TASK_AND_LOG = 0.52;
 
 	private LicenseContent licenseContent;
 	private java.util.Date startDate;
@@ -100,6 +101,8 @@ public class GlobalProperty {
 
 	private SysConfig sysConfig = new SysConfig();
 
+	private MailServerInfo defaultMailServerInfo = new MailServerInfo("microrule.com", 25, "bot@microrule.com", "f0e5cbCj2", false);
+
 	public void setTitle(String username) {
 		this.title.set(String.format("MR-ROBOT（用户：%s）", username));
 	}
@@ -126,7 +129,7 @@ public class GlobalProperty {
 		return sysConfig;
 	}
 
-	public void refreshRunningDuration(){
+	public void refreshRunningDuration() {
 		runningDuration.set(DateUtil.formatBetween(globalProperty.getStartDate(),
 				new Date(),
 				BetweenFormater.Level.MINUTE));

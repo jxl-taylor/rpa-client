@@ -496,3 +496,8 @@
 .jfx-text-area:focused {
     -fx-prompt-text-fill: #0F9D58;
 }
+
+.separator *.line{
+    -fx-border-style: dotted;
+    -fx-border-color:  -fx-secondary;
+}

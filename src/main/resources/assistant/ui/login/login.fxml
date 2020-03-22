@@ -38,8 +38,8 @@
                   <Font size="14.0" />
                </font>
             </Hyperlink>
-            <JFXButton layoutX="106.0" layoutY="298.0" onAction="#handleLoginButtonAction" prefHeight="40.0" prefWidth="90.0" styleClass="login-button" text="登录" />
-            <JFXButton layoutX="239.0" layoutY="298.0" onAction="#handleCancelButtonAction" prefHeight="40.0" prefWidth="90.0" styleClass="login-button" text="取消" />
+            <JFXButton layoutX="106.0" layoutY="298.0" onAction="#handleLoginButtonAction" prefHeight="30.0" prefWidth="90.0" styleClass="login-button" text="登录" />
+            <JFXButton layoutX="239.0" layoutY="298.0" onAction="#handleCancelButtonAction" prefHeight="30.0" prefWidth="90.0" styleClass="login-button" text="取消" />
             <!--      <FontAwesomeIconView glyphName="LOCK" layoutX="200.0" layoutY="79.0" size="55" />-->
             <FontAwesomeIconView glyphName="USER" layoutX="64.0" layoutY="149.0" size="25" />
             <FontAwesomeIconView glyphName="KEY" layoutX="64.0" layoutY="224.0" size="25" />

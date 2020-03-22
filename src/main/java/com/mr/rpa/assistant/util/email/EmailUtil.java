@@ -1,9 +1,11 @@
 package com.mr.rpa.assistant.util.email;
 
+import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.sun.mail.util.MailSSLSocketFactory;
-import org.apache.log4j.Logger;
+import javafx.application.Platform;
+import lombok.extern.log4j.Log4j;
 
 import java.util.Properties;
 import javax.mail.Message;
@@ -16,89 +18,127 @@ import javax.mail.internet.MimeMessage;
 /**
  * @author Villan
  */
+@Log4j
 public class EmailUtil {
 
-    private final static Logger LOGGER = Logger.getLogger(EmailUtil.class);
+	private static GenericCallback gbCallback = new BgCallback();
 
-    public static void sendTestMail(MailServerInfo mailServerInfo, String recepient, GenericCallback callback) {
+	private static GenericCallback showCallback = new ShowCallback();
 
-        Runnable emailSendTask = () -> {
-            LOGGER.info(String.format("Initiating email sending task. Sending to %s", recepient));
-            Properties props = new Properties();
-            try {
-                MailSSLSocketFactory sf = new MailSSLSocketFactory();
-                sf.setTrustAllHosts(true);
-                props.put("mail.imap.ssl.trust", "*");
-                props.put("mail.imap.ssl.socketFactory", sf);
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.starttls.enable", mailServerInfo.getSslEnabled() ? "true" : "false");
-                props.put("mail.smtp.host", mailServerInfo.getMailServer());
-                props.put("mail.smtp.port", mailServerInfo.getPort());
+	public static void sendTestMail(MailServerInfo mailServerInfo, String recepient) {
 
-                Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(mailServerInfo.getEmailID(), mailServerInfo.getPassword());
-                    }
-                });
+		Runnable emailSendTask = () -> {
+			log.info(String.format("Initiating email sending task. Sending to %s", recepient));
+			Properties props = new Properties();
+			try {
+				MailSSLSocketFactory sf = new MailSSLSocketFactory();
+				sf.setTrustAllHosts(true);
+				props.put("mail.imap.ssl.trust", "*");
+				props.put("mail.imap.ssl.socketFactory", sf);
+				props.put("mail.smtp.auth", "true");
+				props.put("mail.smtp.starttls.enable", mailServerInfo.getSslEnabled() ? "true" : "false");
+				props.put("mail.smtp.host", mailServerInfo.getMailServer());
+				props.put("mail.smtp.port", mailServerInfo.getPort());
 
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(mailServerInfo.getEmailID()));
-                message.setRecipients(Message.RecipientType.TO,
-                        InternetAddress.parse(recepient));
-                message.setSubject("Test mail from Library Assistant");
-                message.setText("Hi,"
-                        + "\n\n This is a test mail from Library Assistant!");
+				Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+					@Override
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(mailServerInfo.getEmailID(), mailServerInfo.getPassword());
+					}
+				});
 
-                Transport.send(message);
-                LOGGER.info("Everything seems fine");
-                callback.taskCompleted(Boolean.TRUE);
-            } catch (Throwable exp) {
-                LOGGER.error( "Error occurred during sending email", exp);
-                callback.taskCompleted(Boolean.FALSE);
-            }
-        };
-        Thread mailSender = new Thread(emailSendTask, "EMAIL-SENDER");
-        mailSender.start();
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(mailServerInfo.getEmailID()));
+				message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(recepient));
+				message.setSubject("来自迈容BOT的测试邮件");
+				message.setText("您好,"
+						+ "\n\n 这是一封迈容机器人大麦的测试邮件!");
+
+				Transport.send(message);
+				log.info("测试邮件发送成功");
+				showCallback.taskCompleted(Boolean.TRUE);
+			} catch (Throwable exp) {
+				log.error("Error occurred during sending email", exp);
+				showCallback.taskCompleted(Boolean.FALSE);
+			}
+		};
+		Thread mailSender = new Thread(emailSendTask, "EMAIL-SENDER");
+		mailSender.start();
+	}
+
+	public static void sendMail(MailServerInfo mailServerInfo, String recepient, String content, String title, GenericCallback callback) {
+		Runnable emailSendTask = () -> {
+			log.info(String.format("Initiating email sending task. Sending to %s", recepient));
+			Properties props = new Properties();
+			try {
+				MailSSLSocketFactory sf = new MailSSLSocketFactory();
+				sf.setTrustAllHosts(true);
+				props.put("mail.imap.ssl.trust", "*");
+				props.put("mail.imap.ssl.socketFactory", sf);
+				props.put("mail.smtp.auth", "true");
+				props.put("mail.smtp.starttls.enable", mailServerInfo.getSslEnabled() ? "true" : "false");
+				props.put("mail.smtp.host", mailServerInfo.getMailServer());
+				props.put("mail.smtp.port", mailServerInfo.getPort());
+
+				Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+					@Override
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(mailServerInfo.getEmailID(), mailServerInfo.getPassword());
+					}
+				});
+
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(mailServerInfo.getEmailID()));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recepient));
+				message.setSubject(title);
+				message.setContent(content, "text/html");
+
+				Transport.send(message);
+				log.info("Everything seems fine");
+				callback.taskCompleted(Boolean.TRUE);
+			} catch (Throwable exp) {
+				log.error("Error occurred during sending email", exp);
+				callback.taskCompleted(Boolean.FALSE);
+			}
+		};
+		Thread mailSender = new Thread(emailSendTask, "EMAIL-SENDER");
+		mailSender.start();
+	}
+
+	public static void sendBgMail(MailServerInfo mailServerInfo, String recepient, String content, String title) {
+		sendMail(mailServerInfo, recepient, content, title, gbCallback);
+	}
+
+    public static void sendShowMail(MailServerInfo mailServerInfo, String recepient, String content, String title) {
+        sendMail(mailServerInfo, recepient, content, title, showCallback);
     }
 
-    public static void sendMail(MailServerInfo mailServerInfo, String recepient, String content, String title, GenericCallback callback) {
+	static class BgCallback implements GenericCallback {
+		@Override
+		public Object taskCompleted(Object val) {
+			boolean result = (boolean) val;
+			Platform.runLater(() -> {
+				if (!result) {
+					log.error("邮件发送失败!");
+				}
+			});
+			return true;
+		}
+	}
 
-        Runnable emailSendTask = () -> {
-            LOGGER.info(String.format("Initiating email sending task. Sending to %s", recepient));
-            Properties props = new Properties();
-            try {
-                MailSSLSocketFactory sf = new MailSSLSocketFactory();
-                sf.setTrustAllHosts(true);
-                props.put("mail.imap.ssl.trust", "*");
-                props.put("mail.imap.ssl.socketFactory", sf);
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.starttls.enable", mailServerInfo.getSslEnabled() ? "true" : "false");
-                props.put("mail.smtp.host", mailServerInfo.getMailServer());
-                props.put("mail.smtp.port", mailServerInfo.getPort());
-
-                Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(mailServerInfo.getEmailID(), mailServerInfo.getPassword());
-                    }
-                });
-
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(mailServerInfo.getEmailID()));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recepient));
-                message.setSubject(title);
-                message.setContent(content, "text/html");
-
-                Transport.send(message);
-                LOGGER.info("Everything seems fine");
-                callback.taskCompleted(Boolean.TRUE);
-            } catch (Throwable exp) {
-                LOGGER.error("Error occurred during sending email", exp);
-                callback.taskCompleted(Boolean.FALSE);
-            }
-        };
-        Thread mailSender = new Thread(emailSendTask, "EMAIL-SENDER");
-        mailSender.start();
+    static class ShowCallback implements GenericCallback {
+        @Override
+        public Object taskCompleted(Object val) {
+            boolean result = (boolean) val;
+            Platform.runLater(() -> {
+                if (result) {
+                    AlertMaker.showSimpleAlert("Success", "邮件发送成功!");
+                } else {
+                    AlertMaker.showErrorMessage("Failed", "邮件发送失败!");
+                }
+            });
+            return true;
+        }
     }
 }

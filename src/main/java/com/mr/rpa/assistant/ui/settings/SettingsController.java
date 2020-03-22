@@ -2,8 +2,12 @@ package com.mr.rpa.assistant.ui.settings;
 
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.jfoenix.controls.*;
+import com.mr.rpa.assistant.data.callback.GenericCallback;
+import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.SysConfig;
 
 import java.io.File;
@@ -11,15 +15,23 @@ import java.net.URL;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.mr.rpa.assistant.job.HeartBeat;
+import com.mr.rpa.assistant.util.email.EmailUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -28,7 +40,6 @@ import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.export.DatabaseExporter;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 @Log4j
 public class SettingsController implements Initializable {
@@ -39,8 +50,6 @@ public class SettingsController implements Initializable {
 	private JFXTextField mailSmtpPort;
 	@FXML
 	private JFXTextField mailEmailAddress;
-
-	private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class.getName());
 	@FXML
 	private JFXPasswordField mailEmailPassword;
 	@FXML
@@ -65,37 +74,71 @@ public class SettingsController implements Initializable {
 	private JFXTextField runningLimit;
 	@FXML
 	private JFXSpinner progressSpinner;
-
+	@FXML
+	private StackPane rootPane;
 	@FXML
 	private JFXTabPane settingTabPane;
+	@FXML
+	private Tab mailTab;
+	private boolean mailsaved;
 
-	private LinkedHashMap<Object, HBox> paramDeleteMap = Maps.newLinkedHashMap();
+	private LinkedHashMap<Object, HBox> toMailMap = Maps.newLinkedHashMap();
 
 	private SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+
+	private MailServerInfo defaultMailServerInfo = GlobalProperty.getInstance().getDefaultMailServerInfo();
+
+	private JFXButton cancelBtn;
+
+	private GenericCallback mailCallBack;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initData();
 		initComponents();
+		cancelBtn = new JFXButton("取消");
+		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			rootPane.getChildren().get(0).setEffect(null);
+		});
 	}
 
 	private void initComponents() {
 		settingTabPane.tabMinWidthProperty().bind(settingTabPane.widthProperty().divide(settingTabPane.getTabs().size()).subtract(15));
-
+		JFXButton confirmBtn = new JFXButton("确定");
+		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			try {
+				handleSaveMailAction(null);
+			} catch (Exception e) {
+				log.error(e);
+				AlertMaker.showSimpleAlert("保存通知配置", "操作失败，原因：" + e.getMessage());
+				return;
+			}
+		});
+		mailTab.setOnSelectionChanged((Event event) -> {
+			if (mailTab.isSelected()) {
+				initMailSetting();
+			}else {
+				if(!mailsaved)
+					AlertMaker.showMaterialDialog(rootPane,
+							rootPane.getChildren().get(0),
+							Lists.newArrayList(confirmBtn, cancelBtn), "通知配置",
+							"保存配置么?", false);
+			}
+		});
 	}
 
 	@FXML
-	private void testConnection(ActionEvent event){
+	private void testConnection(ActionEvent event) {
 		HeartBeat heartBeat = new HeartBeat();
 		try {
-			if(StringUtils.isBlank(controlServer.getText())) {
+			if (StringUtils.isBlank(controlServer.getText())) {
 				AlertMaker.showErrorMessage("测试连接", "控制中心地址为空，请输入地址");
 				return;
 			}
-			if(heartBeat.action(controlServer.getText())){
+			if (heartBeat.action(controlServer.getText())) {
 				AlertMaker.showSimpleAlert("测试连接", "连接成功");
 				return;
-			}else{
+			} else {
 				AlertMaker.showSimpleAlert("测试连接", "连接失败");
 				return;
 			}
@@ -106,22 +149,34 @@ public class SettingsController implements Initializable {
 	}
 
 	@FXML
-	private void handleSaveButtonAction(ActionEvent event) {
+	private void handleSaveMailAction(ActionEvent event) {
+		mailsaved = true;
 		sysConfig.setMailServerName(mailServerName.getText());
 		sysConfig.setMailSmtpPort(Integer.parseInt(mailSmtpPort.getText()));
 		sysConfig.setMailEmailAddress(mailEmailAddress.getText());
 		sysConfig.setMailEmailPassword(mailEmailPassword.getText());
 		sysConfig.setMailSslCheckbox(mailSslCheckbox.isSelected());
+		Set<String> mailSet = Sets.newLinkedHashSet();
+		toMailMap.values().forEach(hBox -> {
+			JFXTextField mailField = (JFXTextField) hBox.getChildren().get(0);
+			mailSet.add(mailField.getText());
+		});
+		sysConfig.setToMails(StringUtils.join(mailSet, ","));
 		DatabaseHandler.getInstance().updateSysConfig();
-		AlertMaker.showSimpleAlert("保存", "基础配置修改成功");
+		AlertMaker.showSimpleAlert("保存", "通知管理配置修改成功");
 	}
 
 	@FXML
 	private void setDefaultAdminEmailAction(ActionEvent event) {
-
+		mailServerName.setText(defaultMailServerInfo.getMailServer());
+		mailEmailAddress.setText(defaultMailServerInfo.getEmailID());
+		mailEmailPassword.setText(defaultMailServerInfo.getPassword());
+		mailSmtpPort.setText(String.valueOf(defaultMailServerInfo.getPort()));
+		mailSslCheckbox.setSelected(defaultMailServerInfo.getSslEnabled());
 	}
+
 	@FXML
-	private void addToMailAction(ActionEvent event) {
+	private void doAddToMail(String toMail) {
 		HBox paramBox = new HBox();
 		paramBox.setStyle("-fx-border-color: #2A2E37; -fx-background-color: #2A2E37");
 		paramBox.setSpacing(5);
@@ -130,6 +185,7 @@ public class SettingsController implements Initializable {
 		mailField.setLabelFloat(false);
 		mailField.setPromptText("收件人");
 		mailField.setPrefWidth(330);
+		if (StringUtils.isNotBlank(toMail)) mailField.setText(toMail);
 		paramBox.getChildren().add(mailField);
 		HBox.setHgrow(mailField, Priority.ALWAYS);
 
@@ -137,20 +193,40 @@ public class SettingsController implements Initializable {
 		JFXButton deleteButton = new JFXButton("删除");
 		deleteButton.setPrefWidth(100);
 		deleteButton.setOnAction((final ActionEvent e) -> {
-			HBox selectedHBox = paramDeleteMap.get(e.getSource());
+			HBox selectedHBox = toMailMap.get(e.getSource());
 			toMailBox.getChildren().remove(selectedHBox);
-			paramDeleteMap.remove(e.getSource());
+			toMailMap.remove(e.getSource());
 		});
 		paramBox.getChildren().add(deleteButton);
-		paramDeleteMap.put(deleteButton, paramBox);
+		toMailMap.put(deleteButton, paramBox);
 		toMailBox.getChildren().add(paramBox);
 	}
+
+	@FXML
+	private void addToMailAction(ActionEvent event) {
+		doAddToMail(null);
+	}
+
 	@FXML
 	private void testMailAction(ActionEvent event) {
-
+		if(toMailMap.size() == 0){
+			AlertMaker.showSimpleAlert("邮件发送", "收件人不能为空!");
+			return;
+		}
+		MailServerInfo mailServerInfo = new MailServerInfo(mailServerName.getText(),
+				Integer.parseInt(mailSmtpPort.getText()),
+				mailEmailAddress.getText(), mailEmailPassword.getText(), mailSslCheckbox.isSelected());
+		EmailUtil.sendTestMail(mailServerInfo, StringUtils.join(toMailMap.values().stream()
+				.map(item -> ((JFXTextField)item.getChildren().get(0)).getText())
+				.collect(Collectors.toSet()), ","));
 	}
+
 	@FXML
 	private void handleSaverRunningAction(ActionEvent event) {
+		if(toMailMap.size() == 0){
+			AlertMaker.showSimpleAlert("邮件发送", "收件人不能为空!");
+			return;
+		}
 		sysConfig.setTaskFilePath(taskFilePath.getText());
 		sysConfig.setLogPath(logPath.getText());
 		sysConfig.setControlServer(controlServer.getText());
@@ -159,7 +235,7 @@ public class SettingsController implements Initializable {
 	}
 
 	@FXML
-	private void refreshRunningAction(ActionEvent event){
+	private void refreshRunningAction(ActionEvent event) {
 		initData();
 	}
 
@@ -187,12 +263,7 @@ public class SettingsController implements Initializable {
 	}
 
 	private void initData() {
-		mailServerName.setText(sysConfig.getMailServerName());
-		mailSmtpPort.setText(sysConfig.getMailSmtpPort().toString());
-		mailEmailAddress.setText(sysConfig.getMailEmailAddress());
-		mailEmailPassword.setText(sysConfig.getMailEmailPassword());
-		mailSslCheckbox.setSelected(sysConfig.getMailSslCheckbox());
-
+		initMailSetting();
 		taskFilePath.setText(sysConfig.getTaskFilePath());
 		logPath.setText(sysConfig.getLogPath());
 		controlServer.setText(sysConfig.getControlServer());
@@ -210,6 +281,23 @@ public class SettingsController implements Initializable {
 
 		miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
 		runningLimit.setText(sysConfig.getRunningLimit().toString());
+	}
+
+	private void initMailSetting() {
+		mailsaved = false;
+		toMailBox.getChildren().clear();
+		toMailMap.clear();
+		mailServerName.setText(sysConfig.getMailServerName());
+		mailSmtpPort.setText(sysConfig.getMailSmtpPort().toString());
+		mailEmailAddress.setText(sysConfig.getMailEmailAddress());
+		mailEmailPassword.setText(sysConfig.getMailEmailPassword());
+		mailSslCheckbox.setSelected(sysConfig.getMailSslCheckbox());
+		if(StringUtils.isNotBlank(sysConfig.getToMails())){
+			String[] toMailArray = StringUtils.split(sysConfig.getToMails(), ",");
+			for (String mail : toMailArray) {
+				doAddToMail(mail);
+			}
+		}
 	}
 
 	private Stage getStage() {

@@ -44,7 +44,7 @@ public class TestMailController implements Initializable, GenericCallback {
     private void handleStartAction(ActionEvent event) {
         String toAddress = recepientAddressInput.getText();
         if (AssistantUtil.validateEmailAddress(toAddress)) {
-            EmailUtil.sendTestMail(mailServerInfo, toAddress, this);
+            EmailUtil.sendTestMail(mailServerInfo, toAddress);
             progressBar.setVisible(true);
         } else {
             AlertMaker.showErrorMessage("Failed", "Invalid email address!");
