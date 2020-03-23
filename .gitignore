@@ -2,10 +2,7 @@
 /target/
 .idea/
 /logs/
-/database/
-/kjb/
-/mbot/
-/update/
+/recfile/
 
 .classpath
 .project
