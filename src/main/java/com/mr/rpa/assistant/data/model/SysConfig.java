@@ -16,7 +16,8 @@ import java.io.FileReader;
 @Log4j
 public class SysConfig {
 
-	private static String DEFAULT_BOT_FILE_DIR = System.getProperty("user.dir");
+//	private static String DEFAULT_BOT_FILE_DIR = System.getProperty("user.dir");
+	private static String DEFAULT_BOT_FILE_DIR = "recfile";
 
 	private String adminUsername = "admin";
 	private String adminPassword = "admin";
@@ -31,7 +32,7 @@ public class SysConfig {
 	private String logPath = DEFAULT_BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
 	private java.util.Date connectTime;
-	private String dbPath = "database";
+	private String dbPath = DEFAULT_BOT_FILE_DIR + File.separator + "database";
 	private String updatePath = DEFAULT_BOT_FILE_DIR + File.separator + "update";
 	private String CONFIG_FILE = DEFAULT_BOT_FILE_DIR + File.separator + "config.txt";
 	private String runResultPath = DEFAULT_BOT_FILE_DIR + File.separator

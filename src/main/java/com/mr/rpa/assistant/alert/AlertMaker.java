@@ -146,9 +146,9 @@ public class AlertMaker {
 		try {
 			SystemTray tray = SystemTray.getSystemTray();
 			BufferedImage image = ImageIO.read(AlertMaker.class.getResource(AssistantUtil.ICON_IMAGE_LOC));
-			TrayIcon trayIcon = new TrayIcon(image, "MR ROBOT");
+			TrayIcon trayIcon = new TrayIcon(image, "REC");
 			trayIcon.setImageAutoSize(true);
-			trayIcon.setToolTip("MR ROBOT");
+			trayIcon.setToolTip("REC");
 			tray.add(trayIcon);
 			trayIcon.displayMessage(title, message, MessageType.INFO);
 			tray.remove(trayIcon);
