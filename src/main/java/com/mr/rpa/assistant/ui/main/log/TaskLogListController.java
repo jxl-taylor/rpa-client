@@ -92,7 +92,11 @@ public class TaskLogListController implements Initializable {
 	}
 
 	private List<TaskLog> loadLogData() {
-		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
+		Integer status = GlobalProperty.getInstance().getTaskHistoryController().getStatusChoice();
+		if (status == -1) {
+			return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
+		}
+		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get(), status);
 	}
 
 	@FXML
@@ -124,7 +128,7 @@ public class TaskLogListController implements Initializable {
 		AlertMaker.showMaterialDialog(rootPane,
 				rootPane.getChildren().get(0),
 				Lists.newArrayList(confirmBtn, cancelBtn), "删除日志",
-				String.format("确定删除日志[id=%s]么?",selectedForDetail.getId()), false);
+				String.format("确定删除日志[id=%s]么?", selectedForDetail.getId()), false);
 
 	}
 
@@ -160,7 +164,7 @@ public class TaskLogListController implements Initializable {
 
 	}
 
-	private void showLogDetail(TaskLogListController.TaskLog selectedForDetail) {
+	private void showLogDetail(TaskLog selectedForDetail) {
 
 		if (selectedForDetail == null) {
 			AlertMaker.showErrorMessage("未选择任务日志", "请选择一条记录.");

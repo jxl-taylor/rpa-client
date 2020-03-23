@@ -115,9 +115,9 @@ public class RPAAppender extends WriterAppender {
 	public void activateOptions() {
 		if (follow) {
 			if (target.equals(SYSTEM_ERR)) {
-				setWriter(createWriter(new RPAAppender.SystemErrStream()));
+				setWriter(createWriter(new SystemErrStream()));
 			} else {
-				setWriter(createWriter(new RPAAppender.SystemOutStream()));
+				setWriter(createWriter(new SystemOutStream()));
 			}
 		} else {
 			if (target.equals(SYSTEM_ERR)) {

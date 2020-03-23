@@ -11,7 +11,6 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
 import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
-import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
 import de.schlichtherle.license.LicenseContent;
@@ -51,7 +50,7 @@ public class GlobalProperty {
 	public final static double SPLIT_POSITION_TASK_AND_LOG =0.52;
 
 	private LicenseContent licenseContent;
-	private java.util.Date startDate;
+	private Date startDate;
 	private SimpleStringProperty runningDuration = new SimpleStringProperty();
 
 	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
@@ -73,6 +72,7 @@ public class GlobalProperty {
 	private StatisticController statisticController;
 	private TaskBeanController taskBeanController;
 	private MyInfoController myInfoController;
+	private TaskHistoryController taskHistoryController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 

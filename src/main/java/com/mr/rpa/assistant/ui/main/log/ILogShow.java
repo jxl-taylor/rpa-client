@@ -6,4 +6,6 @@ package com.mr.rpa.assistant.ui.main.log;
 public interface ILogShow {
 
 	void scrollText();
+
+	void setMenuName(String name);
 }

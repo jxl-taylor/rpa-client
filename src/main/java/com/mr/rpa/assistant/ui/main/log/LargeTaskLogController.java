@@ -76,4 +76,9 @@ public class LargeTaskLogController implements Initializable, ILogShow {
 			logTextArea.deselect();
 		});
 	}
+
+	@Override
+	public void setMenuName(String name) {
+		logMenu.setText(name);
+	}
 }

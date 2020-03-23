@@ -31,7 +31,7 @@ public class SysConfig {
 	private String logPath = DEFAULT_BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
 	private java.util.Date connectTime;
-	private String dbPath = DEFAULT_BOT_FILE_DIR + File.separator + "database";
+	private String dbPath = "database";
 	private String updatePath = DEFAULT_BOT_FILE_DIR + File.separator + "update";
 	private String CONFIG_FILE = DEFAULT_BOT_FILE_DIR + File.separator + "config.txt";
 	private String runResultPath = DEFAULT_BOT_FILE_DIR + File.separator

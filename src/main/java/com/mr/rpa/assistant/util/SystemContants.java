@@ -5,9 +5,13 @@ package com.mr.rpa.assistant.util;
  */
 public class SystemContants {
 
+	public static final String LIC_KEY_PWD = "7#MG;wBX(%O`]HN0<k1SZ`TN:T?l/i?h?m";
+
 	public static final long HEARTBEAT_INTERVAL = 5000;
 	public static final String API_SUCCESS = "1";
 	public static final String API_FAIL = "0";
+
+	public static final long MAX_LOG_OUTPUT_DURATION = 2*60*1000;
 
 	public static final int TASK_RUNNING_STATUS_RUN = 1;
 	public static final int TASK_RUNNING_STATUS_PAUSE = 0;

@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -73,5 +72,10 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 			logTextArea.selectEnd();
 			logTextArea.deselect();
 		});
+	}
+
+	@Override
+	public void setMenuName(String name) {
+		logMenu.setText(name);
 	}
 }
