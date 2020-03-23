@@ -43,7 +43,7 @@ public class GlobalProperty {
 		return globalProperty;
 	}
 
-	public final static String TITLE_PREFIX = "MR-ROBOT";
+	public final static String TITLE_PREFIX = "REC";
 	public final static double DEFAULT_LOG_HEIGHT = 247.0;
 	public final static double MAX_LOG_HEIGHT = 570.0;
 	public final static double DEFAULT_LOG_LIST_HEIGHT = 195.0;
@@ -54,7 +54,7 @@ public class GlobalProperty {
 	private java.util.Date startDate;
 	private SimpleStringProperty runningDuration = new SimpleStringProperty();
 
-	private SimpleStringProperty title = new SimpleStringProperty("MR-ROBOT（未登录）");
+	private SimpleStringProperty title = new SimpleStringProperty("REC（未登录）");
 
 	private User currentUser;
 
@@ -104,7 +104,7 @@ public class GlobalProperty {
 	private MailServerInfo defaultMailServerInfo = new MailServerInfo("microrule.com", 25, "bot@microrule.com", "f0e5cbCj2", false);
 
 	public void setTitle(String username) {
-		this.title.set(String.format("MR-ROBOT（用户：%s）", username));
+		this.title.set(String.format("REC（用户：%s）", username));
 	}
 
 	public List<JFXButton> getExitBtns() {

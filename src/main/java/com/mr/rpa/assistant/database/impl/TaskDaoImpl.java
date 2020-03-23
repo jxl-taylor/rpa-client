@@ -412,11 +412,10 @@ public class TaskDaoImpl implements TaskDao {
 						rs.getBoolean("running"),
 						rs.getInt("status"),
 						rs.getString("cron"),
-						0,
-						0,
+						querySuccCount(rs.getString("id")),
+						queryFailCount(rs.getString("id")),
 						rs.getTimestamp("createTime"),
 						rs.getTimestamp("updateTime"));
-
 				taskList.add(task);
 			}
 		} catch (SQLException ex) {

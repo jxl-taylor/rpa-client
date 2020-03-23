@@ -16,7 +16,8 @@ import java.io.FileReader;
 @Log4j
 public class SysConfig {
 
-	private static String DEFAULT_BOT_FILE_DIR = System.getProperty("user.dir");
+	//	private static String DEFAULT_BOT_FILE_DIR = System.getProperty("user.dir");
+	private static String DEFAULT_BOT_FILE_DIR = "recfile";
 
 	private String adminUsername = "admin";
 	private String adminPassword = "admin";

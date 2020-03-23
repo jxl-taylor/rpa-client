@@ -83,6 +83,8 @@ public class HeartBeat implements Runnable {
 			taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogDao.loadTaskLogList(task.getId())) ?
 					SystemContants.TASK_LOG_STATUS_RUNNING : taskLogDao.loadTaskLogList(task.getId()).get(0).getStatus()
 			);
+			taskMap.put("successCount", task.getSuccessCount());
+			taskMap.put("failCount", task.getFailCount());
 			botContentList.add(taskMap);
 		});
 
