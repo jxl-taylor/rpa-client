@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.job;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
@@ -10,6 +11,7 @@ import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
+import com.mr.rpa.assistant.util.email.EmailUtil;
 import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +48,7 @@ public class KettleQuartzJob implements Job {
 
 			runKbj(task.getName(), task.getMainTask(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
 			//执行依赖任务
-			if(StringUtils.isNotBlank(task.getNextTask())){
+			if (StringUtils.isNotBlank(task.getNextTask())) {
 				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
 				runKbj(nextTask.getName(), nextTask.getMainTask(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
 			}
@@ -60,10 +62,15 @@ public class KettleQuartzJob implements Job {
 				taskLogDao.updateTaskLog(taskLog);
 			}
 			log.error(e);
+			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+			if (StringUtils.isNotBlank(sysConfig.getToMails()))
+				EmailUtil.sendBgMail(sysConfig.getToMails(),
+						String.format("BOT[%s]运行失败。\n\n原因：%s", task.toString(), e.getMessage()),
+						String.format("BOT[%s]运行失败", task.getName()));
 		}
 	}
 
-	public void triggerByManual(String taskId){
+	public void triggerByManual(String taskId) {
 		Task task = taskDao.queryTaskById(taskId);
 		TaskLog taskLog = null;
 		try {
@@ -71,7 +78,7 @@ public class KettleQuartzJob implements Job {
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: trgger by manual", task.getName(), taskLog.getId()));
 			runKbj(task.getName(), task.getMainTask(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
 			//执行依赖任务
-			if(StringUtils.isNotBlank(task.getNextTask())){
+			if (StringUtils.isNotBlank(task.getNextTask())) {
 				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
 				runKbj(nextTask.getName(), nextTask.getMainTask(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
 			}
@@ -85,6 +92,11 @@ public class KettleQuartzJob implements Job {
 				taskLogDao.updateTaskLog(taskLog);
 			}
 			log.error(e);
+			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+			if (StringUtils.isNotBlank(sysConfig.getToMails()))
+				EmailUtil.sendBgMail(sysConfig.getToMails(),
+						String.format("BOT[%s]运行失败。\n\n原因：%s", task.toString(), e.getMessage()),
+						String.format("BOT[%s]运行失败", task.getName()));
 		}
 	}
 
@@ -97,7 +109,7 @@ public class KettleQuartzJob implements Job {
 	}
 
 	protected void runKbj(String taskName, String kbjName, List<KeyValue> kvList) throws Exception {
-		if(!LicenseManagerHolder.getLicenseManagerHolder().verifyCert())
+		if (!LicenseManagerHolder.getLicenseManagerHolder().verifyCert())
 			throw new RuntimeException("License已失效");
 
 		String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath()

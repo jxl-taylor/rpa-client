@@ -3,8 +3,11 @@ package com.mr.rpa.assistant.util.email;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.callback.GenericCallback;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
+import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.sun.mail.util.MailSSLSocketFactory;
 import javafx.application.Platform;
+import jdk.nashorn.internal.objects.Global;
 import lombok.extern.log4j.Log4j;
 
 import java.util.Properties;
@@ -92,8 +95,8 @@ public class EmailUtil {
 				message.setFrom(new InternetAddress(mailServerInfo.getEmailID()));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recepient));
 				message.setSubject(title);
-				message.setContent(content, "text/html");
-
+//				message.setContent(content, "text/html");
+				message.setText(content);
 				Transport.send(message);
 				log.info("Everything seems fine");
 				callback.taskCompleted(Boolean.TRUE);
@@ -110,9 +113,17 @@ public class EmailUtil {
 		sendMail(mailServerInfo, recepient, content, title, gbCallback);
 	}
 
-    public static void sendShowMail(MailServerInfo mailServerInfo, String recepient, String content, String title) {
-        sendMail(mailServerInfo, recepient, content, title, showCallback);
-    }
+	public static void sendBgMail(String recepient, String content, String title) {
+		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+		MailServerInfo mailServerInfo = new MailServerInfo(sysConfig.getMailServerName(),
+				sysConfig.getMailSmtpPort(),
+				sysConfig.getMailEmailAddress(), sysConfig.getMailEmailPassword(), sysConfig.getMailSslCheckbox());
+		sendBgMail(mailServerInfo, recepient, content, title);
+	}
+
+	public static void sendShowMail(MailServerInfo mailServerInfo, String recepient, String content, String title) {
+		sendMail(mailServerInfo, recepient, content, title, showCallback);
+	}
 
 	static class BgCallback implements GenericCallback {
 		@Override
@@ -127,18 +138,18 @@ public class EmailUtil {
 		}
 	}
 
-    static class ShowCallback implements GenericCallback {
-        @Override
-        public Object taskCompleted(Object val) {
-            boolean result = (boolean) val;
-            Platform.runLater(() -> {
-                if (result) {
-                    AlertMaker.showSimpleAlert("Success", "邮件发送成功!");
-                } else {
-                    AlertMaker.showErrorMessage("Failed", "邮件发送失败!");
-                }
-            });
-            return true;
-        }
-    }
+	static class ShowCallback implements GenericCallback {
+		@Override
+		public Object taskCompleted(Object val) {
+			boolean result = (boolean) val;
+			Platform.runLater(() -> {
+				if (result) {
+					AlertMaker.showSimpleAlert("Success", "邮件发送成功!");
+				} else {
+					AlertMaker.showErrorMessage("Failed", "邮件发送失败!");
+				}
+			});
+			return true;
+		}
+	}
 }

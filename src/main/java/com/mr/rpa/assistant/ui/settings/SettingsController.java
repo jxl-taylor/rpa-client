@@ -2,6 +2,7 @@ package com.mr.rpa.assistant.ui.settings;
 
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.extra.mail.MailUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -150,6 +151,11 @@ public class SettingsController implements Initializable {
 
 	@FXML
 	private void handleSaveMailAction(ActionEvent event) {
+		String checkMsg = checkMailSave();
+		if(StringUtils.isNotBlank(checkMsg)) {
+			AlertMaker.showErrorMessage("保存", checkMsg);
+			return;
+		}
 		mailsaved = true;
 		sysConfig.setMailServerName(mailServerName.getText());
 		sysConfig.setMailSmtpPort(Integer.parseInt(mailSmtpPort.getText()));
@@ -164,6 +170,22 @@ public class SettingsController implements Initializable {
 		sysConfig.setToMails(StringUtils.join(mailSet, ","));
 		DatabaseHandler.getInstance().updateSysConfig();
 		AlertMaker.showSimpleAlert("保存", "通知管理配置修改成功");
+	}
+
+	private String checkMailSave() {
+		//邮件格式正则表达式
+		String mailRegex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
+		if(StringUtils.isBlank(mailServerName.getText())) return "SMTP主机不能为空";
+		if(StringUtils.isBlank(mailEmailAddress.getText())) return "管理员Email账号不能为空";
+		if(!mailEmailAddress.getText().matches(mailRegex)) return "管理员Email账号格式不正确";
+		if(StringUtils.isBlank(mailEmailPassword.getText())) return "管理员Email密码不能为空";
+		if(StringUtils.isBlank(mailSmtpPort.getText())) return "SMTP端口号不能为空";
+		for (HBox hBox : toMailMap.values()) {
+			JFXTextField mailField = (JFXTextField) hBox.getChildren().get(0);
+			if(StringUtils.isBlank(mailField.getText())) return "收件人账号不能为空";
+			if(!mailField.getText().matches(mailRegex)) return String.format("收件人[%s]账号格式不正确", mailField.getText());
+		}
+		return null;
 	}
 
 	@FXML
@@ -209,6 +231,11 @@ public class SettingsController implements Initializable {
 
 	@FXML
 	private void testMailAction(ActionEvent event) {
+		String checkMsg = checkMailSave();
+		if(StringUtils.isNotBlank(checkMsg)) {
+			AlertMaker.showSimpleAlert("邮件发送", checkMsg);
+			return;
+		}
 		if(toMailMap.size() == 0){
 			AlertMaker.showSimpleAlert("邮件发送", "收件人不能为空!");
 			return;
