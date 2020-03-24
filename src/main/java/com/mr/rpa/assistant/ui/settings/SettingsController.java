@@ -250,10 +250,6 @@ public class SettingsController implements Initializable {
 
 	@FXML
 	private void handleSaverRunningAction(ActionEvent event) {
-		if(toMailMap.size() == 0){
-			AlertMaker.showSimpleAlert("邮件发送", "收件人不能为空!");
-			return;
-		}
 		sysConfig.setTaskFilePath(taskFilePath.getText());
 		sysConfig.setLogPath(logPath.getText());
 		sysConfig.setControlServer(controlServer.getText());

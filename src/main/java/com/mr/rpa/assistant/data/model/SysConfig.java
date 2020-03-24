@@ -17,7 +17,9 @@ import java.io.FileReader;
 public class SysConfig {
 
 	//	private static String DEFAULT_BOT_FILE_DIR = System.getProperty("user.dir");
-	private static String DEFAULT_BOT_FILE_DIR = "recfile";
+	private static String BOT_FILE_DIR_NAME = "recfile";
+
+	private static String BOT_FILE_DIR = System.getProperty("user.dir") + File.separator + BOT_FILE_DIR_NAME;
 
 	private String adminUsername = "admin";
 	private String adminPassword = "admin";
@@ -28,25 +30,25 @@ public class SysConfig {
 	private String mailEmailPassword;
 	private String toMails;
 	private Boolean mailSslCheckbox = false;
-	private String taskFilePath = DEFAULT_BOT_FILE_DIR + File.separator + "mbot";
+	private String taskFilePath = BOT_FILE_DIR + File.separator + "mbot";
 	private String taskFilePathTmp = taskFilePath + File.separator + "tmp";
-	private String logPath = DEFAULT_BOT_FILE_DIR + File.separator + "log";
+	private String logPath = BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
 	private java.util.Date connectTime;
-	private String dbPath = DEFAULT_BOT_FILE_DIR + File.separator + "database";
-	private String updatePath = DEFAULT_BOT_FILE_DIR + File.separator + "update";
-	private String CONFIG_FILE = DEFAULT_BOT_FILE_DIR + File.separator + "config.txt";
-	private String runResultPath = DEFAULT_BOT_FILE_DIR + File.separator
+	private String dbPath = BOT_FILE_DIR_NAME + File.separator + "database";
+	private String updatePath = BOT_FILE_DIR + File.separator + "update";
+	private String CONFIG_FILE = BOT_FILE_DIR + File.separator + "config.txt";
+	private String runResultPath = BOT_FILE_DIR + File.separator
 			+ "source" + File.separator
 			+ "bank" + File.separator
 			+ "%s" + File.separator
 			+ "data";
-	private String defaultResultPath = DEFAULT_BOT_FILE_DIR + File.separator + "source";
+	private String defaultResultPath = BOT_FILE_DIR + File.separator + "source";
 	private Integer miniteErrorLimit = 10;
 	private Integer runningLimit = 100;
 
 	public String getBotRootDir() {
-		return DEFAULT_BOT_FILE_DIR;
+		return BOT_FILE_DIR;
 	}
 
 	public User getAdminUser() {

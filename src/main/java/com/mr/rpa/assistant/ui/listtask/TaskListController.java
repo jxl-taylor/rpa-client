@@ -101,6 +101,7 @@ public class TaskListController implements Initializable {
 			StackPane rootPane = GlobalProperty.getInstance().getRootPane();
 			rootPane.getChildren().get(0).setEffect(null);
 		});
+		globalProperty.setTaskListController(this);
 	}
 
 	private Stage getStage() {
@@ -121,6 +122,7 @@ public class TaskListController implements Initializable {
 
 	private void loadData() {
 		taskDao.loadTaskList();
+		tableView.setItems(taskDao.getTaskList());
 	}
 
 	private void loadLogData() {
@@ -139,7 +141,8 @@ public class TaskListController implements Initializable {
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				taskLogDao.deleteTaskLogByTaskId(selectedForDeletion.getId());
+				com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedForDeletion.getId());
+				deleteAllTaskLog(task);
 				AlertMaker.showSimpleAlert("清空日志", selectedForDeletion.getName() + " 操作成功.");
 			} catch (Exception e) {
 				log.error(e);
@@ -154,6 +157,11 @@ public class TaskListController implements Initializable {
 				Lists.newArrayList(confirmBtn, cancelBtn), "情况日志",
 				"确定清空该任务的所有日志么 " + selectedForDeletion.getName() + " ?", false);
 
+	}
+
+	public synchronized void deleteAllTaskLog(com.mr.rpa.assistant.data.model.Task task) {
+		taskLogDao.deleteTaskLogByTaskId(task.getId());
+		loadData();
 	}
 
 	@FXML
@@ -245,15 +253,13 @@ public class TaskListController implements Initializable {
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				task.setRunning(true);
-				JobFactory.add(task);
+				startTask(task);
 			} catch (SchedulerException e) {
 				log.error(e);
 				AlertMaker.showErrorMessage("开启任务", "调度引擎开启任务失败.");
 				throw new RuntimeException(e);
 			}
-			taskDao.updateTaskRunning(task.getId(), true);
-			loadData();
+
 			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "启动任务", selectedTask.getId() + " 已开启");
 
 		});
@@ -262,6 +268,14 @@ public class TaskListController implements Initializable {
 				rootPane.getChildren().get(0),
 				Lists.newArrayList(confirmBtn, cancelBtn), "开启任务", "确定开启该任务么 " + task.getName() + " ?", false);
 
+	}
+
+	public synchronized void startTask(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {
+		if (task.isRunning()) return;
+		task.setRunning(true);
+		JobFactory.add(task);
+		taskDao.updateTaskRunning(task.getId(), true);
+		loadData();
 	}
 
 	@FXML
@@ -280,14 +294,12 @@ public class TaskListController implements Initializable {
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				JobFactory.delete(task);
+				endTask(task);
 			} catch (SchedulerException e) {
 				log.error(e);
 				AlertMaker.showErrorMessage("停止任务", "调度引擎停止任务失败.");
 				throw new RuntimeException(e);
 			}
-			taskDao.updateTaskRunning(selectedTask.getId(), false);
-			loadData();
 			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
 
 		});
@@ -295,7 +307,13 @@ public class TaskListController implements Initializable {
 		AlertMaker.showMaterialDialog(rootPane,
 				rootPane.getChildren().get(0),
 				Lists.newArrayList(confirmBtn, cancelBtn), "停止任务", "确定停止该任务么" + task.getName() + " ?", false);
+	}
 
+	public synchronized void endTask(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {
+		if (!task.isRunning()) return;
+		JobFactory.delete(task);
+		taskDao.updateTaskRunning(task.getId(), false);
+		loadData();
 	}
 
 	@FXML
@@ -317,16 +335,21 @@ public class TaskListController implements Initializable {
 		}
 
 		try {
-			task.setStatus(SystemContants.TASK_RUNNING_STATUS_RUN);
-			JobFactory.resume(task);
+			resumeTask(task);
 		} catch (SchedulerException e) {
 			log.error(e);
 			AlertMaker.showErrorMessage("恢复执行", "调度引擎恢复任务失败.");
 			return;
 		}
-		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
-		loadData();
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "恢复执行", selectedTask.getName() + " 已恢复");
+	}
+
+	public synchronized void resumeTask(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {
+		if (!task.isRunning()) return;
+		if (task.getStatus() != SystemContants.TASK_RUNNING_STATUS_PAUSE) return;
+		task.setStatus(SystemContants.TASK_RUNNING_STATUS_RUN);
+		JobFactory.resume(task);
+		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
 		loadData();
 	}
 
@@ -349,16 +372,22 @@ public class TaskListController implements Initializable {
 		}
 
 		try {
-			task.setStatus(SystemContants.TASK_RUNNING_STATUS_PAUSE);
-			JobFactory.pause(task);
+			pauseTask(task);
 		} catch (SchedulerException e) {
 			log.error(e);
 			AlertMaker.showErrorMessage("暂停执行", "调度引擎暂停任务失败.");
 			return;
 		}
+		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "暂停执行", selectedTask.getName() + " 已暂停 ");
+	}
+
+	public synchronized void pauseTask(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {
+		if (!task.isRunning()) return;
+		if (task.getStatus() != SystemContants.TASK_RUNNING_STATUS_RUN) return;
+		task.setStatus(SystemContants.TASK_RUNNING_STATUS_PAUSE);
+		JobFactory.pause(task);
 		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_PAUSE);
 		loadData();
-		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "暂停执行", selectedTask.getName() + " 已暂停 ");
 	}
 
 	@FXML
@@ -374,14 +403,19 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
 			return;
 		}
+		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
 		try {
-			JobFactory.triggerByManual(selectedTask.getId());
+			triggerByManual(task);
 		} catch (SchedulerException e) {
 			log.error(e);
 			AlertMaker.showErrorMessage("手动触发", selectedTask.getName() + " 触发成功");
 			return;
 		}
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "手动触发", selectedTask.getName() + " 触发成功");
+	}
+
+	public synchronized void triggerByManual(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {
+		JobFactory.triggerByManual(task.getId());
 	}
 
 	@FXML

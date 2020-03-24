@@ -74,6 +74,7 @@ public class GlobalProperty {
 	private TaskBeanController taskBeanController;
 	private MyInfoController myInfoController;
 	private TaskHistoryController taskHistoryController;
+	private TaskListController taskListController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 
