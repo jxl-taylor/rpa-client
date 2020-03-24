@@ -163,10 +163,10 @@ public final class DatabaseHandler {
 				sysConfig.setMailEmailAddress(rs.getString("mail_user_email"));
 				sysConfig.setMailEmailPassword(rs.getString("mail_user_password"));
 				sysConfig.setMailSslCheckbox(rs.getBoolean("mail_ssl_enabled"));
-				sysConfig.setTaskFilePath(rs.getString("task_file_path"));
-				sysConfig.setLogPath(rs.getString("log_path"));
+//				sysConfig.setTaskFilePath(rs.getString("task_file_path"));
+//				sysConfig.setLogPath(rs.getString("log_path"));
+//				sysConfig.setDbPath(rs.getString("db_path"));
 				sysConfig.setControlServer(rs.getString("control_server"));
-				sysConfig.setDbPath(rs.getString("db_path"));
 				sysConfig.setMiniteErrorLimit(rs.getInt("minite_error_limit"));
 				sysConfig.setRunningLimit(rs.getInt("running_limit"));
 				rs.close();
