@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.database.impl;
 
+import com.google.common.collect.Lists;
 import com.mr.rpa.assistant.data.model.TaskLog;
 import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.TaskLogDao;
@@ -142,6 +143,37 @@ public class TaskLogDaoImpl implements TaskLogDao {
 			}
 		}
 		return taskLog;
+	}
+
+	@Override
+	public List<TaskLog> loadTaskLogByTaskId(String taskId) {
+		String sql = String.format("SELECT * FROM TASK_LOG WHERE TASK_ID = '%s'", taskId);
+		List<TaskLog> taskLogList = Lists.newArrayList();
+		ResultSet rs = handler.execQuery(sql);
+		if (rs == null) return null;
+		try {
+			int i = 1;
+			while (rs.next()) {
+				TaskLog taskLog = new TaskLog();
+				taskLog.setId(rs.getString("id"));
+				taskLog.setTaskId(rs.getString("task_id"));
+				taskLog.setStatus(rs.getInt("status"));
+				taskLog.setError(rs.getString("error"));
+				taskLog.setStartTime(rs.getTimestamp("startTime"));
+				taskLog.setEndTime(rs.getTimestamp("endTime"));
+				taskLogList.add(taskLog);
+			}
+		} catch (SQLException ex) {
+			log.error(ex);
+		} finally {
+			try {
+				rs.close();
+				handler.closeStmt();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return taskLogList;
 	}
 
 	@Override
