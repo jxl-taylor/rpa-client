@@ -16,7 +16,7 @@
    <children>
       <AnchorPane prefHeight="367.0" prefWidth="419.0" >
          <children>
-            <Label text="迈容机器人" layoutX="165.0" layoutY="59.0" textFill="#FFFF8D" style="-fx-font-size: 20">
+            <Label text="RPA机器人" layoutX="165.0" layoutY="59.0" textFill="#FFFF8D" style="-fx-font-size: 20">
             </Label>
             <JFXTextField fx:id="username" labelFloat="true" layoutX="95.0" layoutY="122.0" prefHeight="33.0" prefWidth="259.0" promptText="用户名">
                <font>

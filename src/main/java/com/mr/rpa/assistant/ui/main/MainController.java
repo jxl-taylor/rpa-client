@@ -74,7 +74,7 @@ public class MainController implements Initializable {
 		initShowButtonAction();
 		initDrawer();
 
-		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用迈容机器人");
+		AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用RPA机器人");
 	}
 
 	private void initShowButtonAction() {
