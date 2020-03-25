@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="/">
+<mapper namespace="com.mr.rpa.assistant.dao.TaskMapper">
     <select id="findByName" parameterType="java.lang.String" resultType="com.mr.rpa.assistant.data.model.Task">
        select * from task where name=#{name}
+  </select>
+
+    <select id="queryTaskList" resultType="com.mr.rpa.assistant.data.model.Task">
+       select * from task
   </select>
 
 </mapper>
