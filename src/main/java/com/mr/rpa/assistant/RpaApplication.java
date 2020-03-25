@@ -21,7 +21,7 @@ public class RpaApplication extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		log.info("MR-BOT Client Starting...");
+		log.info("REC Client Starting...");
 		DatabaseHandler.getInstance();
 		Parent root = FXMLLoader.load(getClass().getResource("/assistant/ui/login/login.fxml"));
 
@@ -38,7 +38,7 @@ public class RpaApplication extends Application {
 		stage.setResizable(false);
  		stage.setScene(scene);
 		stage.show();
-		stage.setTitle("MR-BOT");
+		stage.setTitle("REC");
 
 	}
 
@@ -46,7 +46,7 @@ public class RpaApplication extends Application {
 		Long startTime = System.currentTimeMillis();
 		launch(args);
 		Long endTime = System.currentTimeMillis();
-		log.info(String.format("MR-BOT Client is started successfully on %s. Used for %s ms", AssistantUtil.formatDateTimeString(startTime), endTime));
+		log.info(String.format("REC Client is started successfully on %s. Used for %s ms", AssistantUtil.formatDateTimeString(startTime), endTime));
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
