@@ -48,7 +48,7 @@ public class SysConfig {
 	private Integer runningLimit = 100;
 
 	public String getBotRootDir() {
-		return BOT_FILE_DIR;
+		return System.getProperty("user.dir");
 	}
 
 	public User getAdminUser() {
