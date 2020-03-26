@@ -177,7 +177,7 @@ public class SettingsController implements Initializable {
 		String mailRegex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
 		if(StringUtils.isBlank(mailServerName.getText())) return "SMTP主机不能为空";
 		if(StringUtils.isBlank(mailEmailAddress.getText())) return "管理员Email账号不能为空";
-		if(!mailEmailAddress.getText().matches(mailRegex)) return "管理员Email账号格式不正确";
+//		if(!mailEmailAddress.getText().matches(mailRegex)) return "管理员Email账号格式不正确";
 		if(StringUtils.isBlank(mailEmailPassword.getText())) return "管理员Email密码不能为空";
 		if(StringUtils.isBlank(mailSmtpPort.getText())) return "SMTP端口号不能为空";
 		for (HBox hBox : toMailMap.values()) {

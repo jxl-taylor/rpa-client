@@ -56,7 +56,7 @@ public class EmailUtil {
 						InternetAddress.parse(recepient));
 				message.setSubject("来自REC的测试邮件");
 				message.setText("您好,"
-						+ "\n\n 这是一封RPA机器人大麦的测试邮件!");
+						+ "\n\n 这是一封RPA机器人的测试邮件!");
 
 				Transport.send(message);
 				log.info("测试邮件发送成功");

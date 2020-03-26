@@ -14,6 +14,7 @@ import com.mr.rpa.assistant.ui.main.log.ILogShow;
 import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
+import com.mr.rpa.assistant.util.SystemContants;
 import de.schlichtherle.license.LicenseContent;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -102,7 +103,11 @@ public class GlobalProperty {
 
 	private SysConfig sysConfig = new SysConfig();
 
-	private MailServerInfo defaultMailServerInfo = new MailServerInfo("microrule.com", 25, "bot@microrule.com", "f0e5cbCj2", false);
+	private MailServerInfo defaultMailServerInfo = new MailServerInfo(SystemContants.DEFAULT_ADMIN_MAIL_SERVER,
+			SystemContants.DEFAULT_ADMIN_MAIL_PORT,
+			SystemContants.DEFAULT_ADMIN_MAIL_USERNAME,
+			SystemContants.DEFAULT_ADMIN_MAIL_PASSWORD,
+			false);
 
 	public void setTitle(String username) {
 		this.title.set(String.format("REC（用户：%s）", username));

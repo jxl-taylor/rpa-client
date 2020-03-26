@@ -49,6 +49,15 @@ public class SystemContants {
 	public static final String TASK_SUFFIX_KJB = "kjb";
 	public static final String TASK_SUFFIX_KTR = "ktr";
 
+	/**Default Email
+	 *
+	 */
+	public static final String DEFAULT_ADMIN_MAIL_SERVER = "smtp.126.com";
+	public static final String DEFAULT_ADMIN_MAIL_USERNAME = "space_star_rpa@126.com";
+	public static final String DEFAULT_ADMIN_MAIL_PASSWORD = "spacestarrpa123";
+	public static final Integer DEFAULT_ADMIN_MAIL_PORT = 25;
+
+
 	/**
 	 * 冒号转义字符
 	 */
