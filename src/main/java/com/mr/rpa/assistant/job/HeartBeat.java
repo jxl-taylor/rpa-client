@@ -67,12 +67,12 @@ public class HeartBeat implements Runnable {
 		String url = "";
 		sysConfig = globalProperty.getSysConfig();
 		if (StringUtils.isBlank(controlUrl)) {
-			url = sysConfig.getControlServer() + SystemContants.API_NAME_HEARTBEAT;
+			url = sysConfig.getControlServer();
 		} else {
-			url = controlUrl + SystemContants.API_NAME_HEARTBEAT;
+			url = controlUrl;
 		}
 
-		if (StringUtils.isBlank(url) || url.equals(SystemContants.API_NAME_HEARTBEAT)) {
+		if (StringUtils.isBlank(url)) {
 			if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
 			return false;
 		}
