@@ -1,9 +1,7 @@
 package com.mr.rpa.assistant.dao;
 
 import com.mr.rpa.assistant.data.model.Task;
-import com.mr.rpa.assistant.ui.listtask.TaskListController;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.sql.Timestamp;
@@ -12,6 +10,7 @@ import java.util.List;
 /**
  * Created by feng on 2020/3/25
  */
+@Mapper
 public interface TaskMapper {
 
 	void deleteTask(@Param("taskId") String taskId);

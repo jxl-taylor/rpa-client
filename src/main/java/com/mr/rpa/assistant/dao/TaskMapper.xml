@@ -27,7 +27,7 @@
             DESP=#{desp} ,
             PARAMS=#{params},
             NEXTTASK=#{nextTask,jdbcType=VARCHAR},
-            updateTime=#{updateTime}
+            updateTime=#{updateTime,jdbcType=VARCHAR}
         WHERE ID=#{id}
     </update>
 
