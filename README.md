@@ -32,4 +32,4 @@ dir|dir1=dir/dir2   表明将dir1下的内容放在安装目录的 dir\dir2下�
 测试  
 java -server -XX:+HeapDumpOnOutOfMemoryError -Xmx2g -Xms2g -XX:+UseParallelGC -jar rpa-client.jar 
 生产  
-java -server -XX:+HeapDumpOnOutOfMemoryError -Xmx2g -Xms2g -XX:+UseParallelGC -jar rpa-client.jar 
+java -server -XX:+HeapDumpOnOutOfMemoryError -Xmx4g -Xms4g -XX:+UseParallelGC -jar rpa-client.jar 
