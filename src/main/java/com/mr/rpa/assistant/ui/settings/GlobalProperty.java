@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.User;
+import com.mr.rpa.assistant.service.SysConfigService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
@@ -25,14 +26,29 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Data;
+import lombok.extern.log4j.Log4j;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.Reader;
+import java.sql.*;
+import java.util.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by feng on 2020/2/4 0004
  */
 @Data
+@Log4j
 public class GlobalProperty {
 
 	private static GlobalProperty globalProperty = new GlobalProperty();
@@ -44,12 +60,22 @@ public class GlobalProperty {
 		return globalProperty;
 	}
 
+	public void initDB(){
+		Connection connection = globalProperty.createConnection();
+		if (connection == null) throw new RuntimeException("数据库初始化错误");
+		ServiceFactory.init(globalProperty.session);
+		globalProperty.inflateDB(connection);
+		globalProperty.initSysConfig(ServiceFactory.getService(SysConfigService.class));
+	}
+
 	public final static String TITLE_PREFIX = "REC";
 	public final static double DEFAULT_LOG_HEIGHT = 247.0;
 	public final static double MAX_LOG_HEIGHT = 570.0;
 	public final static double DEFAULT_LOG_LIST_HEIGHT = 195.0;
 	public final static double MAX_LOG_LIST_HEIGHT = 519.0;
 	public final static double SPLIT_POSITION_TASK_AND_LOG = 0.52;
+
+	private SqlSession session;
 
 	private LicenseContent licenseContent;
 	private java.util.Date startDate;
@@ -139,5 +165,88 @@ public class GlobalProperty {
 		runningDuration.set(DateUtil.formatBetween(globalProperty.getStartDate(),
 				new Date(),
 				BetweenFormater.Level.MINUTE));
+	}
+
+
+	private void inflateDB(Connection conn) {
+		List<String> tableData = new ArrayList<>();
+		try {
+			Set<String> loadedTables = getDBTables(conn);
+			log.info("准备装载数据库表: " + loadedTables);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(GlobalProperty.class.getClass().getResourceAsStream("/database/tables.xml"));
+			NodeList nList = doc.getElementsByTagName("table-entry");
+			for (int i = 0; i < nList.getLength(); i++) {
+				Node nNode = nList.item(i);
+				Element entry = (Element) nNode;
+				String tableName = entry.getAttribute("name");
+				String query = entry.getAttribute("col-data");
+				if (!loadedTables.contains(tableName.toLowerCase())) {
+					String createSQL = String.format("CREATE TABLE %s (%s)", tableName, query);
+					tableData.add(createSQL);
+					log.info(String.format("创建表成功，SQL:[%s]", createSQL));
+				}
+			}
+			if (tableData.isEmpty()) {
+				log.info("数据库表已经载入");
+			} else {
+				log.warn("开始创建表结构.");
+				createTables(tableData, conn);
+			}
+		} catch (Exception ex) {
+			log.error("", ex);
+		}
+	}
+
+	private Connection createConnection() {
+		Reader reader;
+		try {
+			String resource = "MyBatisConfig.xml";
+			reader = Resources.getResourceAsReader(resource);
+			SqlSessionFactory sqlMapper = new SqlSessionFactoryBuilder()
+					.build(reader);
+			session = sqlMapper.openSession(true);
+			return session.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "无法载入数据库," + Arrays.toString(e.getStackTrace()), "数据库错误:" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+		return null;
+	}
+
+	private Set<String> getDBTables(Connection conn) throws SQLException {
+		Set<String> set = new HashSet<>();
+		DatabaseMetaData dbmeta = conn.getMetaData();
+		readDBTable(set, dbmeta, "TABLE", null);
+		return set;
+	}
+
+	private void readDBTable(Set<String> set, DatabaseMetaData dbmeta, String searchCriteria, String schema) throws SQLException {
+		ResultSet rs = dbmeta.getTables(null, schema, null, new String[]{searchCriteria});
+		while (rs.next()) {
+			set.add(rs.getString("TABLE_NAME").toLowerCase());
+		}
+		rs.close();
+	}
+
+	private void createTables(List<String> tableData, Connection conn) throws SQLException {
+		Statement statement = conn.createStatement();
+		statement.closeOnCompletion();
+		for (String command : tableData) {
+			log.info(command);
+			statement.addBatch(command);
+		}
+		statement.executeBatch();
+	}
+
+	public void initSysConfig(SysConfigService sysConfigService) {
+		SysConfig dbSysConfig = sysConfigService.query();
+		if (dbSysConfig != null) {
+			globalProperty.setSysConfig(dbSysConfig);
+		} else {
+			sysConfigService.insert();
+		}
 	}
 }

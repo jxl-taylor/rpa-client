@@ -6,25 +6,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.JsonObject;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.SchedulerException;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +32,9 @@ public class HeartBeat implements Runnable {
 	private final static String SERVICE_ID_HEARTBEAT = "heartbeat";
 	private SysConfig sysConfig;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	private Map<String, String> operaErrorMsgMap = Maps.newHashMap();
 
@@ -67,12 +61,12 @@ public class HeartBeat implements Runnable {
 		String url = "";
 		sysConfig = globalProperty.getSysConfig();
 		if (StringUtils.isBlank(controlUrl)) {
-			url = sysConfig.getControlServer() + SystemContants.API_NAME_HEARTBEAT;
+			url = sysConfig.getControlServer();
 		} else {
-			url = controlUrl + SystemContants.API_NAME_HEARTBEAT;
+			url = controlUrl;
 		}
 
-		if (StringUtils.isBlank(url) || url.equals(SystemContants.API_NAME_HEARTBEAT)) {
+		if (StringUtils.isBlank(url)) {
 			if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
 			return false;
 		}
@@ -83,13 +77,13 @@ public class HeartBeat implements Runnable {
 		jsonMap.put("freeDisk", CommonUtil.getFreeDisk());
 
 		List<LinkedHashMap<String, Object>> botContentList = Lists.newArrayList();
-		taskDao.queryTaskList().forEach(task -> {
+		taskService.queryTaskList().forEach(task -> {
 			LinkedHashMap<String, Object> taskMap = Maps.newLinkedHashMap();
 			taskMap.put("botName", task.getName());
 			taskMap.put("mainBot", task.getMainTask());
 			taskMap.put("botStatus", task.isRunning() && task.getStatus() == SystemContants.TASK_RUNNING_STATUS_RUN);
-			taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogDao.loadTaskLogByTaskId(task.getId())) ?
-					SystemContants.TASK_LOG_STATUS_UNKNOWN : taskLogDao.loadTaskLogByTaskId(task.getId()).get(0).getStatus()
+			taskMap.put("runningStatus", CollectionUtils.isEmpty(taskLogService.loadTaskLogByTaskId(task.getId())) ?
+					SystemContants.TASK_LOG_STATUS_UNKNOWN : taskLogService.loadTaskLogByTaskId(task.getId()).get(0).getStatus()
 			);
 			taskMap.put("successCount", task.getSuccessCount());
 			taskMap.put("failCount", task.getFailCount());
@@ -137,7 +131,7 @@ public class HeartBeat implements Runnable {
 			String operation = jsonObject.getString("operation");
 			String name = jsonObject.getString("botName");
 			try {
-				Task task = taskDao.queryTaskByName(name);
+				Task task = taskService.queryTaskByName(name);
 				if (operation.equals(SystemContants.API_TASK_OPERA_START)) {
 					controller.startTask(task);
 				} else if (operation.equals(SystemContants.API_TASK_OPERA_STOP)) {

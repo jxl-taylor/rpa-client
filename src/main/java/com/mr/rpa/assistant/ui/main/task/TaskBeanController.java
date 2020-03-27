@@ -1,24 +1,18 @@
 package com.mr.rpa.assistant.ui.main.task;
 
 import com.jfoenix.controls.JFXTextField;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.Pair;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
-import org.apache.commons.collections.CollectionUtils;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -36,9 +30,9 @@ public class TaskBeanController implements Initializable {
 	@FXML
 	private JFXTextField taskName;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -58,8 +52,8 @@ public class TaskBeanController implements Initializable {
 
 	@FXML
 	private void loadTaskInfo(ActionEvent event) {
-		taskDao.loadTaskList(null, taskName.getText());
-		taskLogDao.getTaskLogList().clear();
+		taskService.loadUITaskList(null, taskName.getText());
+		taskLogService.getUITaskLogList().clear();
 		taskSplit.setDividerPositions(SPLIT_POSITION_TASK_AND_LOG);
 	}
 

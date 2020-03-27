@@ -3,9 +3,11 @@ package com.mr.rpa.assistant.ui.addtask;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.mr.rpa.assistant.data.model.Task;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.main.log.TaskLogListController;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import lombok.extern.log4j.Log4j;
@@ -32,17 +34,18 @@ public class TaskLogDetailController implements Initializable {
 	@FXML
 	private JFXTextField endTime;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
+
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 	}
 
 	public void load(TaskLogListController.TaskLog taskLog) {
-		id.setText(taskLog.getId());
+		id.setText(String.valueOf(taskLog.getId()));
 		taskLogId.setText(taskLog.getTaskLogId());
 		taskId.setText(taskLog.getTaskId());
-		Task task =taskDao.queryTaskById(taskLog.getTaskId());
+		Task task =taskService.queryTaskById(taskLog.getTaskId());
 		taskName.setText(task.getName());
 		status.setText(taskLog.getStatus());
 		error.setText(taskLog.getError());

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mr.rpa.assistant.dao.TaskLogMapper">
+
+    <select id="queryTaskLogList" resultType="com.mr.rpa.assistant.data.model.TaskLog">
+        SELECT * from TASK_LOG WHERE 1=1
+        <if test="taskLogId != null and taskLogId != ''">
+            AND ID = #{taskLogId}
+        </if>
+        <if test="taskId != null and taskId != ''">
+            AND TASK_ID = #{taskId}
+        </if>
+        <if test="status != null">
+            AND STATUS = #{status}
+        </if>
+        ORDER BY STARTTIME DESC OFFSET 0 ROWS FETCH NEXT #{maxRow} ROWS ONLY
+  </select>
+
+    <insert id="insertNewTaskLog" parameterType="com.mr.rpa.assistant.data.model.TaskLog">
+        INSERT INTO TASK_LOG(
+            id,
+            task_id,
+            status,
+            error,
+            startTime,
+            endTime
+            )
+        VALUES(
+            #{id},
+            #{taskId},
+            #{status},
+            #{error, jdbcType=VARCHAR},
+            #{startTime, jdbcType=TIMESTAMP},
+            #{endTime, jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <delete id="deleteTaskLog">
+        DELETE FROM TASK_LOG WHERE 1=1
+        <if test="taskLogId != null and taskLogId != ''">
+            AND ID = #{taskLogId}
+        </if>
+        <if test="taskId != null and taskId != ''">
+            AND TASK_ID = #{taskId}
+        </if>
+    </delete>
+
+    <update id="updateTaskLog" parameterType="com.mr.rpa.assistant.data.model.TaskLog">
+        UPDATE TASK_LOG SET
+            STATUS=#{status},
+            ERROR=#{error},
+            ENDTIME=#{endTime, jdbcType=TIMESTAMP}
+        WHERE ID=#{id}
+    </update>
+
+</mapper>

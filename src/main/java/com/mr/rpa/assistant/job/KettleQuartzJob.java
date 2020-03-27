@@ -5,10 +5,10 @@ import com.alibaba.fastjson.JSON;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.SystemContants;
 import com.mr.rpa.assistant.util.email.EmailUtil;
@@ -29,14 +29,16 @@ import java.util.UUID;
 @Log4j
 public class KettleQuartzJob implements Job {
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
+
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		String taskId = context.getJobDetail().getKey().getName();
-		Task task = taskDao.queryTaskById(taskId);
+		Task task = taskService.queryTaskById(taskId);
 		JobDataMap dataMap = context.getTrigger().getJobDataMap();
 		TaskLog taskLog = (TaskLog) dataMap.get(SystemContants.TASK_LOG_KEY);
 		try {
@@ -49,17 +51,17 @@ public class KettleQuartzJob implements Job {
 			runKbj(task.getName(), task.getMainTask(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
 			//执行依赖任务
 			if (StringUtils.isNotBlank(task.getNextTask())) {
-				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
+				Task nextTask = taskService.queryTaskByName(task.getNextTask());
 				runKbj(nextTask.getName(), nextTask.getMainTask(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
 			}
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
-			taskLogDao.updateTaskLog(taskLog);
+			taskLogService.updateTaskLog(taskLog);
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: job run end", task.getName(), taskLog.getId()));
 		} catch (Throwable e) {
 			if (taskLog != null) {
 				taskLog.setError(e.getMessage());
 				taskLog.setStatus(SystemContants.TASK_LOG_STATUS_FAIL);
-				taskLogDao.updateTaskLog(taskLog);
+				taskLogService.updateTaskLog(taskLog);
 			}
 			log.error(e);
 			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
@@ -71,7 +73,7 @@ public class KettleQuartzJob implements Job {
 	}
 
 	public void triggerByManual(String taskId) {
-		Task task = taskDao.queryTaskById(taskId);
+		Task task = taskService.queryTaskById(taskId);
 		TaskLog taskLog = null;
 		try {
 			taskLog = addLog(taskId);
@@ -79,17 +81,17 @@ public class KettleQuartzJob implements Job {
 			runKbj(task.getName(), task.getMainTask(), JSON.parseArray(task.getParams()).toJavaList(KeyValue.class));
 			//执行依赖任务
 			if (StringUtils.isNotBlank(task.getNextTask())) {
-				Task nextTask = taskDao.queryTaskByName(task.getNextTask());
+				Task nextTask = taskService.queryTaskByName(task.getNextTask());
 				runKbj(nextTask.getName(), nextTask.getMainTask(), JSON.parseArray(nextTask.getParams()).toJavaList(KeyValue.class));
 			}
 			taskLog.setStatus(SystemContants.TASK_LOG_STATUS_SUCCESS);
-			taskLogDao.updateTaskLog(taskLog);
+			taskLogService.updateTaskLog(taskLog);
 			log.info(String.format("taskId=[%s], taskLogId=[%s]: trgger by manual run end", task.getName(), taskLog.getId()));
 		} catch (Throwable e) {
 			if (taskLog != null) {
 				taskLog.setError(e.getMessage());
 				taskLog.setStatus(SystemContants.TASK_LOG_STATUS_FAIL);
-				taskLogDao.updateTaskLog(taskLog);
+				taskLogService.updateTaskLog(taskLog);
 			}
 			log.error(e);
 			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
@@ -104,7 +106,7 @@ public class KettleQuartzJob implements Job {
 		TaskLog taskLog = new TaskLog(UUID.randomUUID().toString(), taskId,
 				SystemContants.TASK_LOG_STATUS_RUNNING, "",
 				new Timestamp(System.currentTimeMillis()), null);
-		taskLogDao.insertNewTaskLog(taskLog);
+		taskLogService.insertNewTaskLog(taskLog);
 		return taskLog;
 	}
 

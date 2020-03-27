@@ -20,14 +20,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import com.mr.rpa.assistant.database.DatabaseHandler;
 import org.apache.log4j.Logger;
 
 public class MainController implements Initializable {
 
 	private final static Logger LOGGER = Logger.getLogger(MainController.class);
-
-	private DatabaseHandler databaseHandler = DatabaseHandler.getInstance();
 
 	@FXML
 	private StackPane rootPane;

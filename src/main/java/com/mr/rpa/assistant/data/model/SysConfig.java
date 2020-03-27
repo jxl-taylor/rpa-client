@@ -21,6 +21,7 @@ public class SysConfig {
 
 	private static String BOT_FILE_DIR = System.getProperty("user.dir") + File.separator + BOT_FILE_DIR_NAME;
 
+	private String id = "1";
 	private String adminUsername = "admin";
 	private String adminPassword = "admin";
 	private String adminNick = "系统管理员";

@@ -3,11 +3,11 @@ package com.mr.rpa.assistant.job;
 import cn.hutool.core.collection.CollectionUtil;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.TaskLog;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.LogTextCollector;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
 import org.pentaho.di.core.KettleEnvironment;
@@ -38,9 +38,11 @@ public class JobFactory implements Runnable {
 
 	private Scheduler userScheduler;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
+
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	/**
 	 * 开启定时任务
@@ -97,7 +99,7 @@ public class JobFactory implements Runnable {
 	 */
 	public static void trigger(TaskLog taskLog) throws SchedulerException {
 		scheduleAble();
-		Task task = jobFactory.taskDao.queryTaskById(taskLog.getTaskId());
+		Task task = jobFactory.taskService.queryTaskById(taskLog.getTaskId());
 		String taskId = task.getId();
 
 		JobDataMap map = new JobDataMap();
@@ -191,8 +193,8 @@ public class JobFactory implements Runnable {
 			userScheduler = new StdSchedulerFactory().getScheduler();
 			userScheduler.start();
 			//遍历任务表，将任务开启
-			if (CollectionUtil.isEmpty(taskDao.getTaskList())) taskDao.loadTaskList();
-			for (Task task : taskDao.queryTaskList()) {
+			if (CollectionUtil.isEmpty(taskService.getUITaskList())) taskService.loadUITaskList();
+			for (Task task : taskService.queryTaskList()) {
 				if (task.isRunning()) {
 					JobDetail jobDetail = JobBuilder.newJob(KettleQuartzJob.class).
 							withIdentity(task.getId())

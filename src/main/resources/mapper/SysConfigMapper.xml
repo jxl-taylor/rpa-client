@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mr.rpa.assistant.dao.SysConfigMapper">
+
+    <select id="query" resultType="com.mr.rpa.assistant.data.model.SysConfig">
+        SELECT * FROM SYS_CONFIG
+    </select>
+
+    <delete id="delete">
+        DELETE FROM SYS_CONFIG
+    </delete>
+
+    <insert id="insert" parameterType="com.mr.rpa.assistant.data.model.SysConfig">
+        INSERT INTO SYS_CONFIG(
+            id,
+            admin_username,
+            admin_password,
+            mail_server_name,
+            mail_server_port,
+            mail_user_email,
+            mail_user_password,
+            mail_ssl_enabled,
+            to_mails,
+            task_file_path,
+            log_path,
+            db_path,
+            control_server,
+            minite_error_limit,
+            running_limit
+            )
+        VALUES(
+            #{id},
+            #{adminUsername,jdbcType=VARCHAR},
+            #{adminPassword,jdbcType=VARCHAR},
+            #{mailServerName,jdbcType=VARCHAR},
+            #{mailSmtpPort,jdbcType=INTEGER},
+            #{mailEmailAddress,jdbcType=VARCHAR},
+            #{mailEmailPassword,jdbcType=VARCHAR},
+            #{mailSslCheckbox},
+            #{toMails,jdbcType=VARCHAR},
+            #{taskFilePath,jdbcType=VARCHAR},
+            #{logPath,jdbcType=VARCHAR},
+            #{dbPath,jdbcType=VARCHAR},
+            #{controlServer,jdbcType=VARCHAR},
+            #{miniteErrorLimit,jdbcType=INTEGER},
+            #{runningLimit,jdbcType=INTEGER}
+        )
+    </insert>
+
+
+</mapper>

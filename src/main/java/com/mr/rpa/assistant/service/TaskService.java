@@ -1,4 +1,4 @@
-package com.mr.rpa.assistant.database;
+package com.mr.rpa.assistant.service;
 
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
@@ -8,19 +8,18 @@ import javafx.scene.chart.PieChart;
 import java.util.List;
 
 /**
- * Created by feng on 2020/2/21
+ * Created by feng on 2020/3/26 0026
  */
-public interface TaskDao {
+public interface TaskService {
+	ObservableList<TaskListController.Task> getUITaskList();
 
-	ObservableList<TaskListController.Task> getTaskList();
+	void deleteTask(String taskId);
 
-	boolean deleteTask(TaskListController.Task task);
+	void updateTask(TaskListController.Task task);
 
-	boolean updateTask(TaskListController.Task task);
+	void updateTaskRunning(String taskId, boolean running);
 
-	boolean updateTaskRunning(String taskId, boolean running);
-
-	boolean updateTaskStatus(String taskId, int status);
+	void updateTaskStatus(String taskId, int status);
 
 	ObservableList<PieChart.Data> getTotalTaskGraphStatistics();
 
@@ -28,11 +27,11 @@ public interface TaskDao {
 
 	ObservableList<PieChart.Data> getTaskGraphStatistics(String taskId);
 
-	boolean insertNewTask(Task task);
+	void insertNewTask(Task task);
 
-	List<TaskListController.Task> loadTaskList();
+	List<TaskListController.Task> loadUITaskList();
 
-	List<TaskListController.Task> loadTaskList(String taskId, String taskName);
+	List<TaskListController.Task> loadUITaskList(String taskId, String taskName);
 
 	Task queryTaskByName(String name);
 

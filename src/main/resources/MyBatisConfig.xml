@@ -14,6 +14,8 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="mapper/task.xml" />
+        <mapper resource="mapper/taskMapper.xml" />
+        <mapper resource="mapper/taskLogMapper.xml" />
+        <mapper resource="mapper/SysConfigMapper.xml" />
     </mappers>
 </configuration>

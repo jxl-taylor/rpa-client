@@ -30,9 +30,7 @@ public class TestHello {
 				.build(reader);
 		session = sqlMapper.openSession();
 		TaskMapper taskMapper = session.getMapper(TaskMapper.class);
-		Task task = taskMapper.findByName("demo1");
-		System.out.println(task.getName());
-		List<Task> tasks = taskMapper.queryTaskList();
+		List<Task> tasks = taskMapper.queryTaskList(null,null,null);
 		System.out.println(tasks);
 		session.close();
 	}

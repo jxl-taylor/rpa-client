@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mr.rpa.assistant.dao.TaskMapper">
+
+    <select id="queryTaskList" resultType="com.mr.rpa.assistant.data.model.Task">
+        SELECT * from TASK WHERE 1=1
+        <if test="taskId != null and taskId != ''">
+            AND ID = #{taskId}
+        </if>
+        <if test="taskName != null and taskName != ''">
+            AND NAME = #{taskName}
+        </if>
+        <if test="nextTask != null and nextTask != ''">
+            AND NEXTTASK = #{nextTask}
+        </if>
+    </select>
+
+    <delete id="deleteTask">
+        DELETE FROM TASK WHERE ID = #{taskId}
+    </delete>
+
+    <update id="updateTask" parameterType="com.mr.rpa.assistant.data.model.Task">
+        UPDATE TASK SET
+            NAME=#{name},
+            MAINTASK=#{mainTask},
+            CRON=#{cron},
+            DESP=#{desp} ,
+            PARAMS=#{params},
+            NEXTTASK=#{nextTask,jdbcType=VARCHAR},
+            updateTime=#{updateTime}
+        WHERE ID=#{id}
+    </update>
+
+    <update id="updateTaskRunning">
+        UPDATE TASK SET RUNNING=#{running}, updateTime=#{updateTime} WHERE ID=#{taskId}
+    </update>
+
+    <update id="updateTaskStatus">
+       UPDATE TASK SET STATUS=#{status}, updateTime=#{updateTime} WHERE ID=#{taskId}
+    </update>
+
+    <select id="getTotalTaskCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM TASK WHERE RUNNING = #{running}
+    </select>
+
+    <select id="getTotalTaskLogCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM TASK_LOG WHERE STATUS = #{status}
+        <if test="taskId != null and taskId != ''">
+            AND TASK_ID = #{taskId}
+        </if>
+    </select>
+
+    <insert id="insertNewTask" parameterType="com.mr.rpa.assistant.data.model.Task">
+        INSERT INTO TASK(
+            id,
+            name,
+            mainTask,
+            desp,
+            params,
+            nextTask,
+            running,
+            status,
+            cron,
+            createTime
+            )
+        VALUES(
+            #{id},
+            #{name},
+            #{mainTask},
+            #{desp},
+            #{params},
+            #{nextTask,jdbcType=VARCHAR},
+            #{running},
+            #{status},
+            #{cron},
+            #{createTime, jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+
+</mapper>

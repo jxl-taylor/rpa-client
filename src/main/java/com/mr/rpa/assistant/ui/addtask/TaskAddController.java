@@ -7,12 +7,12 @@ import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.Task;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.Pair;
@@ -78,9 +78,11 @@ public class TaskAddController implements Initializable {
 
 	private SimpleBooleanProperty isInEditMode = new SimpleBooleanProperty();
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
+
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	private ObservableList<String> nextTaskItems = FXCollections.observableArrayList();
 
@@ -98,7 +100,7 @@ public class TaskAddController implements Initializable {
 			if (file != null) {
 				String taskName = file.getName().substring(0, file.getName().indexOf("."));
 
-				if (!isInEditMode.get() && taskDao.queryTaskByName(taskName) != null) {
+				if (!isInEditMode.get() && taskService.queryTaskByName(taskName) != null) {
 					log.error(String.format("BOT[%s] 已经存在", taskName));
 					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 已经存在", taskName));
 					return;
@@ -138,7 +140,7 @@ public class TaskAddController implements Initializable {
 			directoryChooser.setTitle("选择文件夹");
 			File directory = directoryChooser.showDialog(new Stage());
 			if (directory != null) {
-				if (!isInEditMode.get() && taskDao.queryTaskByName(directory.getName()) != null) {
+				if (!isInEditMode.get() && taskService.queryTaskByName(directory.getName()) != null) {
 					log.error(String.format("BOT[%s] 已经存在", directory.getName()));
 					AlertMaker.showErrorMessage("上传BOT", String.format("BOT[%s] 已经存在", directory.getName()));
 					return;
@@ -172,7 +174,7 @@ public class TaskAddController implements Initializable {
 		nextTask.setItems(nextTaskItems);
 		nextTaskItems.clear();
 		nextTaskItems.add("");
-		nextTaskItems.addAll(taskDao.queryTaskList()
+		nextTaskItems.addAll(taskService.queryTaskList()
 				.stream()
 				.map(item -> item.getName())
 				.collect(Collectors.toList()));
@@ -264,7 +266,7 @@ public class TaskAddController implements Initializable {
 		}
 
 		if (!checkInput(taskName, mainTaskName, taskCron, taskDesp)) return;
-		if (taskDao.queryTaskByName(taskName) != null) {
+		if (taskService.queryTaskByName(taskName) != null) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
 					"输入有误", "Job已存在，请重新选择.");
 			return;
@@ -273,15 +275,11 @@ public class TaskAddController implements Initializable {
 		Task task = new Task(id.getText(), name.getText(), mainTaskName, desp.getText(), converParamToString(), nextTask.getValue(),
 				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
 				0, 0);
-		boolean result = taskDao.insertNewTask(task);
-		if (result) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
-			clearEntries();
-			taskDao.loadTaskList();
-			closeWindow();
-		} else {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增失败", "请检查输入");
-		}
+		taskService.insertNewTask(task);
+		AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
+		clearEntries();
+		taskService.loadUITaskList();
+		closeWindow();
 	}
 
 	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
@@ -320,7 +318,7 @@ public class TaskAddController implements Initializable {
 
 		//依赖任务不能是自己
 		String selectedTaskId = GlobalProperty.getInstance().getSelectedTaskId().getValue();
-		Task selectTask = taskDao.queryTaskById(selectedTaskId);
+		Task selectTask = taskService.queryTaskById(selectedTaskId);
 		String taskName = selectTask.getName();
 
 		File mainTaskDir = new File(GlobalProperty.getInstance().getSysConfig().getTaskFilePath()
@@ -367,7 +365,7 @@ public class TaskAddController implements Initializable {
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				Task taskModel = taskDao.queryTaskById(task.getId());
+				Task taskModel = taskService.queryTaskById(task.getId());
 				taskModel.setMainTask(mainTask.getValue());
 				taskModel.setCron(task.getCron());
 				taskModel.setDesp(task.getDesp());
@@ -379,13 +377,10 @@ public class TaskAddController implements Initializable {
 				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
 				return;
 			}
-			if (taskDao.updateTask(task)) {
-				AlertMaker.showSimpleAlert("Success", "修改成功");
-				FileUtil.del(taskFileDirTmp);
-				closeWindow();
-			} else {
-				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
-			}
+			taskService.updateTask(task);
+			AlertMaker.showSimpleAlert("Success", "修改成功");
+			FileUtil.del(taskFileDirTmp);
+			closeWindow();
 		});
 		JFXButton cancelBtn = new JFXButton("取消");
 		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {

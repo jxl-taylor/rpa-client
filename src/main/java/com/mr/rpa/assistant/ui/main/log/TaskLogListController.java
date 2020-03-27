@@ -3,15 +3,15 @@ package com.mr.rpa.assistant.ui.main.log;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
+import com.mr.rpa.assistant.service.TaskLogService;
 import com.mr.rpa.assistant.ui.addtask.TaskLogDetailController;
-import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.SystemContants;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -54,13 +54,13 @@ public class TaskLogListController implements Initializable {
 	@FXML
 	private StackPane rootPane;
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		initCol();
-		tableView.setItems(taskLogDao.getTaskLogList());
+		tableView.setItems(taskLogService.getUITaskLogList());
 		tableView.setRowFactory(tv -> {
 			TableRow<TaskLog> row = new TableRow<TaskLog>();
 			row.setOnMouseClicked(event -> {
@@ -68,7 +68,7 @@ public class TaskLogListController implements Initializable {
 					if (event.getClickCount() == 2) {
 						showLogDetail(row.getItem());
 					}
-					String taskLogId = row.getItem().getId();
+					String taskLogId = row.getItem().getTaskLogId();
 					globalProperty.getSelectedTaskLogId().set(taskLogId);
 				}
 			});
@@ -94,9 +94,9 @@ public class TaskLogListController implements Initializable {
 	private List<TaskLog> loadLogData() {
 		Integer status = GlobalProperty.getInstance().getTaskHistoryController().getStatusChoice();
 		if (status == -1) {
-			return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
+			return taskLogService.loadUITaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get());
 		}
-		return taskLogDao.loadTaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get(), status);
+		return taskLogService.loadUITaskLogList(GlobalProperty.getInstance().getSelectedTaskId().get(), status);
 	}
 
 	@FXML
@@ -110,8 +110,9 @@ public class TaskLogListController implements Initializable {
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				taskLogDao.deleteTaskLogByLogId(selectedForDetail.getId());
+				taskLogService.deleteTaskLogByLogId(selectedForDetail.getTaskLogId());
 				AlertMaker.showSimpleAlert("删除", "删除成功.");
+				loadLogData();
 			} catch (Exception e) {
 				log.error(e);
 				AlertMaker.showSimpleAlert("删除", "删除失败");
@@ -142,7 +143,7 @@ public class TaskLogListController implements Initializable {
 		}
 
 		try {
-			com.mr.rpa.assistant.data.model.TaskLog taskLog = taskLogDao.loadTaskLogById(selectedForDetail.getTaskLogId());
+			com.mr.rpa.assistant.data.model.TaskLog taskLog = taskLogService.loadTaskLogById(selectedForDetail.getTaskLogId());
 			if (taskLog.getStatus() == SystemContants.TASK_LOG_STATUS_RUNNING) {
 				AlertMaker.showErrorMessage("重新执行", "任务运行中，请稍等再试.");
 				return;
@@ -206,7 +207,7 @@ public class TaskLogListController implements Initializable {
 
 	public static class TaskLog {
 
-		private final SimpleStringProperty id;
+		private final SimpleIntegerProperty id;
 		private final SimpleStringProperty taskLogId;
 		private final SimpleStringProperty taskId;
 		private final SimpleStringProperty status;
@@ -214,8 +215,8 @@ public class TaskLogListController implements Initializable {
 		private final SimpleStringProperty startTime;
 		private final SimpleStringProperty endTime;
 
-		public TaskLog(String id, String taskLogId, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
-			this.id = new SimpleStringProperty(id);
+		public TaskLog(Integer id, String taskLogId, String taskId, Integer status, String error, java.util.Date startTime, java.util.Date endTime) {
+			this.id = new SimpleIntegerProperty(id);
 			this.taskLogId = new SimpleStringProperty(taskLogId);
 			this.taskId = new SimpleStringProperty(taskId);
 			if (status == SystemContants.TASK_LOG_STATUS_RUNNING) {
@@ -236,7 +237,7 @@ public class TaskLogListController implements Initializable {
 			}
 		}
 
-		public String getId() {
+		public Integer getId() {
 			return id.get();
 		}
 

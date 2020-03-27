@@ -1,19 +1,15 @@
 package com.mr.rpa.assistant.ui.about;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
-import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -84,7 +80,7 @@ public class VersionUpdateController implements Initializable {
 	}
 
 	private void executeUpdateSqlFile(File sqlSetupFile) {
-		ScriptRunner runner = new ScriptRunner(DatabaseHandler.getInstance().getConnection());
+		ScriptRunner runner = new ScriptRunner(GlobalProperty.getInstance().getSession().getConnection());
 //		runner.setLogWriter(null);//设置是否输出日志
 		Reader read = FileUtil.getUtf8Reader(sqlSetupFile);
 		runner.runScript(read);
@@ -331,5 +327,5 @@ public class VersionUpdateController implements Initializable {
 				new FileChooser.ExtensionFilter("mbot", "*.mbot")
 		);
 	}
-	
+
 }

@@ -11,12 +11,6 @@ public class SystemContants {
 	public static final String API_SUCCESS = "1";
 	public static final String API_FAIL = "0";
 
-
-	/**
-	 * API 接口名
-	 */
-	public static final String API_NAME_HEARTBEAT = "/heartbeat";
-
 	/**
 	 * 心跳api操作
 	 */

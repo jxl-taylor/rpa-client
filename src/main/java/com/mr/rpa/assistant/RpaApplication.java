@@ -5,13 +5,11 @@ import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import lombok.extern.log4j.Log4j;
 import org.quartz.SchedulerException;
@@ -22,7 +20,6 @@ public class RpaApplication extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		log.info("REC Client Starting...");
-		DatabaseHandler.getInstance();
 		Parent root = FXMLLoader.load(getClass().getResource("/assistant/ui/login/login.fxml"));
 
 		Scene scene = new Scene(root);
@@ -44,6 +41,8 @@ public class RpaApplication extends Application {
 
 	public static void main(String[] args) {
 		Long startTime = System.currentTimeMillis();
+		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		globalProperty.initDB();
 		launch(args);
 		Long endTime = System.currentTimeMillis();
 		log.info(String.format("REC Client is started successfully on %s. Used for %s ms", AssistantUtil.formatDateTimeString(startTime), endTime));

@@ -1,21 +1,19 @@
 package com.mr.rpa.assistant.ui.main.statistic;
 
 import com.jfoenix.controls.JFXComboBox;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * Created by feng on 2020/2/21
@@ -36,9 +34,7 @@ public class StatisticController implements Initializable {
 	@FXML
 	private JFXComboBox<String> taskNameCbx;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
-
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -48,8 +44,8 @@ public class StatisticController implements Initializable {
 	}
 
 	private void initGraphs() {
-		totalTaskChart.setData(taskDao.getTotalTaskGraphStatistics());
-		totalTaskLogChart.setData(taskDao.getTotalTaskLogGraphStatistics());
+		totalTaskChart.setData(taskService.getTotalTaskGraphStatistics());
+		totalTaskLogChart.setData(taskService.getTotalTaskLogGraphStatistics());
 		setTaskNameCbx();
 		enableDisableGraph(false);
 
@@ -58,8 +54,8 @@ public class StatisticController implements Initializable {
 	public void refreshGraphs() {
 		enableDisableGraph(false);
 		setTaskNameCbx();
-		totalTaskChart.setData(taskDao.getTotalTaskGraphStatistics());
-		totalTaskLogChart.setData(taskDao.getTotalTaskLogGraphStatistics());
+		totalTaskChart.setData(taskService.getTotalTaskGraphStatistics());
+		totalTaskLogChart.setData(taskService.getTotalTaskLogGraphStatistics());
 	}
 
 	private void enableDisableGraph(Boolean status) {
@@ -72,7 +68,7 @@ public class StatisticController implements Initializable {
 
 	@FXML
 	private void loadTaskStatistic(ActionEvent event) {
-		taskChart.setData(taskDao.getTaskGraphStatistics(taskNameCbx.getValue()));
+		taskChart.setData(taskService.getTaskGraphStatistics(taskNameCbx.getValue()));
 		if (StringUtils.isNotBlank(taskNameCbx.getValue())) {
 			enableDisableGraph(true);
 		} else {
@@ -80,8 +76,8 @@ public class StatisticController implements Initializable {
 		}
 	}
 
-	private void setTaskNameCbx(){
+	private void setTaskNameCbx() {
 		taskNameCbx.getItems().clear();
-		taskDao.queryTaskList().forEach(task -> taskNameCbx.getItems().add(task.getName()));
+		taskService.queryTaskList().forEach(task -> taskNameCbx.getItems().add(task.getName()));
 	}
 }

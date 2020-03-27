@@ -1,12 +1,9 @@
 package com.mr.rpa.assistant.ui.main.log;
 
 import com.google.common.collect.Lists;
-import com.jfoenix.controls.JFXButton;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskLogDao;
+import com.mr.rpa.assistant.service.TaskLogService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -14,11 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import lombok.AllArgsConstructor;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -37,13 +30,13 @@ public class TaskHistoryController implements Initializable {
 	@FXML
 	private ChoiceBox<MaxRow> maxRowChoice;
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
-
 	private static int currentStatus;
 
 	private static int currentMaxRow;
 
 	private static List<TaskHistoryController> controllers = Lists.newArrayList();
+
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -73,7 +66,7 @@ public class TaskHistoryController implements Initializable {
 		maxRowChoice.setValue(maxRowChoice.getItems().get(0));
 		maxRowChoice.getSelectionModel().selectedItemProperty().addListener(
 				(observable, oldValue, newValue) -> {
-					taskLogDao.setMaxRow(newValue.key);
+					taskLogService.setMaxRow(newValue.key);
 					currentMaxRow = newValue.key;
 					setMaxRowChoice();
 					loadTaskLog(null);
@@ -116,9 +109,9 @@ public class TaskHistoryController implements Initializable {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		int status = logStatusChoice.getValue().key;
 		if (status == -1) {
-			taskLogDao.loadTaskLogList(globalProperty.getSelectedTaskId().get());
+			taskLogService.loadUITaskLogList(globalProperty.getSelectedTaskId().get());
 		} else {
-			taskLogDao.loadTaskLogList(globalProperty.getSelectedTaskId().get(), logStatusChoice.getValue().key);
+			taskLogService.loadUITaskLogList(globalProperty.getSelectedTaskId().get(), logStatusChoice.getValue().key);
 		}
 
 	}

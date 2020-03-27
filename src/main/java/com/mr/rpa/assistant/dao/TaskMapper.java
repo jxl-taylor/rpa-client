@@ -1,7 +1,12 @@
 package com.mr.rpa.assistant.dao;
 
 import com.mr.rpa.assistant.data.model.Task;
+import com.mr.rpa.assistant.ui.listtask.TaskListController;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
+import org.apache.ibatis.annotations.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -9,7 +14,26 @@ import java.util.List;
  */
 public interface TaskMapper {
 
-	Task findByName(String id);
+	void deleteTask(@Param("taskId") String taskId);
 
-	List<Task> queryTaskList();
+	void updateTask(Task task);
+
+	void updateTaskRunning(@Param("taskId") String taskId,
+						   @Param("updateTime") Timestamp updateTime,
+						   @Param("running") boolean running);
+
+	void updateTaskStatus(@Param("taskId") String taskId,
+						  @Param("updateTime") Timestamp updateTime,
+						  @Param("status") Integer status);
+
+	int getTotalTaskCount(@Param("running") boolean running);
+
+	int getTotalTaskLogCount(@Param("taskId") String taskId, @Param("status") Integer status);
+
+	boolean insertNewTask(Task task);
+
+	List<Task> queryTaskList(@Param("taskId") String taskId,
+							 @Param("taskName") String taskName,
+							 @Param("nextTask") String nextTask);
+
 }

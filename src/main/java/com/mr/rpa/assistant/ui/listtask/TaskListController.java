@@ -7,17 +7,16 @@ import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.database.DatabaseHandler;
-import com.mr.rpa.assistant.database.TaskDao;
-import com.mr.rpa.assistant.database.TaskLogDao;
 import com.mr.rpa.assistant.job.JobFactory;
+import com.mr.rpa.assistant.service.TaskLogService;
+import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.KeyValue;
 import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -69,9 +68,9 @@ public class TaskListController implements Initializable {
 
 	private JFXButton cancelBtn;
 
-	private TaskDao taskDao = DatabaseHandler.getInstance().getTaskDao();
+	private TaskService taskService = ServiceFactory.getService(TaskService.class);
 
-	private TaskLogDao taskLogDao = DatabaseHandler.getInstance().getTaskLogDao();
+	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -79,7 +78,7 @@ public class TaskListController implements Initializable {
 		globalProperty.setTaskTableView(tableView);
 		initCol();
 		loadData();
-		tableView.setItems(taskDao.getTaskList());
+		tableView.setItems(taskService.getUITaskList());
 		tableView.setRowFactory(tv -> {
 			TableRow<Task> row = new TableRow<Task>();
 			row.setOnMouseClicked(event -> {
@@ -121,8 +120,8 @@ public class TaskListController implements Initializable {
 	}
 
 	private void loadData() {
-		taskDao.loadTaskList();
-		tableView.setItems(taskDao.getTaskList());
+		taskService.loadUITaskList();
+		tableView.setItems(taskService.getUITaskList());
 	}
 
 	private void loadLogData() {
@@ -141,9 +140,10 @@ public class TaskListController implements Initializable {
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedForDeletion.getId());
+				com.mr.rpa.assistant.data.model.Task task = taskService.queryTaskById(selectedForDeletion.getId());
 				deleteAllTaskLog(task);
 				AlertMaker.showSimpleAlert("清空日志", selectedForDeletion.getName() + " 操作成功.");
+				loadLogData();
 			} catch (Exception e) {
 				log.error(e);
 				AlertMaker.showSimpleAlert("清空", selectedForDeletion.getName() + " 清空日志失败");
@@ -160,7 +160,7 @@ public class TaskListController implements Initializable {
 	}
 
 	public synchronized void deleteAllTaskLog(com.mr.rpa.assistant.data.model.Task task) {
-		taskLogDao.deleteTaskLogByTaskId(task.getId());
+		taskLogService.deleteTaskLogByTaskId(task.getId());
 		loadData();
 	}
 
@@ -172,14 +172,14 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请选择一个任务删除.");
 			return;
 		}
-		if (CollectionUtil.isNotEmpty(taskDao.queryTaskByNextTask(selectedForDeletion.getName()))) {
+		if (CollectionUtil.isNotEmpty(taskService.queryTaskByNextTask(selectedForDeletion.getName()))) {
 			AlertMaker.showErrorMessage("无法删除", "该任务被别的任务依赖.");
 			return;
 		}
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {
-				JobFactory.delete(taskDao.queryTaskById(selectedForDeletion.getId()));
+				JobFactory.delete(taskService.queryTaskById(selectedForDeletion.getId()));
 			} catch (SchedulerException e) {
 				log.error(e);
 				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
@@ -188,15 +188,11 @@ public class TaskListController implements Initializable {
 			String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
 			String jobPath = taskFileDir + File.separator + selectedForDeletion.getName();
 			FileUtil.del(jobPath);
-			boolean result = taskDao.deleteTask(selectedForDeletion);
-			taskLogDao.deleteTaskLogByTaskId(selectedForDeletion.getId());
-			if (result) {
-				AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
-				taskDao.removeTask(selectedForDeletion);
-				taskLogDao.getTaskLogList().clear();
-			} else {
-				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
-			}
+			taskService.deleteTask(selectedForDeletion.getId());
+			taskLogService.deleteTaskLogByTaskId(selectedForDeletion.getId());
+			AlertMaker.showSimpleAlert("删除任务", selectedForDeletion.getName() + " 删除成功.");
+			taskService.removeTask(selectedForDeletion);
+			taskLogService.getUITaskLogList().clear();
 		});
 
 		AlertMaker.showMaterialDialog(rootPane,
@@ -244,7 +240,7 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
 			return;
 		}
-		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		com.mr.rpa.assistant.data.model.Task task = taskService.queryTaskById(selectedTask.getId());
 		if (task.isRunning()) {
 			AlertMaker.showSimpleAlert("开启任务", "不能重复开启");
 			return;
@@ -274,7 +270,7 @@ public class TaskListController implements Initializable {
 		if (task.isRunning()) return;
 		task.setRunning(true);
 		JobFactory.add(task);
-		taskDao.updateTaskRunning(task.getId(), true);
+		taskService.updateTaskRunning(task.getId(), true);
 		loadData();
 	}
 
@@ -285,7 +281,7 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
 			return;
 		}
-		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		com.mr.rpa.assistant.data.model.Task task = taskService.queryTaskById(selectedTask.getId());
 		if (!task.isRunning()) {
 			AlertMaker.showSimpleAlert("停止任务", "任务已经停止");
 			return;
@@ -312,7 +308,7 @@ public class TaskListController implements Initializable {
 	public synchronized void endTask(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {
 		if (!task.isRunning()) return;
 		JobFactory.delete(task);
-		taskDao.updateTaskRunning(task.getId(), false);
+		taskService.updateTaskRunning(task.getId(), false);
 		loadData();
 	}
 
@@ -323,7 +319,7 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
 			return;
 		}
-		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		com.mr.rpa.assistant.data.model.Task task = taskService.queryTaskById(selectedTask.getId());
 		if (!task.isRunning()) {
 			AlertMaker.showSimpleAlert("恢复执行", "任务还没启动");
 			return;
@@ -349,7 +345,7 @@ public class TaskListController implements Initializable {
 		if (task.getStatus() != SystemContants.TASK_RUNNING_STATUS_PAUSE) return;
 		task.setStatus(SystemContants.TASK_RUNNING_STATUS_RUN);
 		JobFactory.resume(task);
-		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
+		taskService.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_RUN);
 		loadData();
 	}
 
@@ -360,7 +356,7 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
 			return;
 		}
-		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		com.mr.rpa.assistant.data.model.Task task = taskService.queryTaskById(selectedTask.getId());
 		if (!task.isRunning()) {
 			AlertMaker.showSimpleAlert("暂停执行", "任务还没启动");
 			return;
@@ -386,13 +382,13 @@ public class TaskListController implements Initializable {
 		if (task.getStatus() != SystemContants.TASK_RUNNING_STATUS_RUN) return;
 		task.setStatus(SystemContants.TASK_RUNNING_STATUS_PAUSE);
 		JobFactory.pause(task);
-		taskDao.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_PAUSE);
+		taskService.updateTaskStatus(task.getId(), SystemContants.TASK_RUNNING_STATUS_PAUSE);
 		loadData();
 	}
 
 	@FXML
 	private void handleRefresh(ActionEvent event) {
-		taskLogDao.getTaskLogList().clear();
+		taskLogService.getUITaskLogList().clear();
 		loadData();
 	}
 
@@ -403,7 +399,7 @@ public class TaskListController implements Initializable {
 			AlertMaker.showErrorMessage("未选择任务", "请先选择一个任务.");
 			return;
 		}
-		com.mr.rpa.assistant.data.model.Task task = taskDao.queryTaskById(selectedTask.getId());
+		com.mr.rpa.assistant.data.model.Task task = taskService.queryTaskById(selectedTask.getId());
 		try {
 			triggerByManual(task);
 		} catch (SchedulerException e) {
@@ -412,6 +408,7 @@ public class TaskListController implements Initializable {
 			return;
 		}
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "手动触发", selectedTask.getName() + " 触发成功");
+		loadLogData();
 	}
 
 	public synchronized void triggerByManual(com.mr.rpa.assistant.data.model.Task task) throws SchedulerException {

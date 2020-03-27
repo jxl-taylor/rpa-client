@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.mr.rpa.assistant.job.HeartBeat;
+import com.mr.rpa.assistant.service.SysConfigService;
 import com.mr.rpa.assistant.util.email.EmailUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -37,7 +38,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.alert.AlertMaker;
-import com.mr.rpa.assistant.database.DatabaseHandler;
 import com.mr.rpa.assistant.database.export.DatabaseExporter;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
@@ -85,7 +85,11 @@ public class SettingsController implements Initializable {
 
 	private LinkedHashMap<Object, HBox> toMailMap = Maps.newLinkedHashMap();
 
-	private SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+	GlobalProperty globalProperty = GlobalProperty.getInstance();
+
+	private SysConfig sysConfig = globalProperty.getSysConfig();
+
+	private SysConfigService sysConfigService = ServiceFactory.getService(SysConfigService.class);
 
 	private MailServerInfo defaultMailServerInfo = GlobalProperty.getInstance().getDefaultMailServerInfo();
 
@@ -168,7 +172,7 @@ public class SettingsController implements Initializable {
 			mailSet.add(mailField.getText());
 		});
 		sysConfig.setToMails(StringUtils.join(mailSet, ","));
-		DatabaseHandler.getInstance().updateSysConfig();
+		sysConfigService.update();
 		AlertMaker.showSimpleAlert("保存", "通知管理配置修改成功");
 	}
 
@@ -253,7 +257,7 @@ public class SettingsController implements Initializable {
 		sysConfig.setTaskFilePath(taskFilePath.getText());
 		sysConfig.setLogPath(logPath.getText());
 		sysConfig.setControlServer(controlServer.getText());
-		DatabaseHandler.getInstance().updateSysConfig();
+		sysConfigService.update();
 		AlertMaker.showSimpleAlert("保存", "任务配置修改成功");
 	}
 
@@ -266,7 +270,7 @@ public class SettingsController implements Initializable {
 	private void handleSaveAlertAction(ActionEvent event) {
 		sysConfig.setMiniteErrorLimit(Integer.parseInt(miniteErrorLimit.getText()));
 		sysConfig.setRunningLimit(Integer.parseInt(runningLimit.getText()));
-		DatabaseHandler.getInstance().updateSysConfig();
+		sysConfigService.update();
 		AlertMaker.showSimpleAlert("保存", "预警配置修改成功");
 	}
 
