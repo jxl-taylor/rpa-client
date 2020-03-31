@@ -120,7 +120,6 @@ public class MainController implements Initializable {
 		globalProperty.getTaskHistoryPaneVisible().setValue(false);
 		globalProperty.getTaskLogPaneVisible().setValue(false);
 		globalProperty.getTaskBeanController().refreshSplit();
-		globalProperty.refreshRunningDuration();
 	}
 
 

@@ -1,11 +1,10 @@
 package com.mr.rpa.assistant.dao;
 
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.data.model.Task;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by feng on 2020/3/25
@@ -13,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface SysConfigMapper {
 
-	SysConfig query();
+	List<Map<String, Object>> queryList();
 
 	void insert(SysConfig sysConfig);
 

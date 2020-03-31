@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.util.license;
 
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import com.mr.rpa.assistant.util.encryption.Encipher;
 import de.schlichtherle.license.*;
@@ -44,14 +45,17 @@ public class LicenseManagerHolder {
 		InputStream in = getClass().getResourceAsStream(SystemContants.LICENSE_PROPERTY_FILE_PATH);
 		try {
 			prop.load(in);
-		} catch (IOException e) {
+			in.close();
+			PUBLICALIAS = prop.getProperty("PUBLICALIAS");
+			STOREPWD = Encipher.DecodePasswd(SystemContants.LIC_KEY_PWD);
+			SUBJECT = CommonUtil.getLocalMac();
+			licPath = prop.getProperty("licPath");
+			pubPath = prop.getProperty("pubPath");
+		} catch (Exception e) {
 			System.err.println(e);
+			throw new RuntimeException("加载资源文件[verifyParam.properties]出错");
 		}
-		PUBLICALIAS = prop.getProperty("PUBLICALIAS");
-		STOREPWD = Encipher.DecodePasswd(SystemContants.LIC_KEY_PWD);
-		SUBJECT = prop.getProperty("SUBJECT");
-		licPath = prop.getProperty("licPath");
-		pubPath = prop.getProperty("pubPath");
+
 	}
 
 	/**

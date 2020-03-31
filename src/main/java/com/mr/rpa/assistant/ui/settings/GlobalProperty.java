@@ -17,6 +17,7 @@ import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
 import com.mr.rpa.assistant.util.SystemContants;
 import de.schlichtherle.license.LicenseContent;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -60,7 +61,7 @@ public class GlobalProperty {
 		return globalProperty;
 	}
 
-	public void initDB(){
+	public void initDB() {
 		Connection connection = globalProperty.createConnection();
 		if (connection == null) throw new RuntimeException("数据库初始化错误");
 		ServiceFactory.init(globalProperty.session);
@@ -136,7 +137,7 @@ public class GlobalProperty {
 			false);
 
 	public void setTitle(String username) {
-		this.title.set(String.format("REC（用户：%s）", username));
+		this.title.set(String.format("REC(用户:%s)", username));
 	}
 
 	public List<JFXButton> getExitBtns() {
@@ -165,8 +166,26 @@ public class GlobalProperty {
 		runningDuration.set(DateUtil.formatBetween(globalProperty.getStartDate(),
 				new Date(),
 				BetweenFormater.Level.MINUTE));
+		Platform.runLater(() -> {
+			globalProperty.getMyInfoController().refreshExpireTime();
+			int licExpireDays = getLicExpireDays();
+			if (licExpireDays < 31){
+				this.title.set(String.format("REC(用户:%s) 距离到期日还有%s天", sysConfig.getAdminNick(), licExpireDays));
+			}else {
+				this.title.set(String.format("REC(用户:%s) ", sysConfig.getAdminNick()));
+			}
+
+		});
+
 	}
 
+	public int getLicExpireDays(){
+		if(licenseContent == null) return 0;
+		String dayString = DateUtil.formatBetween(licenseContent.getNotAfter(),
+				new Date(),
+				BetweenFormater.Level.DAY);
+		return Integer.parseInt(dayString.replace("天", ""));
+	}
 
 	private void inflateDB(Connection conn) {
 		List<String> tableData = new ArrayList<>();

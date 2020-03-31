@@ -24,10 +24,14 @@ public class MyInfoController implements Initializable {
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		LicenseContent licenseContent = globalProperty.getLicenseContent();
-		expireTime.setText(DateFormatUtils.format(licenseContent.getNotAfter(), "yyyy-MM-dd"));
+		refreshExpireTime();
 		duration.textProperty().bind(globalProperty.getRunningDuration());
 		globalProperty.setMyInfoController(this);
+	}
+
+	public void refreshExpireTime(){
+		LicenseContent licenseContent = globalProperty.getLicenseContent();
+		expireTime.setText(DateFormatUtils.format(licenseContent.getNotAfter(), "yyyy-MM-dd"));
 	}
 
 	public void initCurrentUser(){

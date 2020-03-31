@@ -40,7 +40,7 @@
                  task_file_path varchar(255),
                  log_path varchar(255),
                  db_path varchar(255),
-                 control_server varchar(255),
+                 control_center_server varchar(255),
                  minite_error_limit integer,
                  running_limit integer"/>
     <table-entry name="SYS_USER"

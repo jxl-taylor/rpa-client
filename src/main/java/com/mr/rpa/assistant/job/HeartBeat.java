@@ -1,5 +1,7 @@
 package com.mr.rpa.assistant.job;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ZipUtil;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -15,10 +17,12 @@ import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
+import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,8 @@ import java.util.Map;
 public class HeartBeat implements Runnable {
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 	private final static String SERVICE_ID_HEARTBEAT = "heartbeat";
+	private final static String SERVICE_ID_LIC_DOWNLOAD = "lib_download";
+
 	private SysConfig sysConfig;
 
 	private TaskService taskService = ServiceFactory.getService(TaskService.class);
@@ -38,12 +44,15 @@ public class HeartBeat implements Runnable {
 
 	private Map<String, String> operaErrorMsgMap = Maps.newHashMap();
 
+	public HeartBeat(){
+		sysConfig = globalProperty.getSysConfig();
+	}
 	@Override
 	public void run() {
-		sysConfig = globalProperty.getSysConfig();
 		while (true) {
 			try {
 				Thread.sleep(SystemContants.HEARTBEAT_INTERVAL);
+				globalProperty.refreshRunningDuration();
 				action();
 			} catch (Exception e) {
 				sysConfig.setConnectTime(null);
@@ -61,7 +70,7 @@ public class HeartBeat implements Runnable {
 		String url = "";
 		sysConfig = globalProperty.getSysConfig();
 		if (StringUtils.isBlank(controlUrl)) {
-			url = sysConfig.getControlServer();
+			url = sysConfig.getControlCenterServer();
 		} else {
 			url = controlUrl;
 		}
@@ -94,9 +103,10 @@ public class HeartBeat implements Runnable {
 		jsonMap.put("botContent", botContentList);
 
 		String result = HttpRequest.post(url)
-				.header("serviceId", SERVICE_ID_HEARTBEAT)
+				.header("serviceId", SERVICE_ID_LIC_DOWNLOAD)
 				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
 				.header("privateKey", SystemContants.PRIVATE_KEY)
+				.header("licExpireDays", String.valueOf(globalProperty.getLicExpireDays()))
 				.header("mac", CommonUtil.getLocalMac())
 				.header("processId", CommonUtil.getProcessID())
 				.body(JSON.toJSONString(jsonMap))
@@ -109,6 +119,14 @@ public class HeartBeat implements Runnable {
 			operaErrorMsgMap.clear();
 			if (sysConfig.getConnectTime() == null) {
 				if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(new java.util.Date());
+			}
+			//全局操作
+			String apiOperation = resultJson.getString("operation");
+			if (StringUtils.isNotBlank(apiOperation)) {
+				if (apiOperation.equals(SystemContants.API_OPERA_LIC_DOWNLOAD)) {
+					//download lic
+					downLoadAndInstallLic();
+				}
 			}
 
 			//处理控制中心操作请求
@@ -150,6 +168,31 @@ public class HeartBeat implements Runnable {
 						String.format("操作编号：%s, 错误原因：%s", operation, e.getMessage()));
 			}
 		}
+	}
+
+	/**
+	 * 场景：用户付费后，控制中心生成lic和publicKey，然后在心跳请求返回下载的操作，客户端进行下载操作。
+	 */
+	public void downLoadAndInstallLic() throws Exception {
+		// haertbeat/download/license get请求 下载lic 文件
+		if(StringUtils.isBlank(sysConfig.getControlCenterServer())) return;
+		String url = sysConfig.getControlCenterServer() + "/download/license";
+
+		byte[] result = HttpRequest.get(url)
+				.header("serviceId", SERVICE_ID_HEARTBEAT)
+				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
+				.header("privateKey", SystemContants.PRIVATE_KEY)
+				.header("licExpireDays", String.valueOf(globalProperty.getLicExpireDays()))
+				.header("mac", CommonUtil.getLocalMac())
+				.header("processId", CommonUtil.getProcessID())
+				.execute().bodyBytes();
+		String licZipPath = System.getProperty("user.dir") + File.separator + CommonUtil.getLocalMac() + ".zip";
+		FileUtil.writeBytes(result, licZipPath);
+		ZipUtil.unzip(licZipPath, System.getProperty("user.dir"));
+		FileUtil.del(licZipPath);
+		LicenseManagerHolder.getLicenseManagerHolder().verifyInstall();
+		LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
+
 	}
 
 	public static void main(String[] args) throws Exception {

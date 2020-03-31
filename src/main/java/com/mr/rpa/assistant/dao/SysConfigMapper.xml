@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mr.rpa.assistant.dao.SysConfigMapper">
 
-    <select id="query" resultType="com.mr.rpa.assistant.data.model.SysConfig">
+    <select id="queryList" resultType="java.util.Map">
         SELECT * FROM SYS_CONFIG
     </select>
 
@@ -24,7 +24,7 @@
             task_file_path,
             log_path,
             db_path,
-            control_server,
+            control_center_server,
             minite_error_limit,
             running_limit
             )
@@ -41,7 +41,7 @@
             #{taskFilePath,jdbcType=VARCHAR},
             #{logPath,jdbcType=VARCHAR},
             #{dbPath,jdbcType=VARCHAR},
-            #{controlServer,jdbcType=VARCHAR},
+            #{controlCenterServer,jdbcType=VARCHAR},
             #{miniteErrorLimit,jdbcType=INTEGER},
             #{runningLimit,jdbcType=INTEGER}
         )

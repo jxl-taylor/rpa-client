@@ -111,7 +111,7 @@ public class LoginController implements Initializable {
 
 	private void setUserInfo() {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
-		globalProperty.setTitle(username.getText());
+		globalProperty.setTitle(globalProperty.getSysConfig().getAdminNick());
 	}
 
 	@FXML
