@@ -27,28 +27,27 @@ public class RpaApplication extends Application {
 	public void start(Stage stage) throws Exception {
 		log.info("REC Client Starting...");
 		Parent root = FXMLLoader.load(getClass().getResource("/assistant/ui/login/login.fxml"));
-
 		Scene scene = new Scene(root);
 
 		AssistantUtil.setStageIcon(stage);
 
-		//如果第一次登录，mrbot.lic 不存在，从控制中心下载试用版公钥文件和license
-		if(!FileUtil.exist(System.getProperty("user.dir") + File.separator + SystemContants.LICENSE_PROPERTY_LIC_NAME)
-				||!FileUtil.exist(System.getProperty("user.dir") + File.separator + SystemContants.LICENSE_PROPERTY_PUB_PATH)){
-			if(StringUtils.isNotBlank(GlobalProperty.getInstance().getSysConfig().getControlCenterServer())){
-				new HeartBeat().downLoadAndInstallLic();
+		if (!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()) {
+			//如果验证不通过，尝试从控制中心下载license 和公钥（如果第一次登录，直接下载30天的试用版license）
+			boolean retryVerifing = false;
+			if (StringUtils.isNotBlank(GlobalProperty.getInstance().getSysConfig().getControlCenterServer())) {
+				retryVerifing = new HeartBeat().downLoadAndInstallLic();
 			}
-		}
+			if (!retryVerifing) {
+				AlertMaker.showMaterialDialog(((StackPane) root),
+						((StackPane) root).getChildren().get(0),
+						GlobalProperty.getInstance().getExitBtns().subList(0, 1), "License", "License不可用", false);
 
-		if(!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()){
-			AlertMaker.showMaterialDialog(((StackPane) root),
-					((StackPane) root).getChildren().get(0),
-					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License不可用", false);
+			}
 		}
 
 		stage.setFullScreen(false);
 		stage.setResizable(false);
- 		stage.setScene(scene);
+		stage.setScene(scene);
 		stage.show();
 		stage.setTitle("REC");
 

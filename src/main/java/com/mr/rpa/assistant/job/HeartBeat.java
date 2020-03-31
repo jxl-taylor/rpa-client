@@ -16,6 +16,7 @@ import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.CommonUtil;
+import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import lombok.extern.log4j.Log4j;
@@ -42,11 +43,14 @@ public class HeartBeat implements Runnable {
 
 	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
-	private Map<String, String> operaErrorMsgMap = Maps.newHashMap();
+	private Pair<String, String> apiErrorPair;
 
-	public HeartBeat(){
+	private Map<String, Pair<String, String>> operaErrorMap = Maps.newHashMap();
+
+	public HeartBeat() {
 		sysConfig = globalProperty.getSysConfig();
 	}
+
 	@Override
 	public void run() {
 		while (true) {
@@ -84,6 +88,10 @@ public class HeartBeat implements Runnable {
 		jsonMap.put("freeMemory", CommonUtil.getFreeMemory());
 		jsonMap.put("totalMemory", CommonUtil.getTotalMemory());
 		jsonMap.put("freeDisk", CommonUtil.getFreeDisk());
+		if (apiErrorPair != null) {
+			jsonMap.put("operaErrorCode", apiErrorPair.getObject1());
+			jsonMap.put("operaErrorMsg", apiErrorPair.getObject2());
+		}
 
 		List<LinkedHashMap<String, Object>> botContentList = Lists.newArrayList();
 		taskService.queryTaskList().forEach(task -> {
@@ -96,7 +104,11 @@ public class HeartBeat implements Runnable {
 			);
 			taskMap.put("successCount", task.getSuccessCount());
 			taskMap.put("failCount", task.getFailCount());
-			taskMap.put("operaErrorMsg", operaErrorMsgMap.getOrDefault(task.getName(), ""));
+			Pair<String, String> errorPair = operaErrorMap.get(task.getName());
+			if (errorPair != null) {
+				taskMap.put("operaErrorMsg", errorPair.getObject1());
+				taskMap.put("operaErrorMsg", errorPair.getObject2());
+			}
 			botContentList.add(taskMap);
 		});
 
@@ -116,7 +128,8 @@ public class HeartBeat implements Runnable {
 		String resultCode = resultJson.getString("resultcode");
 		if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
 			//清空上一次操作的信息
-			operaErrorMsgMap.clear();
+			operaErrorMap.clear();
+			apiErrorPair = null;
 			if (sysConfig.getConnectTime() == null) {
 				if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(new java.util.Date());
 			}
@@ -125,7 +138,12 @@ public class HeartBeat implements Runnable {
 			if (StringUtils.isNotBlank(apiOperation)) {
 				if (apiOperation.equals(SystemContants.API_OPERA_LIC_DOWNLOAD)) {
 					//download lic
-					downLoadAndInstallLic();
+					try {
+						if(!downLoadAndInstallLic()) throw new RuntimeException("license 验证失败");
+					} catch (Throwable e) {
+						apiErrorPair = new Pair<>(apiOperation, e.getMessage());
+					}
+
 				}
 			}
 
@@ -164,8 +182,8 @@ public class HeartBeat implements Runnable {
 					controller.deleteAllTaskLog(task);
 				}
 			} catch (Throwable e) {
-				operaErrorMsgMap.put(jsonObject.getString("botName"),
-						String.format("操作编号：%s, 错误原因：%s", operation, e.getMessage()));
+				operaErrorMap.put(jsonObject.getString("botName"),
+						new Pair<>(operation, String.format("操作编号：%s, 错误原因：%s", operation, e.getMessage())));
 			}
 		}
 	}
@@ -173,9 +191,9 @@ public class HeartBeat implements Runnable {
 	/**
 	 * 场景：用户付费后，控制中心生成lic和publicKey，然后在心跳请求返回下载的操作，客户端进行下载操作。
 	 */
-	public void downLoadAndInstallLic() throws Exception {
+	public boolean downLoadAndInstallLic() throws Exception {
 		// haertbeat/download/license get请求 下载lic 文件
-		if(StringUtils.isBlank(sysConfig.getControlCenterServer())) return;
+		if (StringUtils.isBlank(sysConfig.getControlCenterServer())) return false;
 		String url = sysConfig.getControlCenterServer() + "/download/license";
 
 		byte[] result = HttpRequest.get(url)
@@ -190,9 +208,8 @@ public class HeartBeat implements Runnable {
 		FileUtil.writeBytes(result, licZipPath);
 		ZipUtil.unzip(licZipPath, System.getProperty("user.dir"));
 		FileUtil.del(licZipPath);
-		LicenseManagerHolder.getLicenseManagerHolder().verifyInstall();
-		LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
-
+		return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
+				&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
 	}
 
 	public static void main(String[] args) throws Exception {
