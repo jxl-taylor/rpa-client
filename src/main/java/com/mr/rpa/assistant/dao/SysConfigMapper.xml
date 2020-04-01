@@ -24,7 +24,7 @@
             task_file_path,
             log_path,
             db_path,
-            control_center_server,
+            control_server,
             minite_error_limit,
             running_limit
             )

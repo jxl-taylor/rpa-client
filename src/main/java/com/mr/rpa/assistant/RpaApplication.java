@@ -34,7 +34,7 @@ public class RpaApplication extends Application {
 		if (!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()) {
 			//如果验证不通过，尝试从控制中心下载license 和公钥（如果第一次登录，直接下载30天的试用版license）
 			boolean retryVerifing = false;
-			if (StringUtils.isNotBlank(GlobalProperty.getInstance().getSysConfig().getControlCenterServer())) {
+			if (StringUtils.isNotBlank(GlobalProperty.getInstance().getSysConfig().getControlServer())) {
 				retryVerifing = new HeartBeat().downLoadAndInstallLic();
 			}
 			if (!retryVerifing) {

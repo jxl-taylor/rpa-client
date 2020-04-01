@@ -74,7 +74,7 @@ public class HeartBeat implements Runnable {
 		String url = "";
 		sysConfig = globalProperty.getSysConfig();
 		if (StringUtils.isBlank(controlUrl)) {
-			url = sysConfig.getControlCenterServer();
+			url = sysConfig.getControlServer();
 		} else {
 			url = controlUrl;
 		}
@@ -193,8 +193,8 @@ public class HeartBeat implements Runnable {
 	 */
 	public boolean downLoadAndInstallLic() throws Exception {
 		// haertbeat/download/license get请求 下载lic 文件
-		if (StringUtils.isBlank(sysConfig.getControlCenterServer())) return false;
-		String url = sysConfig.getControlCenterServer() + "/download/license";
+		if (StringUtils.isBlank(sysConfig.getControlServer())) return false;
+		String url = sysConfig.getControlServer() + "/download/license";
 
 		byte[] result = HttpRequest.get(url)
 				.header("serviceId", SERVICE_ID_HEARTBEAT)

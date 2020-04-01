@@ -29,7 +29,7 @@ public class SysConfigServiceImpl implements SysConfigService {
 		if (CollectionUtil.isNotEmpty(sysConfigList)) {
 			Map<String, Object> map = sysConfigList.get(0);
 			SysConfig sysConfig = new SysConfig();
-			sysConfig.setControlCenterServer(String.valueOf(map.get("control_center_server".toUpperCase())));
+			sysConfig.setControlServer(String.valueOf(map.get("control_server".toUpperCase())));
 			sysConfig.setMailServerName(String.valueOf(map.get("mail_server_name".toUpperCase())));
 			sysConfig.setMailSmtpPort((Integer) map.get("mail_server_port".toUpperCase()));
 			sysConfig.setMailEmailAddress(String.valueOf(map.get("mail_user_email".toUpperCase())));

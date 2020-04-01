@@ -34,7 +34,7 @@ public class SysConfig {
 	private String taskFilePath = BOT_FILE_DIR + File.separator + "mbot";
 	private String taskFilePathTmp = taskFilePath + File.separator + "tmp";
 	private String logPath = BOT_FILE_DIR + File.separator + "log";
-	private String controlCenterServer;
+	private String controlServer;
 	private java.util.Date connectTime;
 	private String dbPath = BOT_FILE_DIR_NAME + File.separator + "database";
 	private String updatePath = BOT_FILE_DIR + File.separator + "update";

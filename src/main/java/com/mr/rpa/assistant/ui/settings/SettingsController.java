@@ -256,7 +256,7 @@ public class SettingsController implements Initializable {
 	private void handleSaverRunningAction(ActionEvent event) {
 		sysConfig.setTaskFilePath(taskFilePath.getText());
 		sysConfig.setLogPath(logPath.getText());
-		sysConfig.setControlCenterServer(controlServer.getText());
+		sysConfig.setControlServer(controlServer.getText());
 		sysConfigService.update();
 		AlertMaker.showSimpleAlert("保存", "任务配置修改成功");
 	}
@@ -293,7 +293,7 @@ public class SettingsController implements Initializable {
 		initMailSetting();
 		taskFilePath.setText(sysConfig.getTaskFilePath());
 		logPath.setText(sysConfig.getLogPath());
-		controlServer.setText(sysConfig.getControlCenterServer());
+		controlServer.setText(sysConfig.getControlServer());
 		if (sysConfig.getConnectTime() != null) {
 			connectStatus.setText("已连接");
 			connectDuration.setText(DateUtil.formatBetween(sysConfig.getConnectTime(),
