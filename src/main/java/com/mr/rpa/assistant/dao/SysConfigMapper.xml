@@ -41,7 +41,7 @@
             #{taskFilePath,jdbcType=VARCHAR},
             #{logPath,jdbcType=VARCHAR},
             #{dbPath,jdbcType=VARCHAR},
-            #{controlCenterServer,jdbcType=VARCHAR},
+            #{controlServer,jdbcType=VARCHAR},
             #{miniteErrorLimit,jdbcType=INTEGER},
             #{runningLimit,jdbcType=INTEGER}
         )
