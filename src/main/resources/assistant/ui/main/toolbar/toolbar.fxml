@@ -8,6 +8,12 @@
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mr.rpa.assistant.ui.main.toolbar.ToolbarController">
     <children>
+        <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadRegister"
+                   prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="用户注册" textAlignment="CENTER">
+            <graphic>
+                <FontAwesomeIconView glyphName="TASKS" size="25"/>
+            </graphic>
+        </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadAddTask"
                    prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="添加任务" textAlignment="CENTER">
             <graphic>

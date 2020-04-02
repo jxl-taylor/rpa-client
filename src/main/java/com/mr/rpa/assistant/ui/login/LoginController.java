@@ -121,12 +121,13 @@ public class LoginController implements Initializable {
 
 	@FXML
 	private void linkToApply(ActionEvent event) {
-		try {
-			Desktop.getDesktop().browse(new URI(RPA_CONTROL_CENTER));
-			applyLink.setVisited(false);
-		} catch (IOException | URISyntaxException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			Desktop.getDesktop().browse(new URI(RPA_CONTROL_CENTER));
+//			applyLink.setVisited(false);
+//		} catch (IOException | URISyntaxException e1) {
+//			e1.printStackTrace();
+//		}
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/myinfo/register.fxml"), "注册", null);
 	}
 
 	private void closeStage() {

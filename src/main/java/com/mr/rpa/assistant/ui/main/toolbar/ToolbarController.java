@@ -32,6 +32,11 @@ public class ToolbarController implements Initializable {
     }
 
     @FXML
+    private void loadRegister(ActionEvent event) {
+        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/myinfo/register.fxml"), "注册", null);
+    }
+
+    @FXML
     private void loadUpdate(ActionEvent event) {
         Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"), "更新", null);
         pair.getObject1().setOnCloseRequest((e) -> {

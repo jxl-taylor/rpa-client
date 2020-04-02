@@ -33,7 +33,7 @@
                   <Font size="14.0" />
                </font>
             </JFXCheckBox>
-            <Hyperlink fx:id="applyLink" text="申请账号" layoutX="106.0" layoutY="255.0" style="-fx-border-width: 0; -fx-font: #1976D2" onAction="#linkToApply" AnchorPane.rightAnchor="75">
+            <Hyperlink fx:id="applyLink" text="用户注册" layoutX="106.0" layoutY="255.0" style="-fx-border-width: 0; -fx-font: #1976D2" onAction="#linkToApply" AnchorPane.rightAnchor="75">
                <font>
                   <Font size="14.0" />
                </font>
