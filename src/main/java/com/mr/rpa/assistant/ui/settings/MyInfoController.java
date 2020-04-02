@@ -31,6 +31,7 @@ public class MyInfoController implements Initializable {
 
 	public void refreshExpireTime(){
 		LicenseContent licenseContent = globalProperty.getLicenseContent();
+		if(licenseContent == null) return;
 		expireTime.setText(DateFormatUtils.format(licenseContent.getNotAfter(), "yyyy-MM-dd"));
 	}
 

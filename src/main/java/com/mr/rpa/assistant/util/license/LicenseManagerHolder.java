@@ -77,6 +77,7 @@ public class LicenseManagerHolder {
 	 * @return
 	 */
 	public boolean verifyInstall() {
+		if(GlobalProperty.getInstance().isDebug()) return true;
 		try {
 			licenseManager.install(new File(licPath));
 			System.out.println("客户端安装证书成功!");
@@ -94,6 +95,7 @@ public class LicenseManagerHolder {
 	 * @return
 	 */
 	public boolean verifyCert() {
+		if(GlobalProperty.getInstance().isDebug()) return true;
 		try {
 			LicenseContent licenseContent = licenseManager.verify();
 			GlobalProperty.getInstance().setLicenseContent(licenseContent);

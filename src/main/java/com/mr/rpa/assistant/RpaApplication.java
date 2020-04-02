@@ -1,11 +1,9 @@
 package com.mr.rpa.assistant;
 
-import cn.hutool.core.io.FileUtil;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.job.HeartBeat;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.SystemContants;
 import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,10 +13,9 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
-
-import java.io.File;
 
 @Log4j
 public class RpaApplication extends Application {
@@ -56,6 +53,7 @@ public class RpaApplication extends Application {
 	public static void main(String[] args) {
 		Long startTime = System.currentTimeMillis();
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
+		if(args.length > 0 && args[0].equalsIgnoreCase("debug")) globalProperty.setDebug(true);
 		globalProperty.initDB();
 		launch(args);
 		Long endTime = System.currentTimeMillis();

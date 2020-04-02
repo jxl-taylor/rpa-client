@@ -61,6 +61,8 @@ public class GlobalProperty {
 		return globalProperty;
 	}
 
+	private boolean debug;
+
 	public void initDB() {
 		Connection connection = globalProperty.createConnection();
 		if (connection == null) throw new RuntimeException("数据库初始化错误");
