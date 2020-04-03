@@ -464,7 +464,7 @@
     -fx-padding: 0 0 0 0;
 }
 
-.jfx-radio-button{
+.jfx-radio-button {
     -jfx-selected-color: -fx-secondary;
     -jfx-unselected-color: #5A5A5A;
 }
@@ -473,6 +473,7 @@
     -jfx-default-thumb: -fx-secondary;
     -jfx-default-track: -fx-primarytext;
 }
+
 .jfx-slider .slider-value {
     -fx-stroke: -fx-primary;
     -fx-font-size: 10;
@@ -481,23 +482,38 @@
 .jfx-check-box {
     -fx-text-fill: -fx-secondary;
 }
+
 .jfx-text-field,
 .jfx-text-field:focused {
     -fx-prompt-text-fill: #0F9D58;
 }
+
 .jfx-password-field,
 .jfx-password-field:focused {
     -fx-prompt-text-fill: #0F9D58;
 }
+
 .jfx-combo-box {
     -fx-prompt-text-fill: #0F9D58;
 }
+
 .jfx-text-area,
 .jfx-text-area:focused {
     -fx-prompt-text-fill: #0F9D58;
 }
 
-.separator *.line{
+.separator *.line {
     -fx-border-style: dotted;
-    -fx-border-color:  -fx-secondary;
+    -fx-border-color: -fx-secondary;
+}
+
+.hyperlink {
+    -fx-border-width: 0;
+    -fx-font:-fx-blue
+}
+
+.hyperlink:armed,
+.hyperlink:visited,
+.hyperlink:hover:armed {
+    -fx-text-fill:  -fx-secondary;
 }

@@ -36,6 +36,14 @@ public class SysConfigServiceImpl implements SysConfigService {
 			sysConfig.setMailEmailPassword(String.valueOf(map.get("mail_user_password".toUpperCase())));
 			sysConfig.setMailSslCheckbox((Boolean) map.get("mail_ssl_enabled".toUpperCase()));
 			sysConfig.setToMails(String.valueOf(map.get("to_mails".toUpperCase())));
+			sysConfig.setControlServer(String.valueOf(map.get("control_server".toUpperCase())));
+			sysConfig.setUserType(String.valueOf(map.get("user_type".toUpperCase())));
+			sysConfig.setCompanyName(String.valueOf(map.get("company_name".toUpperCase())));
+			sysConfig.setCompanyAddress(String.valueOf(map.get("company_address".toUpperCase())));
+			sysConfig.setApplicant(String.valueOf(map.get("applicant".toUpperCase())));
+			sysConfig.setApplyPhone1(String.valueOf(map.get("applyPhone1".toUpperCase())));
+			sysConfig.setApplyPhone2(String.valueOf(map.get("applyPhone2".toUpperCase())));
+			sysConfig.setApplyMail(String.valueOf(map.get("apply_mail".toUpperCase())));
 			return sysConfig;
 		}
 		return null;

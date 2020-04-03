@@ -35,6 +35,14 @@ public class SysConfig {
 	private String taskFilePathTmp = taskFilePath + File.separator + "tmp";
 	private String logPath = BOT_FILE_DIR + File.separator + "log";
 	private String controlServer;
+	private String userType;
+	private String companyName;
+	private String companyAddress;
+	private String applicant;
+	private String applyPhone1;
+	private String applyPhone2;
+	private String applyMail;
+
 	private java.util.Date connectTime;
 	private String dbPath = BOT_FILE_DIR_NAME + File.separator + "database";
 	private String updatePath = BOT_FILE_DIR + File.separator + "update";

@@ -41,6 +41,13 @@
                  log_path varchar(255),
                  db_path varchar(255),
                  control_server varchar(255),
+                 user_type varchar(255),
+                 company_name varchar(255),
+                 company_address varchar(255),
+                 applicant varchar(100),
+                 applyPhone1 varchar(100),
+                 applyPhone2 varchar(100),
+                 apply_mail varchar(255),
                  minite_error_limit integer,
                  running_limit integer"/>
     <table-entry name="SYS_USER"

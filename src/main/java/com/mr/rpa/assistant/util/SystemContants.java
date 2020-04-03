@@ -50,6 +50,9 @@ public class SystemContants {
 	public static final String TASK_SUFFIX_KJB = "kjb";
 	public static final String TASK_SUFFIX_KTR = "ktr";
 
+	public static final String USER_TYPE_IND = "IND";	//个人
+	public static final String USER_TYPE_ENT = "ENT";	//企业
+
 	/**Default Email
 	 *
 	 */
