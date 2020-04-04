@@ -40,7 +40,7 @@
                  task_file_path varchar(255),
                  log_path varchar(255),
                  db_path varchar(255),
-                 control_server varchar(255),
+                 control_server varchar(255) default '',
                  user_type varchar(255),
                  company_name varchar(255),
                  company_address varchar(255),
