@@ -25,13 +25,6 @@
             log_path,
             db_path,
             control_server,
-            user_type,
-            company_name,
-            company_address,
-            applicant,
-            applyPhone1,
-            applyPhone2,
-            apply_mail,
             minite_error_limit,
             running_limit
             )
@@ -49,13 +42,6 @@
             #{logPath,jdbcType=VARCHAR},
             #{dbPath,jdbcType=VARCHAR},
             #{controlServer,jdbcType=VARCHAR},
-            #{userType,jdbcType=VARCHAR},
-            #{companyName,jdbcType=VARCHAR},
-            #{companyAddress,jdbcType=VARCHAR},
-            #{applicant,jdbcType=VARCHAR},
-            #{applyPhone1,jdbcType=VARCHAR},
-            #{applyPhone2,jdbcType=VARCHAR},
-            #{applyMail,jdbcType=VARCHAR},
             #{miniteErrorLimit,jdbcType=INTEGER},
             #{runningLimit,jdbcType=INTEGER}
         )

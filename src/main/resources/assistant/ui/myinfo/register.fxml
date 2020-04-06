@@ -62,9 +62,20 @@
                            </VBox.margin>
                         </JFXTextField>
 
-                        <HBox fx:id="actionBox" alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="30.0">
+                        <HBox spacing="5" maxHeight="50" VBox.vgrow="ALWAYS">
                            <children>
-                              <JFXButton onAction="#apply" prefHeight="66.0" prefWidth="100.0" text="提交" />
+                              <JFXTextField fx:id="serialNo" labelFloat="true" promptText="序列码" HBox.hgrow="ALWAYS" >
+                              </JFXTextField>
+                              <JFXButton onAction="#queryBySerialNo" prefWidth="100.0" text="验证"/>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </HBox>
+
+                        <HBox alignment="CENTER" prefHeight="47.0" prefWidth="404.0" spacing="30.0">
+                           <children>
+                              <JFXButton fx:id="submitBtn" onAction="#apply" prefHeight="66.0" prefWidth="100.0" text="提交" />
                               <JFXButton layoutX="10.0" layoutY="10.0" onAction="#cancel" prefHeight="66.0" prefWidth="100.0" text="关闭" />
                            </children>
                            <VBox.margin>

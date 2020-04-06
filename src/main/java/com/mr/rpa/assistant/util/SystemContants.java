@@ -22,9 +22,13 @@ public class SystemContants {
 	public static final String API_TASK_OPERA_CLEARLOG = "5";
 
 	/**
-	 * api全局操作
+	 * api serviceId
 	 */
-	public static final String API_OPERA_LIC_DOWNLOAD = "LIC_DOWNLOAD";
+	public static final String API_SERVICE_ID_LIC_DOWNLOAD = "LIC_DOWNLOAD";
+	public static final String API_SERVICE_ID_REGISTER = "REGISTER";
+	public static final String API_SERVICE_ID_REGISTER_QUERY = "REGISTER_QUERY";
+	public static final String API_SERVICE_ID_HEARTBEAT = "HEARTBEAT";
+
 
 	public static final long MAX_LOG_OUTPUT_DURATION = 2 * 60 * 1000;
 

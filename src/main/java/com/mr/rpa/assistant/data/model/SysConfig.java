@@ -25,23 +25,24 @@ public class SysConfig {
 	private String adminUsername = "admin";
 	private String adminPassword = "admin";
 	private String adminNick = "系统管理员";
-	private String mailServerName;
+	private String mailServerName = "";
 	private Integer mailSmtpPort = 25;
-	private String mailEmailAddress;
-	private String mailEmailPassword;
-	private String toMails;
+	private String mailEmailAddress = "";
+	private String mailEmailPassword = "";
+	private String toMails = "";
 	private Boolean mailSslCheckbox = false;
 	private String taskFilePath = BOT_FILE_DIR + File.separator + "mbot";
 	private String taskFilePathTmp = taskFilePath + File.separator + "tmp";
 	private String logPath = BOT_FILE_DIR + File.separator + "log";
-	private String controlServer;
-	private String userType;
-	private String companyName;
-	private String companyAddress;
-	private String applicant;
-	private String applyPhone1;
-	private String applyPhone2;
-	private String applyMail;
+	private String controlServer = "";
+	//注册信息，通过控制中心查询获得，无连接或者没有注册则无此信息
+	private String userType = "";
+	private String companyName = "";
+	private String companyAddress = "";
+	private String applicant = "";
+	private String applyPhone1 = "";
+	private String applyPhone2 = "";
+	private String applyMail = "";
 
 	private java.util.Date connectTime;
 	private String dbPath = BOT_FILE_DIR_NAME + File.separator + "database";

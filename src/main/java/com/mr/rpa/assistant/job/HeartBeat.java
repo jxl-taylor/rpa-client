@@ -34,8 +34,6 @@ import java.util.Map;
 @Log4j
 public class HeartBeat implements Runnable {
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
-	private final static String SERVICE_ID_HEARTBEAT = "heartbeat";
-	private final static String SERVICE_ID_LIC_DOWNLOAD = "lib_download";
 
 	private SysConfig sysConfig;
 
@@ -115,7 +113,7 @@ public class HeartBeat implements Runnable {
 		jsonMap.put("botContent", botContentList);
 
 		String result = HttpRequest.post(url)
-				.header("serviceId", SERVICE_ID_LIC_DOWNLOAD)
+				.header("serviceId", SystemContants.API_SERVICE_ID_HEARTBEAT)
 				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
 				.header("privateKey", SystemContants.PRIVATE_KEY)
 				.header("licExpireDays", String.valueOf(globalProperty.getLicExpireDays()))
@@ -136,7 +134,7 @@ public class HeartBeat implements Runnable {
 			//全局操作
 			String apiOperation = resultJson.getString("operation");
 			if (StringUtils.isNotBlank(apiOperation)) {
-				if (apiOperation.equals(SystemContants.API_OPERA_LIC_DOWNLOAD)) {
+				if (apiOperation.equals(SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)) {
 					//download lic
 					try {
 						if(!downLoadAndInstallLic()) throw new RuntimeException("license 验证失败");
@@ -197,7 +195,7 @@ public class HeartBeat implements Runnable {
 		String url = sysConfig.getControlServer() + "/download/license";
 
 		byte[] result = HttpRequest.get(url)
-				.header("serviceId", SERVICE_ID_HEARTBEAT)
+				.header("serviceId", SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)
 				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
 				.header("privateKey", SystemContants.PRIVATE_KEY)
 				.header("licExpireDays", String.valueOf(globalProperty.getLicExpireDays()))

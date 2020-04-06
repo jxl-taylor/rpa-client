@@ -1,8 +1,17 @@
 package com.mr.rpa.assistant.util;
 
+import cn.hutool.http.HttpRequest;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.ui.callback.ControlCenterCallback;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.sun.management.OperatingSystemMXBean;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,12 +20,17 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
  * Created by feng on 2020/3/10 0010
  */
+
 public class CommonUtil {
+
+	private final static Logger log = LogManager.getLogger(CommonUtil.class.getName());
+
 	public static void copyAndCoverFile(String oldPath, String newPath) throws Exception {
 		int bytesum = 0;
 		int byteread = 0;
@@ -118,6 +132,33 @@ public class CommonUtil {
 		} else {
 			File rootFile = new File(path).getParentFile();
 			return (int) (rootFile.getFreeSpace() / (1024 * 1024 * 1024));
+		}
+	}
+
+	public static void requestControlCenter(String controlUrl,
+														 String serviceId,
+														 String body,
+														 ControlCenterCallback callback) throws Exception {
+		if (StringUtils.isBlank(controlUrl)) {
+			log.warn("控制中心地址为空");
+			return;
+		}
+		String result =HttpRequest.post(controlUrl)
+				.header("serviceId", serviceId)
+				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
+				.header("privateKey", SystemContants.PRIVATE_KEY)
+				.header("licExpireDays", String.valueOf(GlobalProperty.getInstance().getLicExpireDays()))
+				.header("mac", CommonUtil.getLocalMac())
+				.header("processId", CommonUtil.getProcessID())
+				.body(body)
+				.execute().body();
+		JSONObject resultJson = JSON.parseObject(result);
+		if (resultJson == null) throw new RuntimeException(String.format("[%s]控制中心地址无法识别", controlUrl));
+		String resultCode = resultJson.getString("resultcode");
+		if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
+			callback.processReturn(resultJson);
+		} else {
+			log.warn(resultJson.getString("message"));
 		}
 	}
 }
