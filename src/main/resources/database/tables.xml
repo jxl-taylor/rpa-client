@@ -11,6 +11,8 @@
                  running boolean default false,
                  status integer default 0,
                  cron varchar(200) default '0 0 0/1 * * ?',
+                 download boolean default false,
+                 version varchar(200),
                  createBy varchar(100),
                  updateBy varchar(100),
                  createTime timestamp default CURRENT_TIMESTAMP,

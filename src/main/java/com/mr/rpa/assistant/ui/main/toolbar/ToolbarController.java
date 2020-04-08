@@ -45,6 +45,13 @@ public class ToolbarController implements Initializable {
     }
 
     @FXML
+    private void loadBotMarket(ActionEvent event) {
+        Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"), "BOT市场", null);
+        pair.getObject1().setOnCloseRequest((e) -> {
+            AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"));
+        });
+    }
+    @FXML
     private void exit(ActionEvent event) {
         JFXButton confirmBtn = new JFXButton("确定");
         confirmBtn .addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {

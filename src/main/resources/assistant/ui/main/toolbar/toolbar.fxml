@@ -46,5 +46,12 @@
                 <FontAwesomeIconView glyphName="GLOBE" size="25"/>
             </graphic>
         </JFXButton>
+        <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
+                   onAction="#loadBotMarket" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
+                   text="BOT市场" textAlignment="CENTER">
+            <graphic>
+                <FontAwesomeIconView glyphName="STORE" size="25"/>
+            </graphic>
+        </JFXButton>
     </children>
 </VBox>

@@ -13,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import lombok.extern.log4j.Log4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 
