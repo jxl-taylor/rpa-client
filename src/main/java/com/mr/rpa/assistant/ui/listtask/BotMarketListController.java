@@ -1,70 +1,61 @@
 package com.mr.rpa.assistant.ui.listtask;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXRadioButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.service.TaskLogService;
 import com.mr.rpa.assistant.service.TaskService;
-import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
-import com.mr.rpa.assistant.util.AssistantUtil;
-import com.mr.rpa.assistant.util.KeyValue;
-import com.mr.rpa.assistant.util.Pair;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.SchedulerException;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 @Log4j
 public class BotMarketListController implements Initializable {
 	@FXML
-	private TableView<Task> tableView;
+	private TableView<Bot> tableView;
 	@FXML
-	private TableColumn<Task, Integer> seqCol;
+	private TableColumn<Bot, Integer> seqCol;
 	@FXML
-	private TableColumn<Task, String> nameCol;
+	private TableColumn<Bot, String> botNameCol;
 	@FXML
-	private TableColumn<Task, String> cronCol;
+	private TableColumn<Bot, String> mainBotCol;
 	@FXML
-	private TableColumn<Task, String> despCol;
+	private TableColumn<Bot, String> despCol;
 	@FXML
-	private TableColumn<Task, Boolean> runningCol;
+	private TableColumn<Bot, String> versionCol;
 	@FXML
-	private TableColumn<Task, Integer> statusCol;
+	private TableColumn<Bot, String> downloadUrlCol;
 	@FXML
-	private TableColumn<Task, Integer> successCountCol;
+	private TableColumn<Bot, String> createdByCol;
 	@FXML
-	private TableColumn<Task, Integer> failCountCol;
+	private TableColumn<Bot, String> createdTimeCol;
 	@FXML
-	private TableColumn<Task, CheckBox> registeredCol;
+	private TableColumn<Bot, HBox> operatingCol;
 	@FXML
 	private StackPane rootPane;
 	@FXML
@@ -74,10 +65,56 @@ public class BotMarketListController implements Initializable {
 
 	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
+
+	private static ObservableList<Bot> botList = FXCollections.observableArrayList();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		initCol();
+		tableView.setItems(botList);
+		refreshBotList();
+	}
+
+	public void refreshBotList() {
+		refreshBotList(null);
+	}
+
+	public void refreshBotList(String botName) {
+		refreshBotList(botName, null);
+	}
+
+	public void refreshBotList(String botName, String verison) {
+		botList.clear();
+		SysConfig sysConfig = globalProperty.getSysConfig();
+		if (StringUtils.isEmpty(sysConfig.getControlServer())) {
+			AlertMaker.showErrorMessage("BOT市场", "控制中心未配置");
+		}
+		Map<String, String> jsonMap = Maps.newHashMap();
+		jsonMap.put("botName", botName);
+		jsonMap.put("verison", verison);
+		try {
+			CommonUtil.requestControlCenter(sysConfig.getControlServer(),
+					SystemContants.API_SERVICE_ID_BOT_MARKET_QUERY,
+					JSON.toJSONString(jsonMap),
+					resultJson -> {
+						JSONArray jsonArray = resultJson.getJSONArray("botContent");
+						for (int i = 0; i < jsonArray.size(); i++) {
+							JSONObject botObj = jsonArray.getJSONObject(i);
+							botList.add(new Bot(i + 1, botObj.getString("botName"),
+									botObj.getString("mainBot"),
+									botObj.getString("desp"),
+									botObj.getString("version"),
+									botObj.getString("downloadUrl"),
+									botObj.getString("createdBy"),
+									botObj.getString("createdTime")));
+						}
+
+					});
+		} catch (Throwable e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("BOT市场", e.getMessage());
+		}
 	}
 
 	private Stage getStage() {
@@ -86,55 +123,42 @@ public class BotMarketListController implements Initializable {
 
 	private void initCol() {
 		seqCol.setCellValueFactory(new PropertyValueFactory<>("seq"));
-		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		cronCol.setCellValueFactory(new PropertyValueFactory<>("cron"));
+		botNameCol.setCellValueFactory(new PropertyValueFactory<>("botName"));
+		mainBotCol.setCellValueFactory(new PropertyValueFactory<>("mainBot"));
 		despCol.setCellValueFactory(new PropertyValueFactory<>("desp"));
-		runningCol.setCellValueFactory(new PropertyValueFactory<>("running"));
-		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-		successCountCol.setCellValueFactory(new PropertyValueFactory<>("successCount"));
-		failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
-		registeredCol.setCellValueFactory(new PropertyValueFactory<>("checkBox"));
+		versionCol.setCellValueFactory(new PropertyValueFactory<>("version"));
+		downloadUrlCol.setCellValueFactory(new PropertyValueFactory<>("downloadUrl"));
+		createdByCol.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
+		createdTimeCol.setCellValueFactory(new PropertyValueFactory<>("createdTime"));
+		operatingCol.setCellValueFactory(new PropertyValueFactory<>("operatingBox"));
 	}
 
-
-	public static class Task {
-
+	public class Bot {
 		private final SimpleIntegerProperty seq;
-		private final SimpleStringProperty id;
-		private final SimpleStringProperty name;
-		private final SimpleStringProperty mainTask;
-		private final SimpleStringProperty cron;
+		private final SimpleStringProperty botName;
+		private final SimpleStringProperty mainBot;
 		private final SimpleStringProperty desp;
-		private final SimpleStringProperty params;
-		private final SimpleStringProperty nextTask;
-		private final SimpleStringProperty running;
-		private final SimpleStringProperty status;
-		private final SimpleIntegerProperty successCount;
-		private final SimpleIntegerProperty failCount;
+		private final SimpleStringProperty version;
+		private final SimpleStringProperty downloadUrl;
+		private final SimpleStringProperty createdBy;
+		private final SimpleStringProperty createdTime;
 
-		private CheckBox checkBox = new CheckBox();
+		private HBox operatingBox;
 
-		public Task(int seq, String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+		private JFXButton downloadBtn = new JFXButton("下载");
+		private JFXButton updateBtn = new JFXButton("更新");
+
+		public Bot(int seq, String botName, String mainBot, String desp, String version, String downloadUrl, String createdBy, String createdTime) {
 			this.seq = new SimpleIntegerProperty(seq);
-			this.id = new SimpleStringProperty(id);
-			this.name = new SimpleStringProperty(name);
-			this.mainTask = new SimpleStringProperty(mainTask);
-			this.cron = new SimpleStringProperty(cron);
+			this.botName = new SimpleStringProperty(botName);
+			this.mainBot = new SimpleStringProperty(mainBot);
 			this.desp = new SimpleStringProperty(desp);
-			this.params = new SimpleStringProperty(params);
-			this.nextTask = new SimpleStringProperty(nextTask);
-			if (running) {
-				this.running = new SimpleStringProperty("已开启");
-			} else {
-				this.running = new SimpleStringProperty("未开启");
-			}
-			if (status == 0) {
-				this.status = new SimpleStringProperty("暂停");
-			} else {
-				this.status = new SimpleStringProperty("正常");
-			}
-			this.successCount = new SimpleIntegerProperty(successCount);
-			this.failCount = new SimpleIntegerProperty(failCount);
+			this.version = new SimpleStringProperty(version);
+			this.downloadUrl = new SimpleStringProperty(downloadUrl);
+			this.createdBy = new SimpleStringProperty(createdBy);
+			this.createdTime = new SimpleStringProperty(createdTime);
+			this.operatingBox = new HBox(downloadBtn, updateBtn);
+			operatingBox.setSpacing(10);
 		}
 
 		public int getSeq() {
@@ -145,50 +169,65 @@ public class BotMarketListController implements Initializable {
 			return seq;
 		}
 
-		public String getId() {
-			return id.get();
+		public String getBotName() {
+			return botName.get();
 		}
 
-		public String getName() {
-			return name.get();
+		public SimpleStringProperty botNameProperty() {
+			return botName;
 		}
 
-		public String getMainTask() {
-			return mainTask.get();
+		public String getMainBot() {
+			return mainBot.get();
 		}
 
-		public String getCron() {
-			return cron.get();
+		public SimpleStringProperty mainBotProperty() {
+			return mainBot;
 		}
 
 		public String getDesp() {
 			return desp.get();
 		}
 
-		public String getParams() {
-			return params.get();
+		public SimpleStringProperty despProperty() {
+			return desp;
 		}
 
-		public String getNextTask() {
-			return nextTask.get();
+		public String getVersion() {
+			return version.get();
 		}
 
-		public String getRunning() {
-			return running.get();
+		public SimpleStringProperty versionProperty() {
+			return version;
 		}
 
-		public String getStatus() {
-			return status.get();
+		public String getDownloadUrl() {
+			return downloadUrl.get();
 		}
 
-		public int getSuccessCount() {
-			return successCount.get();
+		public SimpleStringProperty downloadUrlProperty() {
+			return downloadUrl;
 		}
 
-		public int getFailCount() {
-			return failCount.get();
+		public String getCreatedBy() {
+			return createdBy.get();
 		}
 
+		public SimpleStringProperty createdByProperty() {
+			return createdBy;
+		}
+
+		public String getCreatedTime() {
+			return createdTime.get();
+		}
+
+		public SimpleStringProperty createdTimeProperty() {
+			return createdTime;
+		}
+
+		public HBox getOperatingBox() {
+			return operatingBox;
+		}
 	}
 
 }

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
@@ -19,14 +15,14 @@
                              AnchorPane.topAnchor="15.0">
                      <columns>
                         <TableColumn fx:id="seqCol" text="BOT编号"/>
-                        <TableColumn fx:id="nameCol" prefWidth="75.0" text="BOT名称"/>
-                        <TableColumn fx:id="cronCol" prefWidth="75.0" text="调度策略(cron)"/>
+                        <TableColumn fx:id="botNameCol" prefWidth="75.0" text="BOT名称"/>
+                        <TableColumn fx:id="mainBotCol" prefWidth="75.0" text="BOT上级"/>
                         <TableColumn fx:id="despCol" prefWidth="75.0" maxWidth="200.0" text="描述" visible="false"/>
-                        <TableColumn fx:id="runningCol" text="是否开启"/>
-                        <TableColumn fx:id="statusCol" text="调度状态"/>
-                        <TableColumn fx:id="successCountCol" text="成功次数"/>
-                        <TableColumn fx:id="failCountCol" text="失败次数"/>
-                        <TableColumn fx:id="registeredCol" text="操作" visible="false"/>
+                        <TableColumn fx:id="versionCol" text="最新版本"/>
+                        <TableColumn fx:id="downloadUrlCol" text="下载链接" visible="false"/>
+                        <TableColumn fx:id="createdByCol" text="创建人"/>
+                        <TableColumn fx:id="createdTimeCol" text="创建时间"/>
+                        <TableColumn fx:id="operatingCol" text="操作"/>
 
                      </columns>
                      <columnResizePolicy>

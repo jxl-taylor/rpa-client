@@ -60,8 +60,6 @@ public class TaskListController implements Initializable {
 	@FXML
 	private TableColumn<Task, Integer> failCountCol;
 	@FXML
-	private TableColumn<Task, CheckBox> registeredCol;
-	@FXML
 	private StackPane rootPane;
 	@FXML
 	private AnchorPane contentPane;
@@ -116,7 +114,6 @@ public class TaskListController implements Initializable {
 		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 		successCountCol.setCellValueFactory(new PropertyValueFactory<>("successCount"));
 		failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
-		registeredCol.setCellValueFactory(new PropertyValueFactory<>("checkBox"));
 	}
 
 	private void loadData() {
@@ -469,8 +466,6 @@ public class TaskListController implements Initializable {
 		private final SimpleStringProperty status;
 		private final SimpleIntegerProperty successCount;
 		private final SimpleIntegerProperty failCount;
-
-		private CheckBox checkBox = new CheckBox();
 
 		public Task(int seq, String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
 			this.seq = new SimpleIntegerProperty(seq);

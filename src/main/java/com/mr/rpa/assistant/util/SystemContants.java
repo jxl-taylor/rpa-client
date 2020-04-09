@@ -28,6 +28,8 @@ public class SystemContants {
 	public static final String API_SERVICE_ID_REGISTER = "REGISTER";
 	public static final String API_SERVICE_ID_REGISTER_QUERY = "REGISTER_QUERY";
 	public static final String API_SERVICE_ID_HEARTBEAT = "HEARTBEAT";
+	public static final String API_SERVICE_ID_BOT_MARKET_QUERY = "BOT_MARKET_QUERY";
+	public static final String API_SERVICE_ID_BOT_DOWNLOAD = "BOT_DOWNLOAD";
 
 
 	public static final long MAX_LOG_OUTPUT_DURATION = 2 * 60 * 1000;
