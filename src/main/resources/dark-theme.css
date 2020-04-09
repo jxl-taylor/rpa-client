@@ -219,7 +219,7 @@
 }
 
 .table-row-cell {
-    -fx-cell-size: 20px;
+    -fx-cell-size: 25px;
 }
 
 .table-view .column-header-background {

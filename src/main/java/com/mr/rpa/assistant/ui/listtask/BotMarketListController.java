@@ -20,6 +20,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -145,8 +147,8 @@ public class BotMarketListController implements Initializable {
 
 		private HBox operatingBox;
 
-		private JFXButton downloadBtn = new JFXButton("下载");
-		private JFXButton updateBtn = new JFXButton("更新");
+		private Hyperlink downloadLink = new Hyperlink("下载");
+		private Hyperlink updateLink = new Hyperlink("更新");
 
 		public Bot(int seq, String botName, String mainBot, String desp, String version, String downloadUrl, String createdBy, String createdTime) {
 			this.seq = new SimpleIntegerProperty(seq);
@@ -157,8 +159,9 @@ public class BotMarketListController implements Initializable {
 			this.downloadUrl = new SimpleStringProperty(downloadUrl);
 			this.createdBy = new SimpleStringProperty(createdBy);
 			this.createdTime = new SimpleStringProperty(createdTime);
-			this.operatingBox = new HBox(downloadBtn, updateBtn);
-			operatingBox.setSpacing(10);
+			this.operatingBox = new HBox(downloadLink, updateLink);
+			operatingBox.setSpacing(20);
+			operatingBox.setAlignment(Pos.CENTER);
 		}
 
 		public int getSeq() {
