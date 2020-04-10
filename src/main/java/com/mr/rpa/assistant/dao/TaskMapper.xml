@@ -24,6 +24,8 @@
             NAME=#{name},
             MAINTASK=#{mainTask},
             CRON=#{cron},
+            DOWNLOAD=#{download},
+            VERSION=#{version},
             DESP=#{desp} ,
             PARAMS=#{params},
             NEXTTASK=#{nextTask,jdbcType=VARCHAR},
@@ -61,6 +63,8 @@
             running,
             status,
             cron,
+            download,
+            version,
             createTime
             )
         VALUES(
@@ -73,6 +77,8 @@
             #{running},
             #{status},
             #{cron},
+            #{download},
+            #{version},
             #{createTime, jdbcType=TIMESTAMP}
         )
     </insert>

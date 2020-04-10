@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.service.TaskLogService;
 import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
@@ -159,7 +160,59 @@ public class BotMarketListController implements Initializable {
 			this.downloadUrl = new SimpleStringProperty(downloadUrl);
 			this.createdBy = new SimpleStringProperty(createdBy);
 			this.createdTime = new SimpleStringProperty(createdTime);
-			this.operatingBox = new HBox(downloadLink, updateLink);
+			initOperatingBox();
+		}
+
+		private void initOperatingBox() {
+			downloadLink.setOnAction(event -> {
+				downloadLink.setText("正在下载");
+				downloadLink.setDisable(true);
+				try {
+					CommonUtil.downLoadAndInstallLic(getDownloadUrl());
+					AlertMaker.showSimpleAlert("BOT下载", "下载完成");
+					operatingBox.getChildren().remove(downloadLink);
+				} catch (Exception e) {
+					log.error(e);
+					AlertMaker.showErrorMessage("BOT市场下载", e.getMessage());
+					downloadLink.setText("下载");
+					downloadLink.setDisable(false);
+					return;
+				}
+			});
+			updateLink.setOnAction(event -> {
+				updateLink.setText("正在更新");
+				updateLink.setDisable(true);
+				AlertMaker.showSimpleAlert("BOT更新", "更新成功");
+				//如果不是最新版本，则可以继续更新
+				Task task = taskService.queryTaskByName(getBotName());
+				Map<String, String> jsonMap = Maps.newHashMap();
+				jsonMap.put("botName", getBotName());
+				SysConfig sysConfig = globalProperty.getSysConfig();
+				try {
+					CommonUtil.requestControlCenter(sysConfig.getControlServer(),
+							SystemContants.API_SERVICE_ID_BOT_MARKET_QUERY,
+							JSON.toJSONString(jsonMap),
+							resultJson -> {
+								JSONArray jsonArray = resultJson.getJSONArray("botContent");
+								JSONObject botObj = jsonArray.getJSONObject(0);
+								if(botObj.getString("version").equals(task.getVersion())) {
+									updateLink.setText("更新");
+									updateLink.setDisable(false);
+								}
+							});
+				} catch (Throwable e) {
+					log.error(e);
+					AlertMaker.showErrorMessage("BOT市场", e.getMessage());
+				}
+
+			});
+			operatingBox = new HBox();
+			Task task = taskService.queryTaskByName(getBotName());
+			if (task == null) {
+				operatingBox.getChildren().add(downloadLink);
+			} else {
+				operatingBox.getChildren().add(updateLink);
+			}
 			operatingBox.setSpacing(20);
 			operatingBox.setAlignment(Pos.CENTER);
 		}

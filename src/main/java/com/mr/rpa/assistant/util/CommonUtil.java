@@ -1,5 +1,7 @@
 package com.mr.rpa.assistant.util;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ZipUtil;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -7,6 +9,7 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.callback.ControlCenterCallback;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import com.sun.management.OperatingSystemMXBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -133,6 +136,24 @@ public class CommonUtil {
 			File rootFile = new File(path).getParentFile();
 			return (int) (rootFile.getFreeSpace() / (1024 * 1024 * 1024));
 		}
+	}
+
+	public synchronized static boolean downLoadAndInstallLic(String downloadUrl) throws Exception {
+		if (StringUtils.isBlank(downloadUrl)) return false;
+		byte[] result = HttpRequest.get(downloadUrl)
+				.header("serviceId", SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)
+				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
+				.header("privateKey", SystemContants.PRIVATE_KEY)
+				.header("licExpireDays", String.valueOf(GlobalProperty.getInstance().getLicExpireDays()))
+				.header("mac", CommonUtil.getLocalMac())
+				.header("processId", CommonUtil.getProcessID())
+				.execute().bodyBytes();
+		String licZipPath = System.getProperty("user.dir") + File.separator + CommonUtil.getLocalMac() + ".zip";
+		FileUtil.writeBytes(result, licZipPath);
+		ZipUtil.unzip(licZipPath, System.getProperty("user.dir"));
+		FileUtil.del(licZipPath);
+		return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
+				&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
 	}
 
 	public static void requestControlCenter(String controlUrl,

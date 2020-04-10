@@ -24,6 +24,8 @@ public class Task {
 	private Integer successCount;
 	private Integer failCount;
 	private String cron;
+	private boolean download;
+	private String version;
 	private Timestamp createTime;
 	private Timestamp updateTime;
 
@@ -44,6 +46,12 @@ public class Task {
 
 	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
 				Integer status, String cron,
+				Integer successCount, Integer failCount, Timestamp createTime, Timestamp updateTime){
+		this(id, name, mainTask, desp, params, nextTask, running, status, cron, false, "", successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
+	}
+
+	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
+				Integer status, String cron, Boolean download, String version,
 				Integer successCount, Integer failCount, Timestamp createTime, Timestamp updateTime) {
 		this.id = id;
 		this.name = name;
@@ -56,6 +64,8 @@ public class Task {
 		this.successCount = successCount;
 		this.failCount = failCount;
 		this.cron = cron;
+		this.download = download;
+		this.version = version;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}

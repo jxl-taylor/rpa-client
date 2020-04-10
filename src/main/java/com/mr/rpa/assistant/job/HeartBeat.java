@@ -190,21 +190,7 @@ public class HeartBeat implements Runnable {
 	 * 场景：用户付费后，控制中心生成lic和publicKey，然后在心跳请求返回下载的操作，客户端进行下载操作。
 	 */
 	public boolean downLoadAndInstallLic(String downloadUrl) throws Exception {
-		if (StringUtils.isBlank(downloadUrl)) return false;
-		byte[] result = HttpRequest.get(downloadUrl)
-				.header("serviceId", SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)
-				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
-				.header("privateKey", SystemContants.PRIVATE_KEY)
-				.header("licExpireDays", String.valueOf(globalProperty.getLicExpireDays()))
-				.header("mac", CommonUtil.getLocalMac())
-				.header("processId", CommonUtil.getProcessID())
-				.execute().bodyBytes();
-		String licZipPath = System.getProperty("user.dir") + File.separator + CommonUtil.getLocalMac() + ".zip";
-		FileUtil.writeBytes(result, licZipPath);
-		ZipUtil.unzip(licZipPath, System.getProperty("user.dir"));
-		FileUtil.del(licZipPath);
-		return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
-				&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
+		return CommonUtil.downLoadAndInstallLic(downloadUrl);
 	}
 
 	public static void main(String[] args) throws Exception {
