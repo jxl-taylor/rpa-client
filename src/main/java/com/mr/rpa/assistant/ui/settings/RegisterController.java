@@ -99,8 +99,8 @@ public class RegisterController implements Initializable {
 						applyPhone2.setText(resultJson.getString("companyName"));
 						applyMail.setText(resultJson.getString("applyMail"));
 					});
-		} catch (Exception e) {
-			log.error(e);
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
 		}
 	}
 

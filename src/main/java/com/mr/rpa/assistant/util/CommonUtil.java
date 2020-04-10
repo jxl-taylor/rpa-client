@@ -138,7 +138,7 @@ public class CommonUtil {
 	public static void requestControlCenter(String controlUrl,
 														 String serviceId,
 														 String body,
-														 ControlCenterCallback callback) throws Exception {
+														 ControlCenterCallback callback) throws Throwable {
 		if (StringUtils.isBlank(controlUrl)) {
 			log.warn("控制中心地址为空");
 			return;

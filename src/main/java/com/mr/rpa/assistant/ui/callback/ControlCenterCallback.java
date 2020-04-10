@@ -7,5 +7,5 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface ControlCenterCallback {
     
-    public void processReturn(JSONObject resultJson);
+    public void processReturn(JSONObject resultJson) throws Exception;
 }

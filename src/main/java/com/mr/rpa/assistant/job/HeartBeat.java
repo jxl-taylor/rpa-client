@@ -137,7 +137,7 @@ public class HeartBeat implements Runnable {
 				if (apiOperation.equals(SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)) {
 					//download lic
 					try {
-						if(!downLoadAndInstallLic()) throw new RuntimeException("license 验证失败");
+						if(!downLoadAndInstallLic(resultJson.getString("licDownloadUrl"))) throw new RuntimeException("license 验证失败");
 					} catch (Throwable e) {
 						apiErrorPair = new Pair<>(apiOperation, e.getMessage());
 					}
@@ -189,12 +189,9 @@ public class HeartBeat implements Runnable {
 	/**
 	 * 场景：用户付费后，控制中心生成lic和publicKey，然后在心跳请求返回下载的操作，客户端进行下载操作。
 	 */
-	public boolean downLoadAndInstallLic() throws Exception {
-		// haertbeat/download/license get请求 下载lic 文件
-		if (StringUtils.isBlank(sysConfig.getControlServer())) return false;
-		String url = sysConfig.getControlServer() + "/download/license";
-
-		byte[] result = HttpRequest.get(url)
+	public boolean downLoadAndInstallLic(String downloadUrl) throws Exception {
+		if (StringUtils.isBlank(downloadUrl)) return false;
+		byte[] result = HttpRequest.get(downloadUrl)
 				.header("serviceId", SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)
 				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
 				.header("privateKey", SystemContants.PRIVATE_KEY)
