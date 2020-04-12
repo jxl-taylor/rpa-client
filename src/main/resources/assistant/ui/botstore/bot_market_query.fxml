@@ -16,11 +16,12 @@
           <children>
              <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <children>
-                   <HBox spacing="20">
+                   <HBox spacing="10">
                       <children>
-                         <JFXTextField fx:id="botName" labelFloat="true" maxWidth="200.0" prefHeight="32.0" prefWidth="200.0" promptText="BOT名称"/>
-                         <JFXTextField fx:id="version" labelFloat="true" maxWidth="100.0" prefHeight="32.0" prefWidth="100.0" promptText="版本"/>
-                         <JFXButton prefHeight="32.0" prefWidth="90.0" text="查找"/>
+                         <JFXTextField fx:id="botName" onAction="#loadBotMarket" labelFloat="true" maxWidth="200.0" prefHeight="32.0" prefWidth="200.0" promptText="BOT名称"/>
+                         <JFXTextField fx:id="version" onAction="#loadBotMarket" labelFloat="true" maxWidth="100.0" prefHeight="32.0" prefWidth="100.0" promptText="版本"/>
+                         <JFXButton prefHeight="32.0" prefWidth="90.0" text="查找" onAction="#loadBotMarket"/>
+                         <JFXButton prefHeight="32.0" prefWidth="90.0" text="清空" onAction="#clearSearch"/>
                       </children>
                       <padding>
                          <Insets bottom="15.0" left="15.0" right="15.0" top="20.0" />

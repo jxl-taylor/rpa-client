@@ -1,11 +1,13 @@
 package com.mr.rpa.assistant.ui.listtask;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXTextField;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
@@ -19,6 +21,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -33,12 +36,21 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 @Log4j
 public class BotMarketListController implements Initializable {
+	@FXML
+	private JFXTextField botName;
+	@FXML
+	private JFXTextField version;
+
 	@FXML
 	private TableView<Bot> tableView;
 	@FXML
@@ -102,6 +114,7 @@ public class BotMarketListController implements Initializable {
 					JSON.toJSONString(jsonMap),
 					resultJson -> {
 						JSONArray jsonArray = resultJson.getJSONArray("botContent");
+						if (jsonArray == null) return "";
 						for (int i = 0; i < jsonArray.size(); i++) {
 							JSONObject botObj = jsonArray.getJSONObject(i);
 							botList.add(new Bot(i + 1, botObj.getString("botName"),
@@ -112,7 +125,7 @@ public class BotMarketListController implements Initializable {
 									botObj.getString("createdBy"),
 									botObj.getString("createdTime")));
 						}
-
+						return "";
 					});
 		} catch (Throwable e) {
 			log.error(e);
@@ -134,6 +147,23 @@ public class BotMarketListController implements Initializable {
 		createdByCol.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
 		createdTimeCol.setCellValueFactory(new PropertyValueFactory<>("createdTime"));
 		operatingCol.setCellValueFactory(new PropertyValueFactory<>("operatingBox"));
+	}
+
+	@FXML
+	private void loadBotMarket(ActionEvent event) {
+		if(StringUtils.isEmpty(botName.getText()) && StringUtils.isNotEmpty(version.getText())){
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
+					"输入有误", "通过版本号查询时BOT名称不能为空");
+			return;
+		}
+		refreshBotList(botName.getText(), version.getText());
+	}
+
+	@FXML
+	public void clearSearch(ActionEvent event) {
+		botName.setText("");
+		version.setText("");
+		refreshBotList();
 	}
 
 	public class Bot {
@@ -168,8 +198,16 @@ public class BotMarketListController implements Initializable {
 				downloadLink.setText("正在下载");
 				downloadLink.setDisable(true);
 				try {
-					CommonUtil.downLoadAndInstallLic(getDownloadUrl());
+					dowloadAndInstallBot();
+					Task task = new Task(UUID.randomUUID().toString().replace("-", ""),
+							getBotName(), getMainBot(), getDesp(), "", "",
+							false, SystemContants.TASK_RUNNING_STATUS_RUN, "0 0 0/1 * * ?",
+							true, getVersion(),
+							0, 0, null, new Timestamp(System.currentTimeMillis()));
+					taskService.insertNewTask(task);
 					AlertMaker.showSimpleAlert("BOT下载", "下载完成");
+					TaskListController controller = GlobalProperty.getInstance().getTaskListController();
+					controller.loadData();
 					operatingBox.getChildren().remove(downloadLink);
 				} catch (Exception e) {
 					log.error(e);
@@ -182,39 +220,54 @@ public class BotMarketListController implements Initializable {
 			updateLink.setOnAction(event -> {
 				updateLink.setText("正在更新");
 				updateLink.setDisable(true);
-				AlertMaker.showSimpleAlert("BOT更新", "更新成功");
-				//如果不是最新版本，则可以继续更新
-				Task task = taskService.queryTaskByName(getBotName());
-				Map<String, String> jsonMap = Maps.newHashMap();
-				jsonMap.put("botName", getBotName());
-				SysConfig sysConfig = globalProperty.getSysConfig();
 				try {
+					dowloadAndInstallBot();
+					Task task = taskService.queryTaskByName(getBotName());
+					task.setVersion(getVersion());
+					taskService.updateTask(task);
+					AlertMaker.showSimpleAlert("BOT更新", "更新成功");
+					//如果不是最新版本，则可以继续更新
+					Map<String, String> jsonMap = Maps.newHashMap();
+					jsonMap.put("botName", getBotName());
+					SysConfig sysConfig = globalProperty.getSysConfig();
 					CommonUtil.requestControlCenter(sysConfig.getControlServer(),
 							SystemContants.API_SERVICE_ID_BOT_MARKET_QUERY,
 							JSON.toJSONString(jsonMap),
 							resultJson -> {
 								JSONArray jsonArray = resultJson.getJSONArray("botContent");
 								JSONObject botObj = jsonArray.getJSONObject(0);
-								if(botObj.getString("version").equals(task.getVersion())) {
+								if (!botObj.getString("version").equals(task.getVersion())) {
 									updateLink.setText("更新");
 									updateLink.setDisable(false);
+								} else {
+									operatingBox.getChildren().remove(updateLink);
 								}
+								return "";
 							});
 				} catch (Throwable e) {
 					log.error(e);
 					AlertMaker.showErrorMessage("BOT市场", e.getMessage());
 				}
-
 			});
 			operatingBox = new HBox();
 			Task task = taskService.queryTaskByName(getBotName());
-			if (task == null) {
-				operatingBox.getChildren().add(downloadLink);
+			if (task != null) {
+				if (!getVersion().equals(task.getVersion()))
+					operatingBox.getChildren().add(updateLink);
 			} else {
-				operatingBox.getChildren().add(updateLink);
+				operatingBox.getChildren().add(downloadLink);
 			}
 			operatingBox.setSpacing(20);
 			operatingBox.setAlignment(Pos.CENTER);
+		}
+
+		public void dowloadAndInstallBot() throws Exception {
+			SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+			String botZipPath = System.getProperty("user.dir")
+					+ File.separator
+					+ getBotName() + getVersion() + ".zip";
+			String outFileDir = sysConfig.getTaskFilePath();
+			CommonUtil.downloadAndUnzip(getDownloadUrl(), botZipPath, outFileDir);
 		}
 
 		public int getSeq() {

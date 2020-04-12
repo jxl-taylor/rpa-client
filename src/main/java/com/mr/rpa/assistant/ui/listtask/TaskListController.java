@@ -116,7 +116,7 @@ public class TaskListController implements Initializable {
 		failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
 	}
 
-	private void loadData() {
+	public void loadData() {
 		taskService.loadUITaskList();
 		tableView.setItems(taskService.getUITaskList());
 	}

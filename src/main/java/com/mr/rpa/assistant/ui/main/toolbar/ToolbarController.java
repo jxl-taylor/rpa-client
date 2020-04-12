@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.Pair;
 import javafx.event.ActionEvent;
@@ -15,6 +16,7 @@ import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 public class ToolbarController implements Initializable {
 
@@ -46,6 +48,11 @@ public class ToolbarController implements Initializable {
 
     @FXML
     private void loadBotMarket(ActionEvent event) {
+        SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+        if (StringUtils.isEmpty(sysConfig.getControlServer())) {
+            AlertMaker.showErrorMessage("BOT市场", "控制中心未配置");
+            return;
+        }
         Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"), "BOT市场", null);
         pair.getObject1().setOnCloseRequest((e) -> {
             AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"));

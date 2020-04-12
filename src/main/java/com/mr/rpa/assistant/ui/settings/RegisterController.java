@@ -98,6 +98,7 @@ public class RegisterController implements Initializable {
 						applyPhone1.setText(resultJson.getString("applyPhone1"));
 						applyPhone2.setText(resultJson.getString("companyName"));
 						applyMail.setText(resultJson.getString("applyMail"));
+						return "";
 					});
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
@@ -130,6 +131,7 @@ public class RegisterController implements Initializable {
 						applyPhone1.setText(resultJson.getString("applyPhone1"));
 						applyPhone2.setText(resultJson.getString("companyName"));
 						applyMail.setText(resultJson.getString("applyMail"));
+						return "";
 					});
 		} catch (Throwable e) {
 			log.error(e);
@@ -176,6 +178,7 @@ public class RegisterController implements Initializable {
 						configService.update();
 						AlertMaker.showSimpleAlert("注册", "提交成功");
 						closeWindow();
+						return "";
 					});
 			return;
 		} catch (Throwable e) {

@@ -1,11 +1,14 @@
 package com.mr.rpa.assistant.ui.addtask;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.service.TaskLogService;
@@ -13,10 +16,7 @@ import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
-import com.mr.rpa.assistant.util.AssistantUtil;
-import com.mr.rpa.assistant.util.KeyValue;
-import com.mr.rpa.assistant.util.Pair;
-import com.mr.rpa.assistant.util.SystemContants;
+import com.mr.rpa.assistant.util.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -41,6 +41,7 @@ import org.quartz.SchedulerException;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Log4j
@@ -266,11 +267,7 @@ public class TaskAddController implements Initializable {
 		}
 
 		if (!checkInput(taskName, mainTaskName, taskCron, taskDesp)) return;
-		if (taskService.queryTaskByName(taskName) != null) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
-					"输入有误", "Job已存在，请重新选择.");
-			return;
-		}
+		if (!checkTaskExist(taskName)) return;
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
 		Task task = new Task(id.getText(), name.getText(), mainTaskName, desp.getText(), converParamToString(), nextTask.getValue(),
 				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
@@ -280,6 +277,38 @@ public class TaskAddController implements Initializable {
 		clearEntries();
 		taskService.loadUITaskList();
 		closeWindow();
+	}
+
+	private boolean checkTaskExist(String taskName) {
+		if (taskService.queryTaskByName(taskName) != null) {
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
+					"输入有误", "bot名称在系统中已存在，请重新输入.");
+			return false;
+		}
+		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+		Map<String, String> jsonMap = Maps.newHashMap();
+		jsonMap.put("botName", taskName);
+		if (StringUtils.isEmpty(sysConfig.getControlServer())) return true;
+		try {
+			Boolean botExist = CommonUtil.requestControlCenter(sysConfig.getControlServer(),
+					SystemContants.API_SERVICE_ID_BOT_MARKET_QUERY,
+					JSON.toJSONString(jsonMap),
+					resultJson -> {
+						JSONArray jsonArray = resultJson.getJSONArray("botContent");
+						return CollectionUtil.isNotEmpty(jsonArray);
+					});
+			if (botExist != null && botExist) {
+				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(),
+						"输入有误", "bot名称在应用市场已存在，请重新输入.");
+				return false;
+			}
+		} catch (Throwable e) {
+			log.error(e);
+			AlertMaker.showErrorMessage("输入检查", e.getMessage());
+			return false;
+		}
+
+		return true;
 	}
 
 	private boolean checkInput(String taskName, String mainTaskName, String taskCron, String taskDesp) {
@@ -377,7 +406,7 @@ public class TaskAddController implements Initializable {
 				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
 				return;
 			}
-			taskService.updateTask(task);
+			taskService.updateUITask(task);
 			AlertMaker.showSimpleAlert("Success", "修改成功");
 			FileUtil.del(taskFileDirTmp);
 			closeWindow();

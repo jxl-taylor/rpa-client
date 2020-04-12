@@ -1,8 +1,5 @@
 package com.mr.rpa.assistant.job;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.ZipUtil;
-import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -56,7 +53,7 @@ public class HeartBeat implements Runnable {
 				Thread.sleep(SystemContants.HEARTBEAT_INTERVAL);
 				globalProperty.refreshRunningDuration();
 				action();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				sysConfig.setConnectTime(null);
 				log.error(e);
 			}
@@ -64,11 +61,11 @@ public class HeartBeat implements Runnable {
 
 	}
 
-	private boolean action() throws Exception {
-		return action(null);
+	private void action() throws Throwable {
+		action(null);
 	}
 
-	public boolean action(String controlUrl) throws Exception {
+	public boolean action(String controlUrl) {
 		String url = "";
 		sysConfig = globalProperty.getSysConfig();
 		if (StringUtils.isBlank(controlUrl)) {
@@ -111,51 +108,44 @@ public class HeartBeat implements Runnable {
 		});
 
 		jsonMap.put("botContent", botContentList);
+		try {
+			CommonUtil.requestControlCenter(url,
+					SystemContants.API_SERVICE_ID_HEARTBEAT,
+					JSON.toJSONString(jsonMap),
+					resultJson -> {
+						//清空上一次操作的信息
+						operaErrorMap.clear();
+						apiErrorPair = null;
+						if (sysConfig.getConnectTime() == null && StringUtils.isBlank(controlUrl)) {
+							sysConfig.setConnectTime(new java.util.Date());
+						}
+						//全局操作
+						String apiOperation = resultJson.getString("operation");
+						if (StringUtils.isNotBlank(apiOperation)) {
+							if (apiOperation.equals(SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)) {
+								//download lic
+								try {
+									if (!downLoadAndInstallLic(resultJson.getString("licDownloadUrl")))
+										throw new RuntimeException("license 验证失败");
+								} catch (Throwable e) {
+									apiErrorPair = new Pair<>(apiOperation, e.getMessage());
+								}
+							}
+						}
 
-		String result = HttpRequest.post(url)
-				.header("serviceId", SystemContants.API_SERVICE_ID_HEARTBEAT)
-				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
-				.header("privateKey", SystemContants.PRIVATE_KEY)
-				.header("licExpireDays", String.valueOf(globalProperty.getLicExpireDays()))
-				.header("mac", CommonUtil.getLocalMac())
-				.header("processId", CommonUtil.getProcessID())
-				.body(JSON.toJSONString(jsonMap))
-				.execute().body();
-		JSONObject resultJson = JSON.parseObject(result);
-		if (resultJson == null) throw new RuntimeException(String.format("[%s]控制中心地址无法识别", controlUrl));
-		String resultCode = resultJson.getString("resultcode");
-		if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
-			//清空上一次操作的信息
-			operaErrorMap.clear();
-			apiErrorPair = null;
-			if (sysConfig.getConnectTime() == null) {
-				if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(new java.util.Date());
-			}
-			//全局操作
-			String apiOperation = resultJson.getString("operation");
-			if (StringUtils.isNotBlank(apiOperation)) {
-				if (apiOperation.equals(SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)) {
-					//download lic
-					try {
-						if(!downLoadAndInstallLic(resultJson.getString("licDownloadUrl"))) throw new RuntimeException("license 验证失败");
-					} catch (Throwable e) {
-						apiErrorPair = new Pair<>(apiOperation, e.getMessage());
-					}
-
-				}
-			}
-
-			//处理控制中心操作请求
-			JSONArray jsonArray = resultJson.getJSONArray("botContent");
-			if (jsonArray != null && jsonArray.size() > 0) {
-				handleAction(jsonArray);
-			}
-			return true;
+						//处理控制中心操作请求
+						JSONArray jsonArray = resultJson.getJSONArray("botContent");
+						if (jsonArray != null && jsonArray.size() > 0) {
+							handleAction(jsonArray);
+						}
+						return "";
+					});
+		} catch (Exception e) {
+			if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
+			log.error(e);
+			return false;
 		}
-		if (StringUtils.isBlank(controlUrl)) sysConfig.setConnectTime(null);
-		log.error(resultJson.getString("message"));
-
-		return false;
+		return true;
 	}
 
 	private void handleAction(JSONArray jsonArray) {
@@ -190,7 +180,10 @@ public class HeartBeat implements Runnable {
 	 * 场景：用户付费后，控制中心生成lic和publicKey，然后在心跳请求返回下载的操作，客户端进行下载操作。
 	 */
 	public boolean downLoadAndInstallLic(String downloadUrl) throws Exception {
-		return CommonUtil.downLoadAndInstallLic(downloadUrl);
+		String licZipPath = System.getProperty("user.dir") + File.separator + CommonUtil.getLocalMac() + ".zip";
+		CommonUtil.downloadAndUnzip(downloadUrl, licZipPath, System.getProperty("user.dir"));
+		return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
+				&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
 	}
 
 	public static void main(String[] args) throws Exception {

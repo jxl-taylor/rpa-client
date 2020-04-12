@@ -5,13 +5,10 @@ import cn.hutool.core.util.ZipUtil;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.callback.ControlCenterCallback;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
-import com.mr.rpa.assistant.util.license.LicenseManagerHolder;
 import com.sun.management.OperatingSystemMXBean;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -138,8 +135,16 @@ public class CommonUtil {
 		}
 	}
 
-	public synchronized static boolean downLoadAndInstallLic(String downloadUrl) throws Exception {
-		if (StringUtils.isBlank(downloadUrl)) return false;
+	/**
+	 *
+	 * @param downloadUrl	下载链接
+	 * @param zipFilePath	下载的压缩文件名
+	 * @param outFileDir	解压文件夹
+	 * @return
+	 * @throws Exception
+	 */
+	public synchronized static void downloadAndUnzip(String downloadUrl, String zipFilePath, String outFileDir) throws Exception {
+		if (StringUtils.isBlank(downloadUrl)) return;
 		byte[] result = HttpRequest.get(downloadUrl)
 				.header("serviceId", SystemContants.API_SERVICE_ID_LIC_DOWNLOAD)
 				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
@@ -148,23 +153,20 @@ public class CommonUtil {
 				.header("mac", CommonUtil.getLocalMac())
 				.header("processId", CommonUtil.getProcessID())
 				.execute().bodyBytes();
-		String licZipPath = System.getProperty("user.dir") + File.separator + CommonUtil.getLocalMac() + ".zip";
-		FileUtil.writeBytes(result, licZipPath);
-		ZipUtil.unzip(licZipPath, System.getProperty("user.dir"));
-		FileUtil.del(licZipPath);
-		return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
-				&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
+		FileUtil.writeBytes(result, zipFilePath);
+		ZipUtil.unzip(zipFilePath, outFileDir);
+		FileUtil.del(zipFilePath);
 	}
 
-	public static void requestControlCenter(String controlUrl,
-														 String serviceId,
-														 String body,
-														 ControlCenterCallback callback) throws Throwable {
+	public static <T> T requestControlCenter(String controlUrl,
+											String serviceId,
+											String body,
+											ControlCenterCallback<T> callback) throws Exception {
 		if (StringUtils.isBlank(controlUrl)) {
 			log.warn("控制中心地址为空");
-			return;
+			return null;
 		}
-		String result =HttpRequest.post(controlUrl)
+		String result = HttpRequest.post(controlUrl)
 				.header("serviceId", serviceId)
 				.header("clientVersion", SystemContants.CLIENT_VERSION_1_0)
 				.header("privateKey", SystemContants.PRIVATE_KEY)
@@ -177,9 +179,10 @@ public class CommonUtil {
 		if (resultJson == null) throw new RuntimeException(String.format("[%s]控制中心地址无法识别", controlUrl));
 		String resultCode = resultJson.getString("resultcode");
 		if (resultCode != null && resultCode.equals(SystemContants.API_SUCCESS)) {
-			callback.processReturn(resultJson);
+			return callback.processReturn(resultJson);
 		} else {
 			log.warn(resultJson.getString("message"));
 		}
+		return null;
 	}
 }

@@ -19,10 +19,11 @@
                     <children>
                         <VBox alignment="TOP_LEFT" prefWidth="450.0">
                             <children>
-                                <HBox alignment="TOP_LEFT">
+                                <HBox alignment="TOP_LEFT" spacing="5">
                                     <children>
                                         <JFXTextField fx:id="taskName" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="BOT名称"/>
                                         <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="90.0" text="查询" />
+                                        <JFXButton onAction="#clearSearch" prefHeight="32.0" prefWidth="90.0" text="清空" />
                                     </children>
                                 </HBox>
                             </children>

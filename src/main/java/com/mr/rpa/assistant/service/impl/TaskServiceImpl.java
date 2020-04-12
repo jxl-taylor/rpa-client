@@ -39,8 +39,13 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public void updateTask(TaskListController.Task task) {
-		taskMapper.updateTask(queryTaskById(task.getId()));
+	public void updateTask(Task task) {
+		taskMapper.updateTask(task);
+	}
+
+	@Override
+	public void updateUITask(TaskListController.Task task) {
+		updateTask(queryTaskById(task.getId()));
 	}
 
 	@Override

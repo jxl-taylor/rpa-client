@@ -15,7 +15,9 @@ public interface TaskService {
 
 	void deleteTask(String taskId);
 
-	void updateTask(TaskListController.Task task);
+	void updateTask(Task task);
+
+	void updateUITask(TaskListController.Task task);
 
 	void updateTaskRunning(String taskId, boolean running);
 

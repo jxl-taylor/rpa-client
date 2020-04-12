@@ -58,6 +58,12 @@ public class TaskBeanController implements Initializable {
 	}
 
 	@FXML
+	public void clearSearch(ActionEvent event) {
+		taskName.setText("");
+		loadTaskInfo(null);
+	}
+
+	@FXML
 	private void loadAddTask(ActionEvent event) {
 		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
 				.getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);

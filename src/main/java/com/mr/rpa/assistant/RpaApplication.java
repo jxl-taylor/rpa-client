@@ -19,6 +19,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,22 +36,27 @@ public class RpaApplication extends Application {
 
 		if (!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()) {
 			//如果验证不通过，尝试从控制中心下载license 和公钥（如果第一次登录，直接下载30天的试用版license）
-			AtomicBoolean retryVerifing = new AtomicBoolean(false);
+			Boolean retryVerifing = false;
 			String controlUrl = GlobalProperty.getInstance().getSysConfig().getControlServer();
 			if (StringUtils.isNotBlank(controlUrl)) {
 				try {
-					CommonUtil.requestControlCenter(controlUrl,
+					retryVerifing = CommonUtil.requestControlCenter(controlUrl,
 							SystemContants.API_SERVICE_ID_QUERY_LIC_DOWNLOAD_URL,
 							JSON.toJSONString(new HashMap<String, String>()),
 							resultJson -> {
-								retryVerifing.set(new HeartBeat().downLoadAndInstallLic(resultJson.getString("licDownloadUrl")));
+								String licZipPath = System.getProperty("user.dir")
+										+ File.separator + CommonUtil.getLocalMac() + ".zip";
+								CommonUtil.downloadAndUnzip(resultJson.getString("licDownloadUrl"),
+										licZipPath, System.getProperty("user.dir"));
+								return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
+										&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
 							});
 				} catch (Throwable e) {
 					log.error(e);
 					AlertMaker.showErrorMessage("用户查询", e.getMessage());
 				}
 			}
-			if (!retryVerifing.get()) {
+			if (retryVerifing != null || !retryVerifing) {
 				AlertMaker.showMaterialDialog(((StackPane) root),
 						((StackPane) root).getChildren().get(0),
 						GlobalProperty.getInstance().getExitBtns().subList(0, 1), "License", "License不可用", false);
