@@ -5,75 +5,104 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
-<HBox fx:id="myInfoPane" prefHeight="600.0" prefWidth="1000.0" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.settings.MyInfoController">
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<VBox prefHeight="600.0" prefWidth="1000.0"
+      stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.settings.MyInfoController">
    <children>
-      <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+      <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
          <children>
-            <HBox alignment="CENTER" >
-               <children>
-                  <Label text="用户名称：" textFill="#FFFF8D" style="-fx-font-size: 16">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="userNick" labelFloat="true" editable="false">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER" >
-               <children>
-                  <Label text="到期时间：" textFill="#FFFF8D" style="-fx-font-size: 16">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="expireTime" labelFloat="true" editable="false">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-               </children>
-            </HBox>
+            <Label text="用户名称：" textFill="#FFFF8D" >
+               <HBox.margin>
+                  <Insets bottom="0.0" left="40.0" right="10.0" top="25.0" />
+               </HBox.margin>
+            </Label>
+            <JFXTextField fx:id="userNick" labelFloat="true" editable="false">
+               <HBox.margin>
+                  <Insets bottom="0.0" left="5.0" right="250.0" top="25.0" />
+               </HBox.margin>
+            </JFXTextField>
+
+            <Label text="登录名称：" textFill="#FFFF8D" >
+               <HBox.margin>
+                  <Insets bottom="0.0" left="40.0" right="10.0" top="25.0" />
+               </HBox.margin>
+            </Label>
+            <JFXTextField fx:id="username" labelFloat="true" editable="false">
+               <HBox.margin>
+                  <Insets bottom="0.0" left="5.0" right="10.0" top="25.0" />
+               </HBox.margin>
+            </JFXTextField>
 
          </children>
-      </VBox>
+      </HBox>
 
-      <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+      <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
          <children>
-            <HBox alignment="CENTER" >
-               <children>
-                  <Label text="登录名称：" textFill="#FFFF8D" style="-fx-font-size: 16">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="username" labelFloat="true" editable="false">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-               </children>
-            </HBox>
+            <Label text="到期时间：" textFill="#FFFF8D" >
+               <HBox.margin>
+                  <Insets bottom="0.0" left="40.0" right="10.0" top="25.0" />
+               </HBox.margin>
+            </Label>
+            <JFXTextField fx:id="expireTime" labelFloat="true" editable="false">
+               <HBox.margin>
+                  <Insets bottom="0.0" left="5.0" right="250.0" top="25.0" />
+               </HBox.margin>
+            </JFXTextField>
 
-            <HBox alignment="CENTER" >
-               <children>
-                  <Label text="运行时长：" textFill="#FFFF8D" style="-fx-font-size: 16">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="duration" labelFloat="true" editable="false">
-                     <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-               </children>
-            </HBox>
+            <Label text="运行时长：" textFill="#FFFF8D" >
+               <HBox.margin>
+                  <Insets bottom="0.0" left="40.0" right="10.0" top="25.0" />
+               </HBox.margin>
+            </Label>
+            <JFXTextField fx:id="duration" labelFloat="true" editable="false">
+               <HBox.margin>
+                  <Insets bottom="0.0" left="5.0" right="10.0" top="25.0" />
+               </HBox.margin>
+            </JFXTextField>
          </children>
-      </VBox>
+      </HBox>
+
+      <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+         <children>
+            <JFXTextField fx:id="usernameQuery" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadUsers" prefHeight="32.0" prefWidth="274.0" promptText="用户名"/>
+            <JFXTextField fx:id="nickQuery" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadUsers" prefHeight="32.0" prefWidth="274.0" promptText="昵称"/>
+            <JFXButton onAction="#loadUsers" prefHeight="32.0" prefWidth="90.0" text="查询" />
+            <JFXButton onAction="#clearSearch" prefHeight="32.0" prefWidth="90.0" text="清空" />
+            <JFXButton onAction="#loadAddUser" prefHeight="32.0" prefWidth="90.0" text="新建用户"/>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="40.0" right="5.0" top="45.0" />
+         </VBox.margin>
+      </HBox>
+
+      <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+         <children>
+            <TableView fx:id="tableView" prefWidth="10000.0" HBox.hgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="seqCol" text="编号"/>
+                  <TableColumn fx:id="usernameCol" prefWidth="75.0" text="用户名"/>
+                  <TableColumn fx:id="nickCol" prefWidth="75.0" text="昵称"/>
+                  <TableColumn fx:id="mailCol" text="邮箱"/>
+                  <TableColumn fx:id="phoneCol" text="电话"/>
+                  <TableColumn fx:id="createdTimeCol" text="创建时间"/>
+                  <TableColumn fx:id="updatedTimeCol" text="修改时间"/>
+                  <TableColumn fx:id="operatingCol" text="操作"/>
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+               </columnResizePolicy>
+            </TableView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
+         </VBox.margin>
+      </HBox>
 
    </children>
-</HBox>
+</VBox>
+
+

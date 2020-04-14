@@ -1,5 +1,7 @@
 package com.mr.rpa.assistant.data.model;
 
+import jdk.nashorn.internal.objects.annotations.Constructor;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -8,6 +10,7 @@ import java.sql.Timestamp;
  * Created by feng on 2020/3/16
  */
 @Data
+@AllArgsConstructor
 public class User {
 	private String id;
 	private String username;
@@ -20,4 +23,8 @@ public class User {
 	private String updateBy;
 	private Timestamp createTime;
 	private Timestamp updateTime;
+
+	public User() {
+
+	}
 }

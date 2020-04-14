@@ -4,9 +4,11 @@ import com.google.common.collect.Maps;
 import com.mr.rpa.assistant.service.SysConfigService;
 import com.mr.rpa.assistant.service.TaskLogService;
 import com.mr.rpa.assistant.service.TaskService;
+import com.mr.rpa.assistant.service.UserService;
 import com.mr.rpa.assistant.service.impl.SysConfigServiceImpl;
 import com.mr.rpa.assistant.service.impl.TaskLogServiceImpl;
 import com.mr.rpa.assistant.service.impl.TaskServiceImpl;
+import com.mr.rpa.assistant.service.impl.UserServiceImpl;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.Map;
@@ -24,6 +26,7 @@ public class ServiceFactory {
 		session = sqlSession;
 		serviceMap.put(TaskService.class, new TaskServiceImpl(session));
 		serviceMap.put(TaskLogService.class, new TaskLogServiceImpl(session));
+		serviceMap.put(UserService.class, new UserServiceImpl(session));
 		serviceMap.put(SysConfigService.class, new SysConfigServiceImpl(session));
 	}
 

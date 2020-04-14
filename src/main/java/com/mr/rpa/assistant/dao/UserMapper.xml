@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mr.rpa.assistant.dao.UserMapper">
+
+    <select id="queryUserList" resultType="com.mr.rpa.assistant.data.model.User">
+        SELECT * from SYS_USER WHERE 1=1
+        <if test="username != null and username != ''">
+            AND USERNAME like '%'||#{username}||'%'
+        </if>
+        <if test="nick != null and nick != ''">
+            AND NICK like '%'||#{nick}||'%'
+        </if>
+    </select>
+
+    <delete id="deleteUser">
+        DELETE FROM SYS_USER WHERE ID=#{userId}
+    </delete>
+
+    <update id="updateUser" parameterType="com.mr.rpa.assistant.data.model.User">
+        UPDATE SYS_USER SET
+            USERNAME=#{username},
+            PASSWORD=#{password},
+            NICK=#{nick},
+            PHONE=#{phone,jdbcType=VARCHAR},
+            MAIL=#{mail,jdbcType=VARCHAR},
+            LOCKING=#{locking} ,
+            CREATEBY=#{createBy,jdbcType=VARCHAR},
+            createTime=#{createTime,jdbcType=TIMESTAMP},
+            UPDATEBY=#{updateBy,jdbcType=VARCHAR},
+            updateTime=#{updateTime,jdbcType=TIMESTAMP}
+        WHERE ID=#{id}
+    </update>
+
+    <insert id="addUser" parameterType="com.mr.rpa.assistant.data.model.User">
+        INSERT INTO SYS_USER(
+            id,
+            username,
+            password,
+            nick,
+            phone,
+            mail,
+            locking,
+            createBy,
+            createTime,
+            updateBy,
+            updateTime
+            )
+        VALUES(
+            #{id},
+            #{username},
+            #{password},
+            #{nick},
+            #{phone,jdbcType=VARCHAR},
+            #{mail,jdbcType=VARCHAR},
+            #{locking},
+            #{createBy},
+            #{createTime, jdbcType=TIMESTAMP}，
+            #{updateBy},
+            #{updateTime, jdbcType=TIMESTAMP}
+        )
+    </insert>
+</mapper>

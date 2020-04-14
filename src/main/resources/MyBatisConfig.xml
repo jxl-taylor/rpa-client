@@ -25,6 +25,7 @@
     <mappers>
         <mapper resource="com/mr/rpa/assistant/dao/TaskMapper.xml" />
         <mapper resource="com/mr/rpa/assistant/dao/TaskLogMapper.xml" />
+        <mapper resource="com/mr/rpa/assistant/dao/UserMapper.xml" />
         <mapper resource="com/mr/rpa/assistant/dao/SysConfigMapper.xml" />
     </mappers>
 </configuration>
