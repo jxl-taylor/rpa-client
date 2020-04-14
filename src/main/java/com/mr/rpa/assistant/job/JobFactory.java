@@ -8,6 +8,7 @@ import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.LogTextCollector;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
+import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import lombok.extern.log4j.Log4j;
 import org.pentaho.di.core.KettleEnvironment;
@@ -38,7 +39,7 @@ public class JobFactory implements Runnable {
 
 	private Scheduler userScheduler;
 
-	private GlobalProperty globalProperty = GlobalProperty.getInstance();
+	private static GlobalProperty globalProperty = GlobalProperty.getInstance();
 
 	private TaskService taskService = ServiceFactory.getService(TaskService.class);
 
@@ -77,6 +78,7 @@ public class JobFactory implements Runnable {
 			});
 			thread.setDaemon(true);
 			thread.start();
+			KettleTaskThread.startProcessTask();
 		}
 	}
 
@@ -158,7 +160,7 @@ public class JobFactory implements Runnable {
 	}
 
 	public static void triggerByManual(String taskId) throws SchedulerException {
-		executor.submit(()-> new KettleQuartzJob().triggerByManual(taskId));
+		executor.submit(()-> globalProperty.getTaskQueue().offer(new Pair<>(taskId, null)));
 	}
 
 	static class JobThreadFactory implements ThreadFactory {

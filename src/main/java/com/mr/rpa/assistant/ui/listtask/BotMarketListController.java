@@ -200,7 +200,7 @@ public class BotMarketListController implements Initializable {
 				try {
 					dowloadAndInstallBot();
 					Task task = new Task(UUID.randomUUID().toString().replace("-", ""),
-							getBotName(), getMainBot(), getDesp(), "", "",
+							getBotName(), getMainBot(), getDesp(), "[]", "",
 							false, SystemContants.TASK_RUNNING_STATUS_RUN, "0 0 0/1 * * ?",
 							true, getVersion(),
 							0, 0, null, new Timestamp(System.currentTimeMillis()));

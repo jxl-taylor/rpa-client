@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.service.SysConfigService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
@@ -15,6 +16,7 @@ import com.mr.rpa.assistant.ui.main.log.ILogShow;
 import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
+import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import de.schlichtherle.license.LicenseContent;
 import javafx.application.Platform;
@@ -32,6 +34,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.quartz.JobDataMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +47,8 @@ import java.io.Reader;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by feng on 2020/2/4 0004
@@ -85,6 +90,8 @@ public class GlobalProperty {
 	private SimpleStringProperty runningDuration = new SimpleStringProperty();
 
 	private SimpleStringProperty title = new SimpleStringProperty("REC（未登录）");
+
+	private LinkedBlockingQueue<Pair<String, JobDataMap>> taskQueue = new LinkedBlockingQueue<>(100);
 
 	private User currentUser;
 
