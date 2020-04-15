@@ -54,7 +54,7 @@
             #{mail,jdbcType=VARCHAR},
             #{locking},
             #{createBy},
-            #{createTime, jdbcType=TIMESTAMP}，
+            #{createTime, jdbcType=TIMESTAMP},
             #{updateBy},
             #{updateTime, jdbcType=TIMESTAMP}
         )

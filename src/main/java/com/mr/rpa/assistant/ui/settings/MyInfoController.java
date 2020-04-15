@@ -1,8 +1,11 @@
 package com.mr.rpa.assistant.ui.settings;
 
+import com.google.common.collect.Lists;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.service.UserService;
+import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.Pair;
 import de.schlichtherle.license.LicenseContent;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -15,13 +18,19 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 @Log4j
@@ -59,6 +68,8 @@ public class MyInfoController implements Initializable {
 	@FXML
 	private TableColumn<User, HBox> operatingCol;
 
+	private static JFXButton cancelBtn;
+
 	public static UserService userService = ServiceFactory.getService(UserService.class);
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 	private static ObservableList<User> userList = FXCollections.observableArrayList();
@@ -70,8 +81,47 @@ public class MyInfoController implements Initializable {
 		globalProperty.setMyInfoController(this);
 		initCol();
 		tableView.setItems(userList);
+		tableView.setRowFactory(tv -> {
+			TableRow<User> row = new TableRow<User>();
+			row.setOnMouseClicked(event -> {
+				if (!row.isEmpty()) {
+					if (event.getClickCount() == 2) {
+						showEditOption(row.getItem());
+					}
+				}
+			});
+			return row;
+		});
 		queryUsers();
+		cancelBtn = new JFXButton("取消");
+		cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+			StackPane rootPane = globalProperty.getRootPane();
+			rootPane.getChildren().get(0).setEffect(null);
+		});
 	}
+
+
+	private static void showEditOption(User selectedForEdit) {
+		if (selectedForEdit == null) {
+			AlertMaker.showErrorMessage("未选择用户", "请选择一个用户编辑.");
+			return;
+		}
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(MyInfoController.class.getClassLoader()
+				.getResource("assistant/ui/myinfo/add_user.fxml"), "编辑用户", null);
+
+		UserAddController controller = (UserAddController) pair.getObject2();
+		controller.inflateUI(selectedForEdit.getUsername());
+		Stage stage = pair.getObject1();
+		stage.setOnHiding((e) -> {
+			queryUsers();
+		});
+
+		stage.setOnCloseRequest((event) -> {
+			AssistantUtil.closeWinow(MyInfoController.class.getClassLoader().getResource("assistant/ui/myinfo/add_user.fxml"));
+		});
+
+	}
+
 
 	public void refreshExpireTime() {
 		LicenseContent licenseContent = globalProperty.getLicenseContent();
@@ -96,17 +146,17 @@ public class MyInfoController implements Initializable {
 		operatingCol.setCellValueFactory(new PropertyValueFactory<>("operatingBox"));
 	}
 
-	public static ObservableList<User> queryUsers(){
+	public static ObservableList<User> queryUsers() {
 		return queryUsers(null, null);
 	}
 
 	public static ObservableList<User> queryUsers(String username, String nick) {
 		userList.clear();
-		if(StringUtils.isNotEmpty(username)){
+		if (StringUtils.isNotEmpty(username)) {
 			userList.addAll(userService.getUIUserListByUsername(username));
-		}else if(StringUtils.isNotEmpty(nick)){
+		} else if (StringUtils.isNotEmpty(nick)) {
 			userList.addAll(userService.getUIUserListByNick(nick));
-		}else {
+		} else {
 			userList.addAll(userService.getUIUserList());
 		}
 		return userList;
@@ -114,14 +164,23 @@ public class MyInfoController implements Initializable {
 
 	@FXML
 	private void loadUsers(ActionEvent event) {
+		queryUsers(usernameQuery.getText(), nickQuery.getText());
 	}
 
 	@FXML
 	private void clearSearch(ActionEvent event) {
+		usernameQuery.clear();
+		nickQuery.clear();
+		queryUsers();
 	}
 
 	@FXML
 	private void loadAddUser(ActionEvent event) {
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
+				.getResource("assistant/ui/myinfo/add_user.fxml"), "添加任务", null);
+		pair.getObject1().setOnCloseRequest((e) -> {
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/myinfo/add_user.fxml"));
+		});
 	}
 
 	public static class User {
@@ -169,7 +228,6 @@ public class MyInfoController implements Initializable {
 			deleteLink.setOnAction(event -> {
 				deleteLink.setDisable(true);
 				try {
-					AlertMaker.showSimpleAlert("删除用户", "删除成功");
 					deleteUser(getUsername());
 					queryUsers();
 				} catch (Exception e) {
@@ -180,6 +238,7 @@ public class MyInfoController implements Initializable {
 			});
 			updateLink.setOnAction(event -> {
 				try {
+					//Fetch the selected row
 					updateUser(getUsername());
 				} catch (Throwable e) {
 					log.error(e);
@@ -188,6 +247,7 @@ public class MyInfoController implements Initializable {
 			});
 			operatingBox = new HBox();
 			operatingBox.getChildren().add(updateLink);
+			operatingBox.getChildren().add(lockLink);
 			operatingBox.getChildren().add(deleteLink);
 			operatingBox.setSpacing(20);
 			operatingBox.setAlignment(Pos.CENTER);
@@ -196,17 +256,37 @@ public class MyInfoController implements Initializable {
 		private void lockOrUnlockUser(String username, boolean status) {
 			com.mr.rpa.assistant.data.model.User user = userService.getUserListByUsername(username).get(0);
 			user.setLocking(status);
-			userService.updateUser(user);
+			JFXButton confirmBtn = new JFXButton("确定");
+			confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+				userService.updateUser(user);
+			});
+			GlobalProperty globalProperty = GlobalProperty.getInstance();
+			AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
+					globalProperty.getRootPane().getChildren().get(0),
+					Lists.newArrayList(confirmBtn, cancelBtn), status ? "启用" : "禁用",
+					"确定执行么?", false);
 		}
 
 		private void updateUser(String username) {
-			com.mr.rpa.assistant.data.model.User user = userService.getUserListByUsername(username).get(0);
-
+			User user = userService.getUIUserListByUsername(username).get(0);
+			//Fetch the selected row
+			showEditOption(user);
 		}
 
 		private void deleteUser(String username) {
 			com.mr.rpa.assistant.data.model.User user = userService.getUserListByUsername(username).get(0);
-			userService.deleteUser(user.getId());
+			JFXButton confirmBtn = new JFXButton("确定");
+			confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+				userService.deleteUser(user.getId());
+				//todo 用户下的任务归属
+
+				AlertMaker.showSimpleAlert("删除用户", "删除成功");
+			});
+			GlobalProperty globalProperty = GlobalProperty.getInstance();
+			AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
+					globalProperty.getRootPane().getChildren().get(0),
+					Lists.newArrayList(confirmBtn, cancelBtn), "删除用户",
+					"确定删除改用户么 用户名：" + username + " ?", false);
 		}
 
 		public int getSeq() {

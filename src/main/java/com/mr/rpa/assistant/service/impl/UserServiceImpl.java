@@ -39,16 +39,20 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private ObservableList<MyInfoController.User> toUIList(List<User> users) {
-		if (CollectionUtil.isEmpty(users)) return FXCollections.observableArrayList();
-		AtomicInteger ai = new AtomicInteger(1);
-		return (ObservableList<MyInfoController.User>) users.stream().map(user -> new MyInfoController.User(ai.getAndIncrement(),
-				user.getUsername(),
-				user.getNick(),
-				user.getMail(),
-				user.getPhone(),
-				user.isLocking(),
-				DateUtil.formatTime(new Date(user.getCreateTime().getTime())),
-				DateUtil.formatTime(new Date(user.getUpdateTime().getTime())))).collect(Collectors.toList());
+		ObservableList<MyInfoController.User> userObservableList = FXCollections.observableArrayList();
+		if (CollectionUtil.isEmpty(users)) return userObservableList;
+		for (int i = 0; i < users.size(); i++) {
+			User user = users.get(i);
+			userObservableList.add(new MyInfoController.User(i,
+					user.getUsername(),
+					user.getNick(),
+					user.getMail(),
+					user.getPhone(),
+					user.isLocking(),
+					DateUtil.formatTime(new Date(user.getCreateTime().getTime())),
+					DateUtil.formatTime(new Date(user.getUpdateTime().getTime()))));
+		}
+		return userObservableList;
 	}
 
 	@Override
@@ -60,13 +64,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> getUserListByUsername(String username) {
 		List<User> users = userMapper.queryUserList(username, null);
-		return CollectionUtil.isEmpty(users)? Lists.newArrayList() : users;
+		return CollectionUtil.isEmpty(users) ? Lists.newArrayList() : users;
 	}
 
 	@Override
 	public List<User> getUserListByNick(String nick) {
 		List<User> users = userMapper.queryUserList(null, nick);
-		return CollectionUtil.isEmpty(users)? Lists.newArrayList() : users;
+		return CollectionUtil.isEmpty(users) ? Lists.newArrayList() : users;
 	}
 
 	@Override

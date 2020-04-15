@@ -101,21 +101,32 @@ public class UserAddController implements Initializable {
 	}
 
 	private boolean checkInput() {
-		if (StringUtils.isBlank(username.getText()) || StringUtils.isBlank(nick.getText()) || StringUtils.isBlank(password.getText())) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "用户名、密码、昵称不能为空.");
+		if (StringUtils.isBlank(username.getText())) {
+			username.getStyleClass().add("wrong-credentials");
+			return false;
+		}
+		if (StringUtils.isBlank(nick.getText())) {
+			nick.getStyleClass().add("wrong-credentials");
+			return false;
+		}
+		if (StringUtils.isBlank(password.getText())) {
+			password.getStyleClass().add("wrong-credentials");
 			return false;
 		}
 		if (!password.getText().equals(password2.getText())) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "两次密码输入不一致.");
+			password.getStyleClass().add("wrong-credentials");
+			password2.getStyleClass().add("wrong-credentials");
 			return false;
 		}
 		if (StringUtils.isBlank(phone.getText()) && StringUtils.isBlank(mail.getText())) {
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "邮箱、电话不能同时为空.");
+			phone.getStyleClass().add("wrong-credentials");
+			mail.getStyleClass().add("wrong-credentials");
 			return false;
 		}
 		String mailRegex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
 		if (StringUtils.isNotEmpty(mail.getText()) && !mail.getText().matches(mailRegex)) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "邮箱格式不正确.");
+			mail.getStyleClass().add("wrong-credentials");
 			return false;
 		}
 
