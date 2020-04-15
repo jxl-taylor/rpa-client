@@ -216,7 +216,6 @@ public class MyInfoController implements Initializable {
 			lockLink.setText(locking.get() ? "启用" : "禁用");
 			lockLink.setOnAction(event -> {
 				try {
-					AlertMaker.showSimpleAlert("启用禁用", "执行成功");
 					lockOrUnlockUser(getUsername(), !this.locking.get());
 					queryUsers();
 				} catch (Exception e) {
@@ -226,14 +225,11 @@ public class MyInfoController implements Initializable {
 			});
 
 			deleteLink.setOnAction(event -> {
-				deleteLink.setDisable(true);
 				try {
 					deleteUser(getUsername());
-					queryUsers();
 				} catch (Exception e) {
 					log.error(e);
 					AlertMaker.showErrorMessage("删除用户", e.getMessage());
-					deleteLink.setDisable(false);
 				}
 			});
 			updateLink.setOnAction(event -> {
@@ -259,6 +255,8 @@ public class MyInfoController implements Initializable {
 			JFXButton confirmBtn = new JFXButton("确定");
 			confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 				userService.updateUser(user);
+				AlertMaker.showSimpleAlert(status ? "启用" : "禁用", "执行成功");
+				queryUsers();
 			});
 			GlobalProperty globalProperty = GlobalProperty.getInstance();
 			AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
@@ -281,12 +279,13 @@ public class MyInfoController implements Initializable {
 				//todo 用户下的任务归属
 
 				AlertMaker.showSimpleAlert("删除用户", "删除成功");
+				queryUsers();
 			});
 			GlobalProperty globalProperty = GlobalProperty.getInstance();
 			AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
 					globalProperty.getRootPane().getChildren().get(0),
 					Lists.newArrayList(confirmBtn, cancelBtn), "删除用户",
-					"确定删除改用户么 用户名：" + username + " ?", false);
+					"确定删除用户：" + username + " ?", false);
 		}
 
 		public int getSeq() {

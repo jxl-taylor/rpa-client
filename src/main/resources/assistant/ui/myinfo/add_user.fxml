@@ -11,7 +11,7 @@
 <StackPane fx:id="rootPane" stylesheets="@/dark-theme.css" xmlns="http://javafx.com/javafx/8.0.141"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.settings.UserAddController">
     <children>
-       <AnchorPane id="mainContainer" prefHeight="668.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
+       <AnchorPane fx:id="mainContainer" prefHeight="668.0" prefWidth="464.0" styleClass="custom-pane" stylesheets="@/dark-theme.css">
           <children>
              <VBox prefHeight="256.0" maxHeight="600" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <children>
