@@ -20,73 +20,63 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ToolbarController implements Initializable {
 
-    @FXML
-    private JFXButton loginButton;
+    private GlobalProperty globalProperty = GlobalProperty.getInstance();
+	@FXML
+	private JFXButton loginButton;
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
+		// TODO
+	}
 
-    @FXML
-    private void loadAddTask(ActionEvent event) {
-        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
-    }
+	@FXML
+	private void loadAddTask(ActionEvent event) {
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/addtask/add_task.fxml"), "添加任务", null);
+	}
 
-    @FXML
-    private void loadRegister(ActionEvent event) {
-        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/myinfo/register.fxml"), "注册", null);
-    }
+	@FXML
+	private void loadRegister(ActionEvent event) {
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/myinfo/register.fxml"), "注册", null);
+	}
 
-    @FXML
-    private void loadUpdate(ActionEvent event) {
-        Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"), "更新", null);
-        pair.getObject1().setOnCloseRequest((e) -> {
-            AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"));
-        });
-    }
+	@FXML
+	private void loadUpdate(ActionEvent event) {
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"), "更新", null);
+		pair.getObject1().setOnCloseRequest((e) -> {
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/about/version_update.fxml"));
+		});
+	}
 
-    @FXML
-    private void loadBotMarket(ActionEvent event) {
-        SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
-        if (StringUtils.isEmpty(sysConfig.getControlServer())) {
-            AlertMaker.showErrorMessage("BOT市场", "控制中心未配置");
-            return;
-        }
-        Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"), "BOT市场", null);
-        pair.getObject1().setOnCloseRequest((e) -> {
-            AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"));
-        });
-    }
-    @FXML
-    private void exit(ActionEvent event) {
-        JFXButton confirmBtn = new JFXButton("确定");
-        confirmBtn .addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
-            System.exit(0);
-        });
+	@FXML
+	private void loadBotMarket(ActionEvent event) {
+		SysConfig sysConfig = globalProperty.getSysConfig();
+		if (StringUtils.isEmpty(sysConfig.getControlServer())) {
+			AlertMaker.showErrorMessage("BOT市场", "控制中心未配置");
+			return;
+		}
+		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"), "BOT市场", null);
+		pair.getObject1().setOnCloseRequest((e) -> {
+			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/botstore/bot_market_query.fxml"));
+		});
+	}
 
-        JFXButton cancelBtn = new JFXButton("取消");
-        cancelBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
-            StackPane rootPane = GlobalProperty.getInstance().getRootPane();
-            rootPane.getChildren().get(0).setEffect(null);
-        });
-        StackPane rootPane = GlobalProperty.getInstance().getRootPane();
-        AlertMaker.showMaterialDialog(rootPane,
-                rootPane.getChildren().get(0),
-                Lists.newArrayList(confirmBtn, cancelBtn), "退出", "", false);
-    }
+	@FXML
+	private void exit(ActionEvent event) {
+		AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
+				globalProperty.getRootPane().getChildren().get(0),
+				GlobalProperty.getInstance().getExitBtns(), "注销/退出", "", false, false);
+	}
 
-    @FXML
-    private void LoadAboutUs(ActionEvent event) {
-        AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/about.fxml"), "关于我们", null);
-    }
+	@FXML
+	private void LoadAboutUs(ActionEvent event) {
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/about/about.fxml"), "关于我们", null);
+	}
 
-    @FXML
-    private void loadSettings(ActionEvent event) {
-        GlobalProperty globalProperty = GlobalProperty.getInstance();
-        globalProperty.getTaskPaneVisible().setValue(false);
-        globalProperty.getSettingPaneVisible().setValue(true);
-        globalProperty.getMyInfoPaneVisible().setValue(false);
-    }
+	@FXML
+	private void loadSettings(ActionEvent event) {
+		globalProperty.getTaskPaneVisible().setValue(false);
+		globalProperty.getSettingPaneVisible().setValue(true);
+		globalProperty.getMyInfoPaneVisible().setValue(false);
+	}
 
 }

@@ -4,12 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,20 +14,14 @@ import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.Pair;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,7 +32,7 @@ public class LoginController implements Initializable {
 	private static final String CACHE_FILE = System.getProperty("user.dir") + File.separator + ".cache";
 
 	@FXML
-	private AnchorPane loginPane;
+	private StackPane rootPane;
 
 	@FXML
 	private JFXTextField username;
@@ -56,8 +45,11 @@ public class LoginController implements Initializable {
 
 	private SysConfig sysConfig;
 
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		globalProperty.setLoginController(this);
 		sysConfig = GlobalProperty.getInstance().getSysConfig();
 		username.setText(sysConfig.getAdminUsername());
 		try {
@@ -80,6 +72,10 @@ public class LoginController implements Initializable {
 
 	}
 
+	public StackPane getRootPane() {
+		return rootPane;
+	}
+
 	@FXML
 	private void handleLoginButtonAction(ActionEvent event) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
@@ -97,6 +93,10 @@ public class LoginController implements Initializable {
 			}
 			globalProperty.setCurrentUser(user);
 			globalProperty.getMyInfoController().initCurrentUser();
+
+			globalProperty.getRootPane().getChildren().get(0).setEffect(null);
+			globalProperty.getRootPane().getChildren().get(0).setDisable(false);
+
 			log.info(String.format("User successfully logged in %s", uname));
 		} else {
 			username.getStyleClass().add("wrong-credentials");
@@ -131,30 +131,23 @@ public class LoginController implements Initializable {
 	}
 
 	private void closeStage() {
-		((Stage) username.getScene().getWindow()).close();
+		((Stage) rootPane.getScene().getWindow()).close();
 	}
 
 	private void loadMain() {
 		try {
-			Parent parent = FXMLLoader.load(getClass().getResource("/assistant/ui/main/main.fxml"));
-			Stage stage = new Stage(StageStyle.DECORATED);
-			stage.setScene(new Scene(parent));
-			stage.show();
+			Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/main/main.fxml"),
+					GlobalProperty.getInstance().getTitle().get(), null);
+			Stage stage = pair.getObject1();
 			stage.titleProperty().bind(GlobalProperty.getInstance().getTitle());
-
-			AssistantUtil.setStageIcon(stage);
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent event) {
-					AlertMaker.showMaterialDialog(((StackPane) parent),
-							((StackPane) parent).getChildren().get(0),
-							GlobalProperty.getInstance().getExitBtns(), "退出", "", false);
-					event.consume();
-				}
+			rootPane.getChildren().get(0).setEffect(null);
+			rootPane.getChildren().get(0).setDisable(false);
+			stage.setOnCloseRequest(e -> {
+				AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
+						globalProperty.getRootPane().getChildren().get(0),
+						GlobalProperty.getInstance().getExitBtns(), "注销/退出", "", false, false);
+				e.consume();
 			});
-
-			stage.setFullScreen(false);
-			stage.setResizable(false);
 
 			//启动定时任务
 			JobFactory.start();

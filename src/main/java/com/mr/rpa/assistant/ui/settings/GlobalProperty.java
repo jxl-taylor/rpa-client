@@ -5,17 +5,20 @@ import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
+import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.MailServerInfo;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.service.SysConfigService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
+import com.mr.rpa.assistant.ui.login.LoginController;
 import com.mr.rpa.assistant.ui.main.MainController;
 import com.mr.rpa.assistant.ui.main.log.ILogShow;
 import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
+import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import de.schlichtherle.license.LicenseContent;
@@ -24,10 +27,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableView;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import org.apache.ibatis.io.Resources;
@@ -106,6 +111,7 @@ public class GlobalProperty {
 	/**
 	 * controller
 	 */
+	private LoginController loginController;
 	private MainController mainController;
 	private StatisticController statisticController;
 	private TaskBeanController taskBeanController;
@@ -152,9 +158,22 @@ public class GlobalProperty {
 	public List<JFXButton> getExitBtns() {
 
 		if (exitBtns == null) {
-			JFXButton confirmBtn = new JFXButton("确定");
+			JFXButton confirmBtn = new JFXButton("退出");
 			confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 				System.exit(0);
+			});
+
+			JFXButton logoutBtn = new JFXButton("注销");
+			logoutBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+//				BoxBlur blur = new BoxBlur(3, 3, 3);
+//				StackPane rootPane = getRootPane();
+//				rootPane.getChildren().get(0).setEffect(blur);
+//				rootPane.getChildren().get(0).setDisable(true);
+//				AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"),
+//						"登录", null);
+				AlertMaker.showMaterialDialog(getRootPane(),
+						getRootPane().getChildren().get(0),
+						loginController.getRootPane(), "登录", "", false);
 			});
 
 			JFXButton cancelBtn = new JFXButton("取消");
@@ -162,7 +181,7 @@ public class GlobalProperty {
 				StackPane rootPane = getRootPane();
 				rootPane.getChildren().get(0).setEffect(null);
 			});
-			exitBtns = Lists.newArrayList(confirmBtn, cancelBtn);
+			exitBtns = Lists.newArrayList(confirmBtn, logoutBtn, cancelBtn);
 		}
 		return exitBtns;
 	}
@@ -178,9 +197,9 @@ public class GlobalProperty {
 		Platform.runLater(() -> {
 			globalProperty.getMyInfoController().refreshExpireTime();
 			int licExpireDays = getLicExpireDays();
-			if (licExpireDays < 31){
+			if (licExpireDays < 31) {
 				this.title.set(String.format("REC(用户:%s) 距离到期日还有%s天", sysConfig.getAdminNick(), licExpireDays));
-			}else {
+			} else {
 				this.title.set(String.format("REC(用户:%s) ", sysConfig.getAdminNick()));
 			}
 
@@ -188,8 +207,8 @@ public class GlobalProperty {
 
 	}
 
-	public int getLicExpireDays(){
-		if(licenseContent == null) return 0;
+	public int getLicExpireDays() {
+		if (licenseContent == null) return 0;
 		String dayString = DateUtil.formatBetween(licenseContent.getNotAfter(),
 				new Date(),
 				BetweenFormater.Level.DAY);

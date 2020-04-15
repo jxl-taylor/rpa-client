@@ -118,6 +118,11 @@ public class AlertMaker {
 	}
 
 	public static void showMaterialDialog(StackPane root, Node nodeToBeBlurred, List<JFXButton> controls, String header, String body, boolean overlayClose) {
+		showMaterialDialog(root, nodeToBeBlurred, controls, header, body, overlayClose, true);
+	}
+
+	public static void showMaterialDialog(StackPane root, Node nodeToBeBlurred, List<JFXButton> controls,
+										  String header, String body, boolean overlayClose, boolean cancelEffectClose) {
 		BoxBlur blur = new BoxBlur(3, 3, 3);
 		if (controls.isEmpty()) {
 //            controls.add(new JFXButton("确定"));
@@ -137,8 +142,18 @@ public class AlertMaker {
 		dialogLayout.setActions(controls);
 		dialog.show();
 		dialog.setOnDialogClosed((JFXDialogEvent event1) -> {
-			nodeToBeBlurred.setEffect(null);
+			if(cancelEffectClose) nodeToBeBlurred.setEffect(null);
 		});
+		nodeToBeBlurred.setEffect(blur);
+	}
+
+	public static void showMaterialDialog(StackPane root, Node nodeToBeBlurred, Node node, String header, String body, boolean overlayClose) {
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog = new JFXDialog(root, dialogLayout, JFXDialog.DialogTransition.TOP, overlayClose);
+		dialogLayout.setBody(new Label(body));
+		dialogLayout.setBody(node);
+		dialog.show();
 		nodeToBeBlurred.setEffect(blur);
 	}
 
