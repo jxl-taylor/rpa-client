@@ -1,7 +1,9 @@
 package com.mr.rpa.assistant.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.format.FastDateFormat;
 import com.google.common.collect.Lists;
 import com.mr.rpa.assistant.dao.UserMapper;
 import com.mr.rpa.assistant.data.model.User;
@@ -15,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.date.DatePattern.NORM_DATETIME_FORMAT;
 
 /**
  * Created by feng on 2020/4/13
@@ -49,8 +53,8 @@ public class UserServiceImpl implements UserService {
 					user.getMail(),
 					user.getPhone(),
 					user.isLocking(),
-					DateUtil.formatTime(new Date(user.getCreateTime().getTime())),
-					DateUtil.formatTime(new Date(user.getUpdateTime().getTime()))));
+					DatePattern.NORM_DATETIME_FORMAT.format(user.getCreateTime().getTime()),
+					DatePattern.NORM_DATETIME_FORMAT.format(user.getUpdateTime().getTime())));
 		}
 		return userObservableList;
 	}

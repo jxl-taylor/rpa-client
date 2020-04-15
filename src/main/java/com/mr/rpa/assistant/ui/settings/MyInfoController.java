@@ -28,9 +28,7 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 @Log4j
@@ -61,6 +59,8 @@ public class MyInfoController implements Initializable {
 	private TableColumn<User, String> mailCol;
 	@FXML
 	private TableColumn<User, String> phoneCol;
+	@FXML
+	private TableColumn<User, String> statusCol;
 	@FXML
 	private TableColumn<User, String> createdTimeCol;
 	@FXML
@@ -141,6 +141,7 @@ public class MyInfoController implements Initializable {
 		nickCol.setCellValueFactory(new PropertyValueFactory<>("nick"));
 		mailCol.setCellValueFactory(new PropertyValueFactory<>("mail"));
 		phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
+		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 		createdTimeCol.setCellValueFactory(new PropertyValueFactory<>("createdTime"));
 		updatedTimeCol.setCellValueFactory(new PropertyValueFactory<>("updatedTime"));
 		operatingCol.setCellValueFactory(new PropertyValueFactory<>("operatingBox"));
@@ -190,6 +191,7 @@ public class MyInfoController implements Initializable {
 		private final SimpleStringProperty mail;
 		private final SimpleStringProperty phone;
 		private final SimpleBooleanProperty locking;
+		private final SimpleStringProperty status;
 		private final SimpleStringProperty createdTime;
 		private final SimpleStringProperty updatedTime;
 
@@ -207,6 +209,7 @@ public class MyInfoController implements Initializable {
 			this.mail = new SimpleStringProperty(mail);
 			this.phone = new SimpleStringProperty(phone);
 			this.locking = new SimpleBooleanProperty(locking);
+			this.status = new SimpleStringProperty(locking ? "已禁用" : "已启用");
 			this.createdTime = new SimpleStringProperty(createdTime);
 			this.updatedTime = new SimpleStringProperty(updatedTime);
 			initOperatingBox();
@@ -326,6 +329,14 @@ public class MyInfoController implements Initializable {
 
 		public SimpleStringProperty phoneProperty() {
 			return phone;
+		}
+
+		public String getStatus() {
+			return status.get();
+		}
+
+		public SimpleStringProperty statusProperty() {
+			return status;
 		}
 
 		public String getCreatedTime() {
