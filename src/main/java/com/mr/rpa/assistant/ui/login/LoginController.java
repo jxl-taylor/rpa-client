@@ -4,15 +4,19 @@ import cn.hutool.core.io.FileUtil;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.job.JobFactory;
+import com.mr.rpa.assistant.service.UserService;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.Pair;
 import javafx.application.Platform;
@@ -28,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 @Log4j
 public class LoginController implements Initializable {
 
-	private static final String RPA_CONTROL_CENTER = "http://microrule.com/";
 	private static final String CACHE_FILE = System.getProperty("user.dir") + File.separator + ".cache";
 
 	@FXML
@@ -47,9 +50,10 @@ public class LoginController implements Initializable {
 
 	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
+	private UserService userService = ServiceFactory.getService(UserService.class);
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		globalProperty.setLoginController(this);
 		sysConfig = GlobalProperty.getInstance().getSysConfig();
 		username.setText(sysConfig.getAdminUsername());
 		try {
@@ -61,6 +65,8 @@ public class LoginController implements Initializable {
 			}
 		} catch (Throwable e) {
 			log.error(e);
+			AlertMaker.showErrorMessage(e);
+			return;
 		}
 
 		Platform.runLater(new Runnable() {
@@ -76,28 +82,48 @@ public class LoginController implements Initializable {
 		return rootPane;
 	}
 
-	@FXML
-	private void handleLoginButtonAction(ActionEvent event) {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
-		String uname = StringUtils.trimToEmpty(username.getText());
+	private User checkLogin() {
+		String uname = username.getText();
+		if (StringUtils.isBlank(uname)) {
+			AlertMaker.showSimpleAlert("登录", "用户名不能为空");
+			return null;
+		}
 		String pword = password.getText();
 		User user = sysConfig.getAdminUser();
-		if (uname.equals(user.getUsername()) && pword.equals(user.getPassword())) {
-			closeStage();
-			setUserInfo();
-			loadMain();
-			if (saveChx.isSelected()) {
-				cachePwd();
+		if (uname.equals(user.getUsername())) {
+			if (user.getPassword().equals(pword)) return user;
+			AlertMaker.showSimpleAlert("登录", "密码错误");
+		} else {
+			List<User> users = userService.getUserListByUsername(uname);
+			if (users.size() == 0) {
+				AlertMaker.showSimpleAlert("登录", "用户名不存在");
 			} else {
-				FileUtil.del(CACHE_FILE);
+				if (users.get(0).getPassword().equals(pword)) return users.get(0);
+				AlertMaker.showSimpleAlert("登录", "密码错误");
 			}
-			globalProperty.setCurrentUser(user);
-			globalProperty.getMyInfoController().initCurrentUser();
+		}
+		return null;
+	}
 
+	@FXML
+	private void handleLoginButtonAction(ActionEvent event) {
+		User user = checkLogin();
+		if (user != null) {
+			if( globalProperty.getLoginController() == null){
+				loadMain();
+				if (saveChx.isSelected()) {
+					cachePwd();
+				} else {
+					FileUtil.del(CACHE_FILE);
+				}
+				globalProperty.setLoginController(this);
+			}
+			closeStage();
+			globalProperty.getMyInfoController().initCurrentUser(user);
 			globalProperty.getRootPane().getChildren().get(0).setEffect(null);
 			globalProperty.getRootPane().getChildren().get(0).setDisable(false);
 
-			log.info(String.format("User successfully logged in %s", uname));
+			log.info(String.format("User successfully logged in %s", user.getUsername()));
 		} else {
 			username.getStyleClass().add("wrong-credentials");
 			password.getStyleClass().add("wrong-credentials");
@@ -107,11 +133,6 @@ public class LoginController implements Initializable {
 	private void cachePwd() {
 		FileUtil.del(CACHE_FILE);
 		FileUtil.writeUtf8String(username.getText() + "=" + password.getText(), new File(CACHE_FILE));
-	}
-
-	private void setUserInfo() {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
-		globalProperty.setTitle(globalProperty.getSysConfig().getAdminNick());
 	}
 
 	@FXML
@@ -131,6 +152,8 @@ public class LoginController implements Initializable {
 	}
 
 	private void closeStage() {
+		username.clear();
+		password.clear();
 		((Stage) rootPane.getScene().getWindow()).close();
 	}
 

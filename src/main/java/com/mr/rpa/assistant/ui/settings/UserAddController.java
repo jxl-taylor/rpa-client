@@ -1,49 +1,24 @@
 package com.mr.rpa.assistant.ui.settings;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import cn.hutool.core.date.DatePattern;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
-import com.mr.rpa.assistant.data.model.Task;
 import com.mr.rpa.assistant.data.model.User;
-import com.mr.rpa.assistant.job.JobFactory;
-import com.mr.rpa.assistant.service.TaskLogService;
-import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.service.UserService;
-import com.mr.rpa.assistant.ui.addtask.CronSettingController;
-import com.mr.rpa.assistant.ui.listtask.TaskListController;
-import com.mr.rpa.assistant.util.*;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.CronExpression;
-import org.quartz.SchedulerException;
-
-import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Log4j
 public class UserAddController implements Initializable {
@@ -62,6 +37,12 @@ public class UserAddController implements Initializable {
 	private JFXTextField mail;
 	@FXML
 	private JFXTextField phone;
+	@FXML
+	private JFXTextField status;
+	@FXML
+	private JFXTextField createTime;
+	@FXML
+	private JFXTextField updateTime;
 
 	@FXML
 	private StackPane rootPane;
@@ -77,6 +58,9 @@ public class UserAddController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		id.visibleProperty().bind(isInEditMode);
+		status.visibleProperty().bind(isInEditMode);
+		createTime.visibleProperty().bind(isInEditMode);
+		updateTime.visibleProperty().bind(isInEditMode);
 	}
 
 	@FXML
@@ -93,11 +77,21 @@ public class UserAddController implements Initializable {
 				false,
 				sysConfig.getAdminUsername(), sysConfig.getAdminUsername(),
 				new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
-		userService.addUser(user);
-		AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增用户", nick.getText() + " 已添加");
-		clearEntries();
-		MyInfoController.queryUsers();
-		closeWindow();
+		try{
+			userService.addUser(user);
+			if(userService.getUserListByUsername(username.getText()).size() > 0) {
+				AlertMaker.showErrorMessage("保存用户", String.format("用户[%s]已存在",username.getText()));
+				return;
+			}
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增用户", nick.getText() + " 已添加");
+			clearEntries();
+			MyInfoController.queryUsers();
+			closeWindow();
+		}catch (Exception e){
+			log.error(e);
+			AlertMaker.showErrorMessage(e);
+		}
+
 	}
 
 	private boolean checkInput() {
@@ -116,11 +110,13 @@ public class UserAddController implements Initializable {
 		if (!password.getText().equals(password2.getText())) {
 			password.getStyleClass().add("wrong-credentials");
 			password2.getStyleClass().add("wrong-credentials");
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "两次输入密码不一致.");
 			return false;
 		}
 		if (StringUtils.isBlank(phone.getText()) && StringUtils.isBlank(mail.getText())) {
 			phone.getStyleClass().add("wrong-credentials");
 			mail.getStyleClass().add("wrong-credentials");
+			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "电话与邮箱不能同时为空.");
 			return false;
 		}
 		String mailRegex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
@@ -152,6 +148,9 @@ public class UserAddController implements Initializable {
 		nick.setText(user.getNick());
 		mail.setText(user.getMail());
 		phone.setText(user.getPhone());
+		status.setText(user.isLocking() ? "已禁用" : "已启用");
+		createTime.setText(DatePattern.NORM_DATETIME_FORMAT.format(user.getCreateTime().getTime()));
+		updateTime.setText(DatePattern.NORM_DATETIME_FORMAT.format(user.getUpdateTime().getTime()));
 		id.setEditable(false);
 
 		isInEditMode.setValue(Boolean.TRUE);
@@ -165,6 +164,9 @@ public class UserAddController implements Initializable {
 		nick.clear();
 		mail.clear();
 		phone.clear();
+		status.clear();
+		createTime.clear();
+		updateTime.clear();
 	}
 
 	private void handleEditOperation() {
@@ -183,7 +185,7 @@ public class UserAddController implements Initializable {
 				closeWindow();
 			} catch (Exception e) {
 				log.error(e);
-				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
+				AlertMaker.showErrorMessage(e);
 			}
 		});
 		JFXButton cancelBtn = new JFXButton("取消");

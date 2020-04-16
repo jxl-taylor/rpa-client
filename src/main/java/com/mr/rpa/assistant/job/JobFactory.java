@@ -73,7 +73,6 @@ public class JobFactory implements Runnable {
 					executor.submit(new HeartBeat());
 				} catch (Exception e) {
 					log.error(e);
-					return;
 				}
 			});
 			thread.setDaemon(true);

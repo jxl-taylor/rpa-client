@@ -49,7 +49,7 @@ public class AlertMaker {
 		alert.showAndWait();
 	}
 
-	public static void showErrorMessage(Exception ex) {
+	public static void showErrorMessage(Throwable ex) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Error occured");
 		alert.setHeaderText("Error Occured");

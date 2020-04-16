@@ -6,6 +6,7 @@ import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.ui.callback.ControlCenterCallback;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.sun.management.OperatingSystemMXBean;
@@ -136,10 +137,9 @@ public class CommonUtil {
 	}
 
 	/**
-	 *
-	 * @param downloadUrl	下载链接
-	 * @param zipFilePath	下载的压缩文件名
-	 * @param outFileDir	解压文件夹
+	 * @param downloadUrl 下载链接
+	 * @param zipFilePath 下载的压缩文件名
+	 * @param outFileDir  解压文件夹
 	 * @return
 	 * @throws Exception
 	 */
@@ -159,9 +159,9 @@ public class CommonUtil {
 	}
 
 	public static <T> T requestControlCenter(String controlUrl,
-											String serviceId,
-											String body,
-											ControlCenterCallback<T> callback) throws Exception {
+											 String serviceId,
+											 String body,
+											 ControlCenterCallback<T> callback) throws Exception {
 		if (StringUtils.isBlank(controlUrl)) {
 			log.warn("控制中心地址为空");
 			return null;
@@ -184,5 +184,10 @@ public class CommonUtil {
 			log.warn(resultJson.getString("message"));
 		}
 		return null;
+	}
+
+	public static boolean isAdmin(String username) {
+		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
+		return sysConfig.getAdminUsername().equals(username);
 	}
 }

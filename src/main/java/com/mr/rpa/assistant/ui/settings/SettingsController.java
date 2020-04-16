@@ -115,7 +115,7 @@ public class SettingsController implements Initializable {
 				handleSaveMailAction(null);
 			} catch (Exception e) {
 				log.error(e);
-				AlertMaker.showSimpleAlert("保存通知配置", "操作失败，原因：" + e.getMessage());
+				AlertMaker.showErrorMessage(e);
 				return;
 			}
 		});
@@ -149,7 +149,7 @@ public class SettingsController implements Initializable {
 			}
 		} catch (Exception e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("测试连接", "连接失败，原因：" + e.getMessage());
+			AlertMaker.showErrorMessage(e);
 		}
 	}
 

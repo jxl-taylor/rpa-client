@@ -304,7 +304,7 @@ public class TaskAddController implements Initializable {
 			}
 		} catch (Throwable e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("输入检查", e.getMessage());
+			AlertMaker.showErrorMessage(e);
 			return false;
 		}
 
@@ -403,7 +403,7 @@ public class TaskAddController implements Initializable {
 				JobFactory.update(taskModel);
 			} catch (SchedulerException e) {
 				log.error(e);
-				AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed", "修改失败");
+				AlertMaker.showErrorMessage(e);
 				return;
 			}
 			taskService.updateUITask(task);

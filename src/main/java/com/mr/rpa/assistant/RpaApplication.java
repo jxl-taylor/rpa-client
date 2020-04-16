@@ -48,7 +48,7 @@ public class RpaApplication extends Application {
 							});
 				} catch (Throwable e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("用户查询", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 				}
 			}
 			if (retryVerifing != null || !retryVerifing) {

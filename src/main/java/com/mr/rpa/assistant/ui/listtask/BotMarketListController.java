@@ -129,7 +129,7 @@ public class BotMarketListController implements Initializable {
 					});
 		} catch (Throwable e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("BOT市场", e.getMessage());
+			AlertMaker.showErrorMessage(e);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class BotMarketListController implements Initializable {
 					operatingBox.getChildren().remove(downloadLink);
 				} catch (Exception e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("BOT市场下载", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 					downloadLink.setText("下载");
 					downloadLink.setDisable(false);
 					return;
@@ -246,7 +246,7 @@ public class BotMarketListController implements Initializable {
 							});
 				} catch (Throwable e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("BOT市场", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 				}
 			});
 			operatingBox = new HBox();

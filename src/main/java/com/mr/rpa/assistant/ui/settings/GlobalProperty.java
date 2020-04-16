@@ -19,6 +19,7 @@ import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.Pair;
 import com.mr.rpa.assistant.util.SystemContants;
 import de.schlichtherle.license.LicenseContent;
@@ -165,12 +166,6 @@ public class GlobalProperty {
 
 			JFXButton logoutBtn = new JFXButton("注销");
 			logoutBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
-//				BoxBlur blur = new BoxBlur(3, 3, 3);
-//				StackPane rootPane = getRootPane();
-//				rootPane.getChildren().get(0).setEffect(blur);
-//				rootPane.getChildren().get(0).setDisable(true);
-//				AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"),
-//						"登录", null);
 				AlertMaker.showMaterialDialog(getRootPane(),
 						getRootPane().getChildren().get(0),
 						loginController.getRootPane(), "登录", "", false);
@@ -182,6 +177,7 @@ public class GlobalProperty {
 				rootPane.getChildren().get(0).setEffect(null);
 			});
 			exitBtns = Lists.newArrayList(confirmBtn, logoutBtn, cancelBtn);
+			if (!CommonUtil.isAdmin(getCurrentUser().getUsername())) exitBtns.remove(0);
 		}
 		return exitBtns;
 	}

@@ -129,10 +129,11 @@ public class MyInfoController implements Initializable {
 		expireTime.setText(DateFormatUtils.format(licenseContent.getNotAfter(), "yyyy-MM-dd"));
 	}
 
-	public void initCurrentUser() {
-		com.mr.rpa.assistant.data.model.User currentUser = globalProperty.getCurrentUser();
-		userNick.setText(currentUser.getNick());
-		username.setText(currentUser.getUsername());
+	public void initCurrentUser(com.mr.rpa.assistant.data.model.User user) {
+		globalProperty.setCurrentUser(user);
+		userNick.setText(user.getNick());
+		username.setText(user.getUsername());
+		globalProperty.setTitle(user.getNick());
 	}
 
 	private void initCol() {
@@ -178,7 +179,7 @@ public class MyInfoController implements Initializable {
 	@FXML
 	private void loadAddUser(ActionEvent event) {
 		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader()
-				.getResource("assistant/ui/myinfo/add_user.fxml"), "添加任务", null);
+				.getResource("assistant/ui/myinfo/add_user.fxml"), "添加用户", null);
 		pair.getObject1().setOnCloseRequest((e) -> {
 			AssistantUtil.closeWinow(getClass().getClassLoader().getResource("assistant/ui/myinfo/add_user.fxml"));
 		});
@@ -223,7 +224,7 @@ public class MyInfoController implements Initializable {
 					queryUsers();
 				} catch (Exception e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("启用禁用", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 				}
 			});
 
@@ -232,7 +233,7 @@ public class MyInfoController implements Initializable {
 					deleteUser(getUsername());
 				} catch (Exception e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("删除用户", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 				}
 			});
 			updateLink.setOnAction(event -> {
@@ -241,7 +242,7 @@ public class MyInfoController implements Initializable {
 					updateUser(getUsername());
 				} catch (Throwable e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("修改用户", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 				}
 			});
 			operatingBox = new HBox();

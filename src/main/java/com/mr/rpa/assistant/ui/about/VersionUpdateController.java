@@ -103,7 +103,7 @@ public class VersionUpdateController implements Initializable {
 			}
 		} catch (Exception e) {
 			log.error(e);
-			AlertMaker.showSimpleAlert("失败", "恢复失败");
+			AlertMaker.showErrorMessage(e);
 			return;
 		}finally {
 			inputStream.close();
@@ -131,7 +131,7 @@ public class VersionUpdateController implements Initializable {
 				JobFactory.pauseAll();
 			} catch (SchedulerException e) {
 				log.error(e);
-				AlertMaker.showSimpleAlert("失败", "调度器停止失败");
+				AlertMaker.showErrorMessage(e);
 			}
 			System.exit(0);
 		});
@@ -181,7 +181,7 @@ public class VersionUpdateController implements Initializable {
 			needRestart = updateByCheckList(checkListProp, theUpdateDir, updateFileDir + File.separator + BAK_PATH, sysConfig.getBotRootDir());
 		} catch (Exception e) {
 			log.error(e);
-			AlertMaker.showSimpleAlert("失败", "更新失败, 原因：" + e.getMessage());
+			AlertMaker.showErrorMessage(e);
 			return;
 		}finally {
 			inputStream.close();

@@ -115,8 +115,7 @@ public class TaskLogListController implements Initializable {
 				loadLogData();
 			} catch (Exception e) {
 				log.error(e);
-				AlertMaker.showSimpleAlert("删除", "删除失败");
-				return;
+				AlertMaker.showErrorMessage(e);
 			}
 		});
 
@@ -151,7 +150,7 @@ public class TaskLogListController implements Initializable {
 			JobFactory.trigger(taskLog);
 		} catch (SchedulerException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("开启任务", "调度引擎开启任务失败.");
+			AlertMaker.showErrorMessage(e);
 			return;
 		}
 

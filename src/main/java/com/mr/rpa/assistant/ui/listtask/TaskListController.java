@@ -143,8 +143,7 @@ public class TaskListController implements Initializable {
 				loadLogData();
 			} catch (Exception e) {
 				log.error(e);
-				AlertMaker.showSimpleAlert("清空", selectedForDeletion.getName() + " 清空日志失败");
-				return;
+				AlertMaker.showErrorMessage(e);
 			}
 
 		});
@@ -179,7 +178,7 @@ public class TaskListController implements Initializable {
 				JobFactory.delete(taskService.queryTaskById(selectedForDeletion.getId()));
 			} catch (SchedulerException e) {
 				log.error(e);
-				AlertMaker.showSimpleAlert("失败", selectedForDeletion.getName() + " 不能删除");
+				AlertMaker.showErrorMessage(e);
 				return;
 			}
 			String taskFileDir = GlobalProperty.getInstance().getSysConfig().getTaskFilePath();
@@ -249,7 +248,7 @@ public class TaskListController implements Initializable {
 				startTask(task);
 			} catch (SchedulerException e) {
 				log.error(e);
-				AlertMaker.showErrorMessage("开启任务", "调度引擎开启任务失败.");
+				AlertMaker.showErrorMessage(e);
 				throw new RuntimeException(e);
 			}
 
@@ -290,7 +289,7 @@ public class TaskListController implements Initializable {
 				endTask(task);
 			} catch (SchedulerException e) {
 				log.error(e);
-				AlertMaker.showErrorMessage("停止任务", "调度引擎停止任务失败.");
+				AlertMaker.showErrorMessage(e);
 				throw new RuntimeException(e);
 			}
 			AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "停止任务", selectedTask.getId() + " 已停止");
@@ -331,7 +330,7 @@ public class TaskListController implements Initializable {
 			resumeTask(task);
 		} catch (SchedulerException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("恢复执行", "调度引擎恢复任务失败.");
+			AlertMaker.showErrorMessage(e);
 			return;
 		}
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "恢复执行", selectedTask.getName() + " 已恢复");
@@ -368,7 +367,7 @@ public class TaskListController implements Initializable {
 			pauseTask(task);
 		} catch (SchedulerException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("暂停执行", "调度引擎暂停任务失败.");
+			AlertMaker.showErrorMessage(e);
 			return;
 		}
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "暂停执行", selectedTask.getName() + " 已暂停 ");
@@ -401,7 +400,7 @@ public class TaskListController implements Initializable {
 			triggerByManual(task);
 		} catch (SchedulerException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("手动触发", selectedTask.getName() + " 触发成功");
+			AlertMaker.showErrorMessage(e);
 			return;
 		}
 		AlertMaker.showMaterialDialog(rootPane, contentPane, new ArrayList<>(), "手动触发", selectedTask.getName() + " 触发成功");
@@ -435,7 +434,7 @@ public class TaskListController implements Initializable {
 					Desktop.getDesktop().open(new File(resultPath));
 				} catch (IOException e) {
 					log.error(e);
-					AlertMaker.showErrorMessage("结果查看失败", e.getMessage());
+					AlertMaker.showErrorMessage(e);
 				}
 				return;
 			}
@@ -446,7 +445,7 @@ public class TaskListController implements Initializable {
 			Desktop.getDesktop().open(new File(sysConfig.getDefaultResultPath()));
 		} catch (IOException e) {
 			log.error(e);
-			AlertMaker.showErrorMessage("结果查看失败", e.getMessage());
+			AlertMaker.showErrorMessage(e);
 		}
 		return;
 
