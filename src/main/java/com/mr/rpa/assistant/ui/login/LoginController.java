@@ -110,15 +110,16 @@ public class LoginController implements Initializable {
 		User user = checkLogin();
 		if (user != null) {
 			if( globalProperty.getLoginController() == null){
-				loadMain();
 				if (saveChx.isSelected()) {
 					cachePwd();
 				} else {
 					FileUtil.del(CACHE_FILE);
 				}
 				globalProperty.setLoginController(this);
+				GlobalProperty.getInstance().setStartDate(new java.util.Date());
 			}
 			closeStage();
+			loadMain();
 			globalProperty.getMyInfoController().initCurrentUser(user);
 			globalProperty.getRootPane().getChildren().get(0).setEffect(null);
 			globalProperty.getRootPane().getChildren().get(0).setDisable(false);
@@ -191,14 +192,9 @@ public class LoginController implements Initializable {
 //            }
 //
 //        }).start();
-
-//			AlertMaker.showMaterialDialog(((StackPane) parent),
-//					((StackPane) parent).getChildren().get(0),
-//					GlobalProperty.getInstance().getExitBtns().subList(0,1), "License", "License无效", true);
-			GlobalProperty.getInstance().setStartDate(new java.util.Date());
 		} catch (Exception ex) {
 			log.error(ex);
-			AlertMaker.showErrorMessage("初始化环境", String.format("初始化环境失败， 原因：%s", ex.getMessage()));
+			AlertMaker.showErrorMessage(ex);
 		}
 	}
 }

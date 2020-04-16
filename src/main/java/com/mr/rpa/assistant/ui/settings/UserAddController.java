@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
+
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
@@ -48,6 +49,8 @@ public class UserAddController implements Initializable {
 	private StackPane rootPane;
 	@FXML
 	private AnchorPane mainContainer;
+	@FXML
+	private VBox vBox;
 
 	private SimpleBooleanProperty isInEditMode = new SimpleBooleanProperty();
 
@@ -57,10 +60,7 @@ public class UserAddController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		id.visibleProperty().bind(isInEditMode);
-		status.visibleProperty().bind(isInEditMode);
-		createTime.visibleProperty().bind(isInEditMode);
-		updateTime.visibleProperty().bind(isInEditMode);
+		vBox.getChildren().removeAll(id, status, createTime, updateTime);
 	}
 
 	@FXML
@@ -77,17 +77,17 @@ public class UserAddController implements Initializable {
 				false,
 				sysConfig.getAdminUsername(), sysConfig.getAdminUsername(),
 				new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
-		try{
+		try {
 			userService.addUser(user);
-			if(userService.getUserListByUsername(username.getText()).size() > 0) {
-				AlertMaker.showErrorMessage("保存用户", String.format("用户[%s]已存在",username.getText()));
+			if (userService.getUserListByUsername(username.getText()).size() > 0) {
+				AlertMaker.showErrorMessage("保存用户", String.format("用户[%s]已存在", username.getText()));
 				return;
 			}
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增用户", nick.getText() + " 已添加");
 			clearEntries();
 			MyInfoController.queryUsers();
 			closeWindow();
-		}catch (Exception e){
+		} catch (Exception e) {
 			log.error(e);
 			AlertMaker.showErrorMessage(e);
 		}
@@ -151,8 +151,10 @@ public class UserAddController implements Initializable {
 		status.setText(user.isLocking() ? "已禁用" : "已启用");
 		createTime.setText(DatePattern.NORM_DATETIME_FORMAT.format(user.getCreateTime().getTime()));
 		updateTime.setText(DatePattern.NORM_DATETIME_FORMAT.format(user.getUpdateTime().getTime()));
-		id.setEditable(false);
-
+		vBox.getChildren().add(0, id);
+		vBox.getChildren().add(7, status);
+		vBox.getChildren().add(8, createTime);
+		vBox.getChildren().add(9, updateTime);
 		isInEditMode.setValue(Boolean.TRUE);
 	}
 

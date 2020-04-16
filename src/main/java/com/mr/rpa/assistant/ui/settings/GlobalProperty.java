@@ -194,11 +194,11 @@ public class GlobalProperty {
 			globalProperty.getMyInfoController().refreshExpireTime();
 			int licExpireDays = getLicExpireDays();
 			if (licExpireDays < 31) {
-				this.title.set(String.format("REC(用户:%s) 距离到期日还有%s天", sysConfig.getAdminNick(), licExpireDays));
+				this.title.set(String.format("REC(用户:%s) 距离到期日还有%s天",
+						globalProperty.getCurrentUser().getNick(), licExpireDays));
 			} else {
-				this.title.set(String.format("REC(用户:%s) ", sysConfig.getAdminNick()));
+				this.title.set(String.format("REC(用户:%s) ", globalProperty.getCurrentUser().getNick()));
 			}
-
 		});
 
 	}
