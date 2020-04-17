@@ -158,6 +158,7 @@ public class MyInfoController implements Initializable {
 		globalProperty.setTitle(user.getNick());
 		globalProperty.getMainController().setRight();
 		globalProperty.getMyInfoController().setRight();
+		globalProperty.getTaskListController().loadData();
 	}
 
 	private void initCol() {

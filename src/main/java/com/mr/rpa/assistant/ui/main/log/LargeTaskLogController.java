@@ -84,9 +84,9 @@ public class LargeTaskLogController implements Initializable, ILogShow {
 	}
 
 	@Override
-	public void closeLog() {
+	public void refreshLog() {
 		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
-		logTextCollector.setLogAble(false);
-		logMenu.setText("开启日志");
+		logTextCollector.setLogAble(true);
+		logMenu.setText("停止日志");
 	}
 }

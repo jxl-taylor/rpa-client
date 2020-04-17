@@ -7,15 +7,18 @@ import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Created by feng on 2020/3/26 0026
@@ -108,15 +111,19 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public List<TaskListController.Task> loadUITaskList(String taskId, String taskName) {
 		taskList.clear();
+		if(GlobalProperty.getInstance().getCurrentUser() == null) return taskList;
+		String username = GlobalProperty.getInstance().getCurrentUser().getUsername();
 		AtomicInteger seq = new AtomicInteger(1);
-		taskMapper.queryTaskList(taskId, taskName, null).forEach(item ->
+		taskMapper.queryTaskList(taskId, taskName, null).forEach(item -> {
+			if (CommonUtil.isAdmin(username) || item.getCreateBy().equals(username)) {
 				taskList.add(new TaskListController.Task(seq.getAndIncrement(), item.getId(), item.getName(), item.getMainTask(),
 						item.getDesp(), item.getParams(), item.getNextTask(),
 						item.isRunning(), item.getStatus(), item.getCron(),
 						taskMapper.getTotalTaskLogCount(item.getId(), SystemContants.TASK_LOG_STATUS_SUCCESS),
 						taskMapper.getTotalTaskLogCount(item.getId(), SystemContants.TASK_LOG_STATUS_FAIL),
-						item.getCreateBy())
-				));
+						item.getCreateBy()));
+			}
+		});
 		return taskList;
 	}
 

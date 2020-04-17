@@ -81,7 +81,7 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 	}
 
 	@Override
-	public void closeLog() {
+	public void refreshLog() {
 		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
 		logTextCollector.setLogAble(false);
 		logMenu.setText("开启日志");

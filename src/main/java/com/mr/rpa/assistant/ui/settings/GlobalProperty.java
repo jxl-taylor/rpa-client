@@ -168,7 +168,7 @@ public class GlobalProperty {
 				AlertMaker.showMaterialDialog(getRootPane(),
 						getRootPane().getChildren().get(0),
 						loginController.getRootPane(), "登录", "", false);
-				globalProperty.getLogShows().forEach(ILogShow::closeLog);
+				globalProperty.getLogShows().forEach(ILogShow::refreshLog);
 			});
 
 			JFXButton cancelBtn = new JFXButton("取消");

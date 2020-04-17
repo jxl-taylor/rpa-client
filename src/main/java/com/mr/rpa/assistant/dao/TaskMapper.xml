@@ -65,7 +65,10 @@
             cron,
             download,
             version,
-            createTime
+            createBy,
+            updateBy,
+            createTime,
+            updateTime
             )
         VALUES(
             #{id},
@@ -79,7 +82,10 @@
             #{cron},
             #{download},
             #{version},
-            #{createTime, jdbcType=TIMESTAMP}
+            #{createBy},
+            #{updateBy},
+            #{createTime, jdbcType=TIMESTAMP},
+            #{updateTime, jdbcType=TIMESTAMP}
         )
     </insert>
 

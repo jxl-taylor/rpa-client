@@ -9,5 +9,5 @@ public interface ILogShow {
 
 	void setMenuName(String name);
 
-	void closeLog();
+	void refreshLog();
 }
