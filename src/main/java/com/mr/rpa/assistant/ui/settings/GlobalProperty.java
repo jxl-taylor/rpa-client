@@ -53,7 +53,6 @@ import java.io.Reader;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -169,6 +168,7 @@ public class GlobalProperty {
 				AlertMaker.showMaterialDialog(getRootPane(),
 						getRootPane().getChildren().get(0),
 						loginController.getRootPane(), "登录", "", false);
+				globalProperty.getLogShows().forEach(ILogShow::closeLog);
 			});
 
 			JFXButton cancelBtn = new JFXButton("取消");

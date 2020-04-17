@@ -26,6 +26,8 @@ public class Task {
 	private String cron;
 	private boolean download;
 	private String version;
+	private String createBy;
+	private String updateBy;
 	private Timestamp createTime;
 	private Timestamp updateTime;
 
@@ -34,25 +36,28 @@ public class Task {
 	}
 
 	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
-				Integer status, String cron) {
-		this(id, name, mainTask, desp, params, nextTask, running, status, cron, 0, 0);
+				Integer status, String cron, String createBy) {
+		this(id, name, mainTask, desp, params, nextTask, running, status, cron, 0, 0, createBy);
 	}
 
 	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
 				Integer status, String cron,
-				Integer successCount, Integer failCount) {
-		this(id, name, mainTask, desp, params, nextTask, running, status, cron, successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
-	}
-
-	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
-				Integer status, String cron,
-				Integer successCount, Integer failCount, Timestamp createTime, Timestamp updateTime){
-		this(id, name, mainTask, desp, params, nextTask, running, status, cron, false, "", successCount, failCount, null, new Timestamp(System.currentTimeMillis()));
+				Integer successCount, Integer failCount, String createBy) {
+		this(id, name, mainTask, desp, params, nextTask, running, status, cron, false, "",
+				successCount, failCount, createBy);
 	}
 
 	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
 				Integer status, String cron, Boolean download, String version,
-				Integer successCount, Integer failCount, Timestamp createTime, Timestamp updateTime) {
+				Integer successCount, Integer failCount, String createBy) {
+		this(id, name, mainTask, desp, params, nextTask, running, status,
+				cron, download, version, successCount, failCount, createBy, new Timestamp(System.currentTimeMillis()),
+				new Timestamp(System.currentTimeMillis()));
+	}
+
+	public Task(String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running,
+				Integer status, String cron, Boolean download, String version,
+				Integer successCount, Integer failCount, String createBy, Timestamp createTime, Timestamp updateTime) {
 		this.id = id;
 		this.name = name;
 		this.mainTask = mainTask;
@@ -66,6 +71,8 @@ public class Task {
 		this.cron = cron;
 		this.download = download;
 		this.version = version;
+		this.createBy = createBy;
+		this.updateBy = createBy;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}

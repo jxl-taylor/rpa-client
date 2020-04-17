@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.CommonUtil;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -73,6 +74,21 @@ public class MainController implements Initializable {
 
 		if (System.getProperty("os.name").contains("Win")) {
 			AlertMaker.showTrayMessage(String.format("您好 %s!", System.getProperty("user.name")), "感谢使用RPA机器人");
+		}
+	}
+
+	/**
+	 * 设置权限
+	 */
+	public void setRight() {
+		topMenu.getChildren().clear();
+		if (CommonUtil.isAdmin(globalProperty.getCurrentUser().getUsername())) {
+			topMenu.getChildren().addAll(taskShowButton, statisticShowButton, settingShowButton, myInfoShowButton);
+			hamburger.setVisible(true);
+		} else {
+			topMenu.getChildren().addAll(taskShowButton, myInfoShowButton);
+			hamburger.setVisible(false);
+
 		}
 	}
 

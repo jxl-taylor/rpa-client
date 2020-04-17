@@ -271,7 +271,7 @@ public class TaskAddController implements Initializable {
 		id.setText(UUID.randomUUID().toString().replace("-", ""));
 		Task task = new Task(id.getText(), name.getText(), mainTaskName, desp.getText(), converParamToString(), nextTask.getValue(),
 				false, SystemContants.TASK_RUNNING_STATUS_RUN, cron.getText(),
-				0, 0);
+				0, 0, globalProperty.getCurrentUser().getUsername());
 		taskService.insertNewTask(task);
 		AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增任务", taskName + " 已添加");
 		clearEntries();
@@ -376,7 +376,7 @@ public class TaskAddController implements Initializable {
 	private void handleEditOperation() {
 		TaskListController.Task task = new TaskListController.Task(0, id.getText(), name.getText(), mainTask.getValue(),
 				desp.getText(), converParamToString(),
-				nextTask.getValue(), false, 0, cron.getText(), 0, 0);
+				nextTask.getValue(), false, 0, cron.getText(), 0, 0, globalProperty.getCurrentUser().getUsername());
 		if (!checkInput(task.getName(), mainTask.getValue(), task.getCron(), task.getDesp())) return;
 
 		//将临时文件夹中的BOT脚本复制到真是文件夹中

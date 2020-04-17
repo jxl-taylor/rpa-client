@@ -7,9 +7,11 @@ import com.google.common.collect.Lists;
 import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
+import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.service.TaskLogService;
 import com.mr.rpa.assistant.service.TaskService;
+import com.mr.rpa.assistant.service.UserService;
 import com.mr.rpa.assistant.ui.addtask.TaskAddController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
@@ -60,6 +62,8 @@ public class TaskListController implements Initializable {
 	@FXML
 	private TableColumn<Task, Integer> failCountCol;
 	@FXML
+	private TableColumn<Task, String> createBy;
+	@FXML
 	private StackPane rootPane;
 	@FXML
 	private AnchorPane contentPane;
@@ -67,7 +71,7 @@ public class TaskListController implements Initializable {
 	private JFXButton cancelBtn;
 
 	private TaskService taskService = ServiceFactory.getService(TaskService.class);
-
+	private static UserService userService = ServiceFactory.getService(UserService.class);
 	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
 	@Override
@@ -114,6 +118,7 @@ public class TaskListController implements Initializable {
 		statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 		successCountCol.setCellValueFactory(new PropertyValueFactory<>("successCount"));
 		failCountCol.setCellValueFactory(new PropertyValueFactory<>("failCount"));
+		createBy.setCellValueFactory(new PropertyValueFactory<>("createBy"));
 	}
 
 	public void loadData() {
@@ -465,8 +470,11 @@ public class TaskListController implements Initializable {
 		private final SimpleStringProperty status;
 		private final SimpleIntegerProperty successCount;
 		private final SimpleIntegerProperty failCount;
+		private final SimpleStringProperty createBy;
 
-		public Task(int seq, String id, String name, String mainTask, String desp, String params, String nextTask, Boolean running, Integer status, String cron, Integer successCount, Integer failCount) {
+		public Task(int seq, String id, String name, String mainTask, String desp, String params,
+					String nextTask, Boolean running, Integer status, String cron,
+					Integer successCount, Integer failCount, String createBy) {
 			this.seq = new SimpleIntegerProperty(seq);
 			this.id = new SimpleStringProperty(id);
 			this.name = new SimpleStringProperty(name);
@@ -475,6 +483,13 @@ public class TaskListController implements Initializable {
 			this.desp = new SimpleStringProperty(desp);
 			this.params = new SimpleStringProperty(params);
 			this.nextTask = new SimpleStringProperty(nextTask);
+			List<User> users = userService.getUserListByUsername(createBy);
+			if(CollectionUtil.isEmpty(users)){
+				this.createBy = new SimpleStringProperty(createBy);
+			}else {
+				this.createBy = new SimpleStringProperty(users.get(0).getNick());
+			}
+
 			if (running) {
 				this.running = new SimpleStringProperty("已开启");
 			} else {
@@ -511,6 +526,10 @@ public class TaskListController implements Initializable {
 
 		public String getCron() {
 			return cron.get();
+		}
+
+		public String getCreateBy() {
+			return createBy.get();
 		}
 
 		public String getDesp() {

@@ -202,8 +202,7 @@ public class BotMarketListController implements Initializable {
 					Task task = new Task(UUID.randomUUID().toString().replace("-", ""),
 							getBotName(), getMainBot(), getDesp(), "[]", "",
 							false, SystemContants.TASK_RUNNING_STATUS_RUN, "0 0 0/1 * * ?",
-							true, getVersion(),
-							0, 0, null, new Timestamp(System.currentTimeMillis()));
+							true, getVersion(),0, 0, globalProperty.getCurrentUser().getUsername());
 					taskService.insertNewTask(task);
 					AlertMaker.showSimpleAlert("BOT下载", "下载完成");
 					TaskListController controller = GlobalProperty.getInstance().getTaskListController();

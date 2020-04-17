@@ -5,6 +5,7 @@ import com.jfoenix.controls.*;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.service.UserService;
 import com.mr.rpa.assistant.util.AssistantUtil;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.Pair;
 import de.schlichtherle.license.LicenseContent;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,10 +25,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -68,6 +71,17 @@ public class MyInfoController implements Initializable {
 	@FXML
 	private TableColumn<User, HBox> operatingCol;
 
+	@FXML
+	private VBox myInfoBox;
+	@FXML
+	private HBox uesrInfo1;
+	@FXML
+	private HBox uesrInfo2;
+	@FXML
+	private HBox userQuery;
+	@FXML
+	private HBox userTable;
+
 	private static JFXButton cancelBtn;
 
 	public static UserService userService = ServiceFactory.getService(UserService.class);
@@ -100,6 +114,14 @@ public class MyInfoController implements Initializable {
 		});
 	}
 
+	public void setRight() {
+		myInfoBox.getChildren().clear();
+		if (CommonUtil.isAdmin(globalProperty.getCurrentUser().getUsername())) {
+			myInfoBox.getChildren().addAll(uesrInfo1, uesrInfo2, userQuery, userTable);
+		} else {
+			myInfoBox.getChildren().addAll(uesrInfo1, uesrInfo2);
+		}
+	}
 
 	private static void showEditOption(User selectedForEdit) {
 		if (selectedForEdit == null) {
@@ -134,6 +156,8 @@ public class MyInfoController implements Initializable {
 		userNick.setText(user.getNick());
 		username.setText(user.getUsername());
 		globalProperty.setTitle(user.getNick());
+		globalProperty.getMainController().setRight();
+		globalProperty.getMyInfoController().setRight();
 	}
 
 	private void initCol() {

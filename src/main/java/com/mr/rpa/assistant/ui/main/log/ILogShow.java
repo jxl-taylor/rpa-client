@@ -8,4 +8,6 @@ public interface ILogShow {
 	void scrollText();
 
 	void setMenuName(String name);
+
+	void closeLog();
 }

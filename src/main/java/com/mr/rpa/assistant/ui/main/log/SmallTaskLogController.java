@@ -1,6 +1,5 @@
 package com.mr.rpa.assistant.ui.main.log;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.LogTextCollector;
@@ -11,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -31,6 +29,8 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 
 	@FXML
 	private MenuItem logMenu;
+
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -56,7 +56,6 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 
 	@FXML
 	private void stopLog(ActionEvent event) {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
 		if (logTextCollector.isLogAble()) {
 			logTextCollector.setLogAble(false);
@@ -77,6 +76,13 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 	@Override
 	public void setMenuName(String name) {
 		logMenu.setText(name);
+	}
+
+	@Override
+	public void closeLog() {
+		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
+		logTextCollector.setLogAble(false);
+		logMenu.setText("开启日志");
 	}
 
 }

@@ -3,8 +3,10 @@ package com.mr.rpa.assistant.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.mr.rpa.assistant.dao.TaskMapper;
 import com.mr.rpa.assistant.data.model.Task;
+import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.service.TaskService;
 import com.mr.rpa.assistant.ui.listtask.TaskListController;
+import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.util.SystemContants;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,6 +42,9 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public void updateTask(Task task) {
+		User user = GlobalProperty.getInstance().getCurrentUser();
+		task.setUpdateBy(user.getUsername());
+		task.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 		taskMapper.updateTask(task);
 	}
 
@@ -109,7 +114,8 @@ public class TaskServiceImpl implements TaskService {
 						item.getDesp(), item.getParams(), item.getNextTask(),
 						item.isRunning(), item.getStatus(), item.getCron(),
 						taskMapper.getTotalTaskLogCount(item.getId(), SystemContants.TASK_LOG_STATUS_SUCCESS),
-						taskMapper.getTotalTaskLogCount(item.getId(), SystemContants.TASK_LOG_STATUS_FAIL))
+						taskMapper.getTotalTaskLogCount(item.getId(), SystemContants.TASK_LOG_STATUS_FAIL),
+						item.getCreateBy())
 				));
 		return taskList;
 	}

@@ -32,6 +32,8 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 	@FXML
 	private MenuItem logMenu;
 
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
@@ -55,7 +57,6 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 
 	@FXML
 	private void stopLog(ActionEvent event) {
-		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
 		if (logTextCollector.isLogAble()) {
 			logTextCollector.setLogAble(false);
@@ -77,5 +78,12 @@ public class MediumTaskLogController implements Initializable, ILogShow {
 	@Override
 	public void setMenuName(String name) {
 		logMenu.setText(name);
+	}
+
+	@Override
+	public void closeLog() {
+		LogTextCollector logTextCollector = globalProperty.getLogTextCollector();
+		logTextCollector.setLogAble(false);
+		logMenu.setText("开启日志");
 	}
 }
