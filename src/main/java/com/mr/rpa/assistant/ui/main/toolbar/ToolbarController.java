@@ -78,7 +78,8 @@ public class ToolbarController implements Initializable {
 	private void exit(ActionEvent event) {
 		AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
 				globalProperty.getRootPane().getChildren().get(0),
-				GlobalProperty.getInstance().getExitBtns(), "注销/退出", "", false, false);
+				GlobalProperty.getInstance().getExitBtns(globalProperty.getCurrentUser().getUsername()),
+				"注销/退出", "", false, false);
 	}
 
 	@FXML
