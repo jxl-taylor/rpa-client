@@ -1,6 +1,7 @@
 package com.mr.rpa.assistant.ui.login;
 
 import cn.hutool.core.io.FileUtil;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -24,6 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
@@ -36,6 +38,8 @@ public class LoginController implements Initializable {
 
 	@FXML
 	private StackPane rootPane;
+	@FXML
+	private AnchorPane mainPane;
 
 	@FXML
 	private JFXTextField username;
@@ -45,6 +49,8 @@ public class LoginController implements Initializable {
 	private Hyperlink applyLink;
 	@FXML
 	private JFXCheckBox saveChx;
+	@FXML
+	private JFXButton exitButton;
 
 	private SysConfig sysConfig;
 
@@ -69,12 +75,7 @@ public class LoginController implements Initializable {
 			return;
 		}
 
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				password.requestFocus();
-			}
-		});
+		Platform.runLater(() -> password.requestFocus());
 
 	}
 
@@ -109,7 +110,7 @@ public class LoginController implements Initializable {
 	private void handleLoginButtonAction(ActionEvent event) {
 		User user = checkLogin();
 		if (user != null) {
-			if( globalProperty.getLoginController() == null){
+			if (globalProperty.getLoginController() == null) {
 				if (saveChx.isSelected()) {
 					cachePwd();
 				} else {
@@ -117,9 +118,10 @@ public class LoginController implements Initializable {
 				}
 				globalProperty.setLoginController(this);
 				GlobalProperty.getInstance().setStartDate(new java.util.Date());
+				exitButton.setDisable(true);
 			}
 			closeStage();
-			loadMain();
+			loadMain(user.getUsername());
 			globalProperty.getMyInfoController().initCurrentUser(user);
 			globalProperty.getRootPane().getChildren().get(0).setEffect(null);
 			globalProperty.getRootPane().getChildren().get(0).setDisable(false);
@@ -158,7 +160,7 @@ public class LoginController implements Initializable {
 		((Stage) rootPane.getScene().getWindow()).close();
 	}
 
-	private void loadMain() {
+	private void loadMain(String username) {
 		try {
 			Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/main/main.fxml"),
 					GlobalProperty.getInstance().getTitle().get(), null);
@@ -169,7 +171,7 @@ public class LoginController implements Initializable {
 			stage.setOnCloseRequest(e -> {
 				AlertMaker.showMaterialDialog(globalProperty.getRootPane(),
 						globalProperty.getRootPane().getChildren().get(0),
-						GlobalProperty.getInstance().getExitBtns(), "注销/退出", "", false, false);
+						GlobalProperty.getInstance().getExitBtns(username), "注销/退出", "", false, false);
 				e.consume();
 			});
 

@@ -84,10 +84,8 @@ public class MainController implements Initializable {
 		topMenu.getChildren().clear();
 		if (CommonUtil.isAdmin(globalProperty.getCurrentUser().getUsername())) {
 			topMenu.getChildren().addAll(taskShowButton, statisticShowButton, settingShowButton, myInfoShowButton);
-			hamburger.setVisible(true);
 		} else {
 			topMenu.getChildren().addAll(taskShowButton, myInfoShowButton);
-			hamburger.setVisible(false);
 
 		}
 	}

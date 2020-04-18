@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXButton;
 import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
+import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.Pair;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,18 +16,31 @@ import javafx.fxml.Initializable;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 public class ToolbarController implements Initializable {
 
     private GlobalProperty globalProperty = GlobalProperty.getInstance();
+    @FXML
+	private VBox toolVBox;
 	@FXML
-	private JFXButton loginButton;
+	private JFXButton registerBtn;
+	@FXML
+	private JFXButton setBtn;
+	@FXML
+	private JFXButton updateBtn;
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		// TODO
+		globalProperty.setToolbarController(this);
+	}
+
+	public void setRight() {
+		if(!CommonUtil.isAdmin(globalProperty.getCurrentUser().getUsername())){
+			toolVBox.getChildren().removeAll(registerBtn, setBtn, updateBtn);
+		}
 	}
 
 	@FXML

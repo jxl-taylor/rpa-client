@@ -83,6 +83,7 @@ public class HeartBeat implements Runnable {
 		jsonMap.put("freeMemory", CommonUtil.getFreeMemory());
 		jsonMap.put("totalMemory", CommonUtil.getTotalMemory());
 		jsonMap.put("freeDisk", CommonUtil.getFreeDisk());
+			jsonMap.put("taskAwaitNum", globalProperty.getInstance().getTaskQueue().size());
 		if (apiErrorPair != null) {
 			jsonMap.put("operaErrorCode", apiErrorPair.getObject1());
 			jsonMap.put("operaErrorMsg", apiErrorPair.getObject2());

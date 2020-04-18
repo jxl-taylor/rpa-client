@@ -18,6 +18,7 @@ import com.mr.rpa.assistant.ui.main.log.ILogShow;
 import com.mr.rpa.assistant.ui.main.log.TaskHistoryController;
 import com.mr.rpa.assistant.ui.main.statistic.StatisticController;
 import com.mr.rpa.assistant.ui.main.task.TaskBeanController;
+import com.mr.rpa.assistant.ui.main.toolbar.ToolbarController;
 import com.mr.rpa.assistant.util.AssistantUtil;
 import com.mr.rpa.assistant.util.CommonUtil;
 import com.mr.rpa.assistant.util.Pair;
@@ -118,6 +119,7 @@ public class GlobalProperty {
 	private MyInfoController myInfoController;
 	private TaskHistoryController taskHistoryController;
 	private TaskListController taskListController;
+	private ToolbarController toolbarController;
 
 	private List<ILogShow> logShows = Lists.newArrayList();
 
@@ -155,7 +157,7 @@ public class GlobalProperty {
 		this.title.set(String.format("REC(用户:%s)", username));
 	}
 
-	public List<JFXButton> getExitBtns() {
+	public List<JFXButton> getExitBtns(String username) {
 
 		if (exitBtns == null) {
 			JFXButton confirmBtn = new JFXButton("退出");
@@ -177,8 +179,8 @@ public class GlobalProperty {
 				rootPane.getChildren().get(0).setEffect(null);
 			});
 			exitBtns = Lists.newArrayList(confirmBtn, logoutBtn, cancelBtn);
-			if (!CommonUtil.isAdmin(getCurrentUser().getUsername())) exitBtns.remove(0);
 		}
+		if (!CommonUtil.isAdmin(username) && exitBtns.size() > 2) exitBtns.remove(0);
 		return exitBtns;
 	}
 

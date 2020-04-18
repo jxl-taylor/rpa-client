@@ -158,8 +158,10 @@ public class MyInfoController implements Initializable {
 		globalProperty.setTitle(user.getNick());
 		globalProperty.getMainController().setRight();
 		globalProperty.getMyInfoController().setRight();
+		globalProperty.getToolbarController().setRight();
 		globalProperty.getTaskListController().loadData();
 	}
+
 
 	private void initCol() {
 		seqCol.setCellValueFactory(new PropertyValueFactory<>("seq"));
