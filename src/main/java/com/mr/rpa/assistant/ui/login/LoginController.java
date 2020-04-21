@@ -68,6 +68,7 @@ public class LoginController implements Initializable {
 				String[] arr = cacheContent.split("=");
 				username.setText(arr[0]);
 				password.setText(arr[1]);
+				throw new Exception("test");
 			}
 		} catch (Throwable e) {
 			log.error(e);

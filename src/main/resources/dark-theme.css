@@ -36,17 +36,20 @@
 }
 
 .text-field {
-    -fx-text-fill: -fx-primarytext;
     -fx-font-size: 10pt;
     -jfx-focus-color: -fx-secondary;
     -fx-text-fill: derive(-fx-secondary, 20%);
 }
 
 .text-area {
-    -fx-text-fill: -fx-primarytext;
     -fx-font-size: 10pt;
     -jfx-focus-color: -fx-secondary;
     -fx-text-fill: #00FF00;
+    -fx-background-color: -fx-primary;
+}
+
+.text-area .content {
+    -fx-background-color: -fx-primary;
 }
 
 /*Login Screen Specific*/
@@ -509,11 +512,11 @@
 
 .hyperlink {
     -fx-border-width: 0;
-    -fx-font:-fx-blue
+    -fx-font: -fx-blue
 }
 
 .hyperlink:armed,
 .hyperlink:visited,
 .hyperlink:hover:armed {
-    -fx-text-fill:  -fx-secondary;
+    -fx-text-fill: -fx-secondary;
 }

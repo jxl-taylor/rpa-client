@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -51,8 +52,8 @@ public class AlertMaker {
 
 	public static void showErrorMessage(Throwable ex) {
 		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Error occured");
-		alert.setHeaderText("Error Occured");
+		alert.setTitle("错误");
+		alert.setHeaderText("发生未知系统异常");
 		alert.setContentText(ex.getLocalizedMessage());
 
 		StringWriter sw = new StringWriter();
@@ -60,12 +61,11 @@ public class AlertMaker {
 		ex.printStackTrace(pw);
 		String exceptionText = sw.toString();
 
-		Label label = new Label("The exception stacktrace was:");
+		Label label = new Label("详细错误信息：");
 
 		TextArea textArea = new TextArea(exceptionText);
 		textArea.setEditable(false);
 		textArea.setWrapText(true);
-
 		textArea.setMaxWidth(Double.MAX_VALUE);
 		textArea.setMaxHeight(Double.MAX_VALUE);
 		GridPane.setVgrow(textArea, Priority.ALWAYS);
@@ -176,8 +176,8 @@ public class AlertMaker {
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		AssistantUtil.setStageIcon(stage);
 
-		DialogPane dialogPane = alert.getDialogPane();
-		dialogPane.getStylesheets().add(AlertMaker.class.getResource("/dark-theme.css").toExternalForm());
-		dialogPane.getStyleClass().add("custom-alert");
+//		DialogPane dialogPane = alert.getDialogPane();
+//		dialogPane.getStylesheets().add(AlertMaker.class.getResource("/dark-theme.css").toExternalForm());
+//		dialogPane.getStyleClass().add("custom-alert");
 	}
 }
