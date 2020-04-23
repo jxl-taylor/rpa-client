@@ -78,7 +78,7 @@ public class AlertMaker {
 
 		alert.getDialogPane().setExpandableContent(expContent);
 
-		styleAlert(alert);
+//		styleAlert(alert);
 		alert.showAndWait();
 	}
 
@@ -176,8 +176,8 @@ public class AlertMaker {
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		AssistantUtil.setStageIcon(stage);
 
-//		DialogPane dialogPane = alert.getDialogPane();
-//		dialogPane.getStylesheets().add(AlertMaker.class.getResource("/dark-theme.css").toExternalForm());
-//		dialogPane.getStyleClass().add("custom-alert");
+		DialogPane dialogPane = alert.getDialogPane();
+		dialogPane.getStylesheets().add(AlertMaker.class.getResource("/dark-theme.css").toExternalForm());
+		dialogPane.getStyleClass().add("custom-alert");
 	}
 }
