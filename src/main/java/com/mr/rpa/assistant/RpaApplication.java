@@ -51,7 +51,7 @@ public class RpaApplication extends Application {
 					AlertMaker.showErrorMessage(e);
 				}
 			}
-			if (retryVerifing != null || !retryVerifing) {
+			if (retryVerifing != null && !retryVerifing) {
 				AlertMaker.showMaterialDialog(rootPane,
 						rootPane.getChildren().get(0),
 						GlobalProperty.getInstance().getExitBtns().subList(0, 1), "License", "License不可用", false);
