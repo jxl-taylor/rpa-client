@@ -37,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -180,7 +181,8 @@ public class GlobalProperty {
 			});
 			exitBtns = Lists.newArrayList(confirmBtn, logoutBtn, cancelBtn);
 		}
-		if (!CommonUtil.isAdmin(username) && exitBtns.size() > 2) exitBtns.remove(0);
+		if (StringUtils.isNotEmpty(username) && !CommonUtil.isAdmin(username) && exitBtns.size() > 2)
+			exitBtns.remove(0);
 		return exitBtns;
 	}
 

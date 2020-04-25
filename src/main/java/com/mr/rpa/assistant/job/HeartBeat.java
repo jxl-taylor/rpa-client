@@ -61,7 +61,7 @@ public class HeartBeat implements Runnable {
 
 	}
 
-	private void action() throws Throwable {
+	public void action() throws Throwable {
 		action(null);
 	}
 

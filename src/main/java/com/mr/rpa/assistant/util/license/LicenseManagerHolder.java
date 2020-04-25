@@ -82,8 +82,7 @@ public class LicenseManagerHolder {
 			licenseManager.install(new File(licPath));
 			System.out.println("客户端安装证书成功!");
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("客户端证书安装失败!");
+			System.err.println("客户端证书安装失败!,原因：" + e.getMessage());
 			return false;
 		}
 		return true;
@@ -101,8 +100,7 @@ public class LicenseManagerHolder {
 			GlobalProperty.getInstance().setLicenseContent(licenseContent);
 			System.out.println("客户端验证证书成功!");
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("客户端证书验证失效!");
+			System.err.println("客户端证书验证失效!,原因：" + e.getMessage());
 			return false;
 		}
 		return true;

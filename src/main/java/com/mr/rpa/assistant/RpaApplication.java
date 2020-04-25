@@ -2,6 +2,7 @@ package com.mr.rpa.assistant;
 
 import com.alibaba.fastjson.JSON;
 import com.mr.rpa.assistant.alert.AlertMaker;
+import com.mr.rpa.assistant.job.HeartBeat;
 import com.mr.rpa.assistant.job.JobFactory;
 import com.mr.rpa.assistant.ui.login.LoginController;
 import com.mr.rpa.assistant.ui.settings.GlobalProperty;
@@ -28,24 +29,17 @@ public class RpaApplication extends Application {
 		log.info("REC Client Starting...");
 		Pair<Stage, Object> pair = AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/login/login.fxml"),
 				"登录", null);
-		StackPane rootPane = ((LoginController)pair.getObject2()).getRootPane();
+		StackPane rootPane = ((LoginController) pair.getObject2()).getRootPane();
 		if (!LicenseManagerHolder.getLicenseManagerHolder().verifyInstall() || !LicenseManagerHolder.getLicenseManagerHolder().verifyCert()) {
 			//如果验证不通过，尝试从控制中心下载license 和公钥（如果第一次登录，直接下载30天的试用版license）
 			Boolean retryVerifing = false;
 			String controlUrl = GlobalProperty.getInstance().getSysConfig().getControlServer();
 			if (StringUtils.isNotBlank(controlUrl)) {
 				try {
-					retryVerifing = CommonUtil.requestControlCenter(controlUrl,
-							SystemContants.API_SERVICE_ID_QUERY_LIC_DOWNLOAD_URL,
-							JSON.toJSONString(new HashMap<String, String>()),
-							resultJson -> {
-								String licZipPath = System.getProperty("user.dir")
-										+ File.separator + CommonUtil.getLocalMac() + ".zip";
-								CommonUtil.downloadAndUnzip(resultJson.getString("licDownloadUrl"),
-										licZipPath, System.getProperty("user.dir"));
-								return LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
-										&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
-							});
+					HeartBeat heartBeat = new HeartBeat();
+					heartBeat.action(null);
+					retryVerifing = LicenseManagerHolder.getLicenseManagerHolder().verifyInstall()
+							&& LicenseManagerHolder.getLicenseManagerHolder().verifyCert();
 				} catch (Throwable e) {
 					log.error(e);
 					AlertMaker.showErrorMessage(e);
@@ -54,7 +48,7 @@ public class RpaApplication extends Application {
 			if (retryVerifing != null && !retryVerifing) {
 				AlertMaker.showMaterialDialog(rootPane,
 						rootPane.getChildren().get(0),
-						GlobalProperty.getInstance().getExitBtns().subList(0, 1), "License", "License不可用", false);
+						GlobalProperty.getInstance().getExitBtns(null).subList(0, 1), "License", "License不可用", false);
 
 			}
 		}
