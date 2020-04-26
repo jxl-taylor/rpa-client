@@ -114,12 +114,13 @@
 
 /*Hamburger Styling*/
 .jfx-hamburger-icon {
-    -fx-spacing: 7;
+    -fx-spacing: 3;
 }
 
 .jfx-hamburger-icon StackPane {
     -fx-background-color: -fx-secondary;
     -fx-background-radius: 5px;
+    -fx-max-width: 20px;
 }
 
 /*Toolbar buttons*/

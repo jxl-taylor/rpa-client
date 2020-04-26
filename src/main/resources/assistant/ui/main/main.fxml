@@ -27,7 +27,6 @@
                         <children>
                            <AnchorPane fx:id="taskPane">
                               <children>
-                                 <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true" styleClass="jfx-drawer" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  <AnchorPane fx:id="rootAnchorPane" prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
@@ -35,7 +34,7 @@
                                              <fx:include source="/assistant/ui/main/task/task_split.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                           </children>
                                        </AnchorPane>
-                                       <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="23.0"/>
+
                                     </children>
                                  </AnchorPane>
                               </children>
@@ -102,7 +101,8 @@
                      </StackPane>
                   </children>
                </VBox>
-
+               <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true"  maxWidth="100" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="30.0" />
+               <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="5.0"/>
             </AnchorPane>
          </children>
       </StackPane>
