@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import com.mr.rpa.assistant.job.HeartBeat;
 import com.mr.rpa.assistant.service.SysConfigService;
+import com.mr.rpa.assistant.util.SystemContants;
 import com.mr.rpa.assistant.util.email.EmailUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -122,8 +123,8 @@ public class SettingsController implements Initializable {
 		mailTab.setOnSelectionChanged((Event event) -> {
 			if (mailTab.isSelected()) {
 				initMailSetting();
-			}else {
-				if(!mailsaved)
+			} else {
+				if (!mailsaved)
 					AlertMaker.showMaterialDialog(rootPane,
 							rootPane.getChildren().get(0),
 							Lists.newArrayList(confirmBtn, cancelBtn), "通知配置",
@@ -156,7 +157,7 @@ public class SettingsController implements Initializable {
 	@FXML
 	private void handleSaveMailAction(ActionEvent event) {
 		String checkMsg = checkMailSave();
-		if(StringUtils.isNotBlank(checkMsg)) {
+		if (StringUtils.isNotBlank(checkMsg)) {
 			AlertMaker.showErrorMessage("保存", checkMsg);
 			return;
 		}
@@ -178,16 +179,16 @@ public class SettingsController implements Initializable {
 
 	private String checkMailSave() {
 		//邮件格式正则表达式
-		String mailRegex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
-		if(StringUtils.isBlank(mailServerName.getText())) return "SMTP主机不能为空";
-		if(StringUtils.isBlank(mailEmailAddress.getText())) return "管理员Email账号不能为空";
+		if (StringUtils.isBlank(mailServerName.getText())) return "SMTP主机不能为空";
+		if (StringUtils.isBlank(mailEmailAddress.getText())) return "管理员Email账号不能为空";
 //		if(!mailEmailAddress.getText().matches(mailRegex)) return "管理员Email账号格式不正确";
-		if(StringUtils.isBlank(mailEmailPassword.getText())) return "管理员Email密码不能为空";
-		if(StringUtils.isBlank(mailSmtpPort.getText())) return "SMTP端口号不能为空";
+		if (StringUtils.isBlank(mailEmailPassword.getText())) return "管理员Email密码不能为空";
+		if (StringUtils.isBlank(mailSmtpPort.getText())) return "SMTP端口号不能为空";
 		for (HBox hBox : toMailMap.values()) {
 			JFXTextField mailField = (JFXTextField) hBox.getChildren().get(0);
-			if(StringUtils.isBlank(mailField.getText())) return "收件人账号不能为空";
-			if(!mailField.getText().matches(mailRegex)) return String.format("收件人[%s]账号格式不正确", mailField.getText());
+			if (StringUtils.isBlank(mailField.getText())) return "收件人账号不能为空";
+			if (!mailField.getText().matches(SystemContants.MAIL_REGEX))
+				return String.format("收件人[%s]账号格式不正确", mailField.getText());
 		}
 		return null;
 	}
@@ -236,11 +237,11 @@ public class SettingsController implements Initializable {
 	@FXML
 	private void testMailAction(ActionEvent event) {
 		String checkMsg = checkMailSave();
-		if(StringUtils.isNotBlank(checkMsg)) {
+		if (StringUtils.isNotBlank(checkMsg)) {
 			AlertMaker.showSimpleAlert("邮件发送", checkMsg);
 			return;
 		}
-		if(toMailMap.size() == 0){
+		if (toMailMap.size() == 0) {
 			AlertMaker.showSimpleAlert("邮件发送", "收件人不能为空!");
 			return;
 		}
@@ -248,7 +249,7 @@ public class SettingsController implements Initializable {
 				Integer.parseInt(mailSmtpPort.getText()),
 				mailEmailAddress.getText(), mailEmailPassword.getText(), mailSslCheckbox.isSelected());
 		EmailUtil.sendTestMail(mailServerInfo, StringUtils.join(toMailMap.values().stream()
-				.map(item -> ((JFXTextField)item.getChildren().get(0)).getText())
+				.map(item -> ((JFXTextField) item.getChildren().get(0)).getText())
 				.collect(Collectors.toSet()), ","));
 	}
 
@@ -319,7 +320,7 @@ public class SettingsController implements Initializable {
 		mailEmailAddress.setText(sysConfig.getMailEmailAddress());
 		mailEmailPassword.setText(sysConfig.getMailEmailPassword());
 		mailSslCheckbox.setSelected(sysConfig.getMailSslCheckbox());
-		if(StringUtils.isNotBlank(sysConfig.getToMails())){
+		if (StringUtils.isNotBlank(sysConfig.getToMails())) {
 			String[] toMailArray = StringUtils.split(sysConfig.getToMails(), ",");
 			for (String mail : toMailArray) {
 				doAddToMail(mail);

@@ -160,6 +160,7 @@ public class MyInfoController implements Initializable {
 		globalProperty.getMyInfoController().setRight();
 		globalProperty.getToolbarController().setRight();
 		globalProperty.getTaskListController().loadData();
+		globalProperty.getExitBtns(user.getUsername());
 	}
 
 

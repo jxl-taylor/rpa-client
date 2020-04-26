@@ -285,6 +285,7 @@ public class TaskAddController implements Initializable {
 					"输入有误", "bot名称在系统中已存在，请重新输入.");
 			return false;
 		}
+		if(globalProperty.isDebug()) return true;
 		SysConfig sysConfig = GlobalProperty.getInstance().getSysConfig();
 		Map<String, String> jsonMap = Maps.newHashMap();
 		jsonMap.put("botName", taskName);

@@ -7,6 +7,7 @@ import com.mr.rpa.assistant.alert.AlertMaker;
 import com.mr.rpa.assistant.data.model.SysConfig;
 import com.mr.rpa.assistant.data.model.User;
 import com.mr.rpa.assistant.service.UserService;
+import com.mr.rpa.assistant.util.SystemContants;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -78,14 +79,14 @@ public class UserAddController implements Initializable {
 				sysConfig.getAdminUsername(), sysConfig.getAdminUsername(),
 				new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
 		try {
-			userService.addUser(user);
 			if (userService.getUserListByUsername(username.getText()).size() > 0) {
 				AlertMaker.showErrorMessage("保存用户", String.format("用户[%s]已存在", username.getText()));
 				return;
 			}
-			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "新增用户", nick.getText() + " 已添加");
+			userService.addUser(user);
 			clearEntries();
 			MyInfoController.queryUsers();
+			AlertMaker.showSimpleAlert("新增用户", "新增成功.");
 			closeWindow();
 		} catch (Exception e) {
 			log.error(e);
@@ -119,8 +120,8 @@ public class UserAddController implements Initializable {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "电话与邮箱不能同时为空.");
 			return false;
 		}
-		String mailRegex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
-		if (StringUtils.isNotEmpty(mail.getText()) && !mail.getText().matches(mailRegex)) {
+
+		if (StringUtils.isNotEmpty(mail.getText()) && !mail.getText().matches(SystemContants.MAIL_REGEX)) {
 			AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "输入有误", "邮箱格式不正确.");
 			mail.getStyleClass().add("wrong-credentials");
 			return false;

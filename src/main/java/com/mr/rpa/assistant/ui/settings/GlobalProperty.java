@@ -1,5 +1,6 @@
 package com.mr.rpa.assistant.ui.settings;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
@@ -181,9 +182,10 @@ public class GlobalProperty {
 			});
 			exitBtns = Lists.newArrayList(confirmBtn, logoutBtn, cancelBtn);
 		}
+		List<JFXButton> sExitBtns = Lists.newArrayList(exitBtns);
 		if (StringUtils.isNotEmpty(username) && !CommonUtil.isAdmin(username) && exitBtns.size() > 2)
-			exitBtns.remove(0);
-		return exitBtns;
+			sExitBtns.remove(0);
+		return sExitBtns;
 	}
 
 	public SysConfig getSysConfig() {

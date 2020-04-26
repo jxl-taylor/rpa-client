@@ -6,6 +6,7 @@ package com.mr.rpa.assistant.util;
 public class SystemContants {
 
 	public static final String LIC_KEY_PWD = "7#MG;wBX(%O`]HN0<k1SZ`TN:T?l/i?h?m";
+	public static final String MAIL_REGEX = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
 
 	public static final long HEARTBEAT_INTERVAL = 15 * 1000;
 	public static final String API_SUCCESS = "1";
