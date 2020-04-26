@@ -74,7 +74,7 @@
             #{id},
             #{name},
             #{mainTask},
-            #{desp},
+            #{desp,jdbcType=VARCHAR},
             #{params},
             #{nextTask,jdbcType=VARCHAR},
             #{running},
@@ -82,8 +82,8 @@
             #{cron},
             #{download},
             #{version},
-            #{createBy},
-            #{updateBy},
+            #{createBy,jdbcType=VARCHAR},
+            #{updateBy,jdbcType=VARCHAR},
             #{createTime, jdbcType=TIMESTAMP},
             #{updateTime, jdbcType=TIMESTAMP}
         )

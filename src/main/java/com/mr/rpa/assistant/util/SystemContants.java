@@ -26,11 +26,10 @@ public class SystemContants {
 	 * api serviceId
 	 */
 	public static final String API_SERVICE_ID_LIC_DOWNLOAD = "LIC_DOWNLOAD";
-	public static final String API_SERVICE_ID_QUERY_LIC_DOWNLOAD_URL = "QUERY_LIC_DOWNLOAD_URL";
 	public static final String API_SERVICE_ID_REGISTER = "REGISTER";
 	public static final String API_SERVICE_ID_REGISTER_QUERY = "REGISTER_QUERY";
 	public static final String API_SERVICE_ID_HEARTBEAT = "HEARTBEAT";
-	public static final String API_SERVICE_ID_BOT_MARKET_QUERY = "BOT_MARKET_QUERY";
+	public static final String API_SERVICE_ID_BOT_MARKET_QUERY = "BOT_QUERY";
 	public static final String API_SERVICE_ID_BOT_DOWNLOAD = "BOT_DOWNLOAD";
 
 
