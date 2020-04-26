@@ -54,6 +54,7 @@ public class SystemContants {
 	public static final String UPDATE_CHECK_LIST_TYPE_FILE = "file";
 	public static final String UPDATE_CHECK_LIST_TYPE_DIR = "dir";
 
+	public static final String TASK_SUFFIX_JBOT = "jbot";
 	public static final String TASK_SUFFIX_KJB = "kjb";
 	public static final String TASK_SUFFIX_KTR = "ktr";
 

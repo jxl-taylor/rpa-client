@@ -20,9 +20,9 @@ public class Task {
 	//是否启动 已开启|未开启
 	private boolean running;
 	//运行状态 1:运行中 | 0:暂停中
-	private Integer status;
-	private Integer successCount;
-	private Integer failCount;
+	private int status;
+	private int successCount;
+	private int failCount;
 	private String cron;
 	private boolean download;
 	private String version;

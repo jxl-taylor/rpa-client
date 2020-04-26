@@ -430,8 +430,8 @@ public class TaskAddController implements Initializable {
 		);
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("所有任务", "*.*"),
-				new FileChooser.ExtensionFilter(SystemContants.TASK_SUFFIX_KJB,
-						"*." + SystemContants.TASK_SUFFIX_KJB),
+				new FileChooser.ExtensionFilter(SystemContants.TASK_SUFFIX_JBOT,
+						"*." + SystemContants.TASK_SUFFIX_JBOT),
 				new FileChooser.ExtensionFilter(SystemContants.TASK_SUFFIX_KTR,
 						"*." + SystemContants.TASK_SUFFIX_KTR)
 		);

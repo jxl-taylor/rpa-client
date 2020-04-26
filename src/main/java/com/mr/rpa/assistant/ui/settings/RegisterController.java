@@ -96,7 +96,7 @@ public class RegisterController implements Initializable {
 						companyAddress.setText(resultJson.getString("companyAddress"));
 						applicant.setText(resultJson.getString("applicant"));
 						applyPhone1.setText(resultJson.getString("applyPhone1"));
-						applyPhone2.setText(resultJson.getString("companyName"));
+						applyPhone2.setText(resultJson.getString("applyPhone2"));
 						applyMail.setText(resultJson.getString("applyMail"));
 						return "";
 					});

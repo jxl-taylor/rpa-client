@@ -104,6 +104,9 @@ public class HeartBeat implements Runnable {
 			if (errorPair != null) {
 				taskMap.put("operaErrorMsg", errorPair.getObject1());
 				taskMap.put("operaErrorMsg", errorPair.getObject2());
+			}else{
+				taskMap.put("operaErrorMsg", "");
+				taskMap.put("operaErrorMsg", "");
 			}
 			botContentList.add(taskMap);
 		});

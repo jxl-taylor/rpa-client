@@ -23,11 +23,11 @@
         UPDATE TASK SET
             NAME=#{name},
             MAINTASK=#{mainTask},
-            CRON=#{cron},
+            CRON=#{cron,jdbcType=VARCHAR},
             DOWNLOAD=#{download},
             VERSION=#{version},
-            DESP=#{desp} ,
-            PARAMS=#{params},
+            DESP=#{desp,jdbcType=VARCHAR},
+            PARAMS=#{params,jdbcType=VARCHAR},
             NEXTTASK=#{nextTask,jdbcType=VARCHAR},
             updateTime=#{updateTime,jdbcType=VARCHAR}
         WHERE ID=#{id}
@@ -75,11 +75,11 @@
             #{name},
             #{mainTask},
             #{desp,jdbcType=VARCHAR},
-            #{params},
+            #{params,jdbcType=VARCHAR},
             #{nextTask,jdbcType=VARCHAR},
             #{running},
             #{status},
-            #{cron},
+            #{cron,jdbcType=VARCHAR},
             #{download},
             #{version},
             #{createBy,jdbcType=VARCHAR},
