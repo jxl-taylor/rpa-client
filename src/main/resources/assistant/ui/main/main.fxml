@@ -20,7 +20,6 @@
                      <HBox fx:id="topMenu" alignment="TOP_RIGHT" style="-fx-background-color: derive(#2A2E37, 10%)">
                         <JFXButton fx:id="taskShowButton" prefWidth="100.0" styleClass="top-menu-button" text="BOT中心"/>
                         <JFXButton fx:id="statisticShowButton" prefWidth="100.0" styleClass="top-menu-button" text="统计中心"/>
-                        <JFXButton fx:id="settingShowButton" prefWidth="100.0" styleClass="top-menu-button" text="设置中心"/>
                         <JFXButton fx:id="myInfoShowButton" prefWidth="100.0" styleClass="top-menu-button" text="用户中心"/>
                      </HBox>
                      <StackPane>
@@ -35,15 +34,6 @@
                                           </children>
                                        </AnchorPane>
 
-                                    </children>
-                                 </AnchorPane>
-                              </children>
-                           </AnchorPane>
-                           <AnchorPane fx:id="settingPane">
-                              <children>
-                                 <AnchorPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <children>
-                                       <fx:include source="/assistant/ui/settings/settings.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                  </AnchorPane>
                               </children>
@@ -102,7 +92,7 @@
                   </children>
                </VBox>
                <JFXDrawer fx:id="drawer" defaultDrawerSize="100.0" resizableOnDrag="true" resizeContent="true"  maxWidth="100" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="30.0" />
-               <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="5.0"/>
+               <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="7.0"/>
             </AnchorPane>
          </children>
       </StackPane>

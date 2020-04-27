@@ -32,8 +32,6 @@ public class MainController implements Initializable {
 	@FXML
 	private AnchorPane taskPane;
 	@FXML
-	private AnchorPane settingPane;
-	@FXML
 	private AnchorPane myInfoPane;
 	@FXML
 	private AnchorPane statisticPane;
@@ -47,9 +45,6 @@ public class MainController implements Initializable {
 	private HBox topMenu;
 	@FXML
 	private JFXButton taskShowButton;
-
-	@FXML
-	private JFXButton settingShowButton;
 
 	@FXML
 	private JFXButton myInfoShowButton;
@@ -83,7 +78,7 @@ public class MainController implements Initializable {
 	public void setRight() {
 		topMenu.getChildren().clear();
 		if (CommonUtil.isAdmin(globalProperty.getCurrentUser().getUsername())) {
-			topMenu.getChildren().addAll(taskShowButton, statisticShowButton, settingShowButton, myInfoShowButton);
+			topMenu.getChildren().addAll(taskShowButton, statisticShowButton, myInfoShowButton);
 		} else {
 			topMenu.getChildren().addAll(taskShowButton, myInfoShowButton);
 
@@ -92,7 +87,6 @@ public class MainController implements Initializable {
 
 	private void initShowButtonAction() {
 		taskPane.visibleProperty().bind(globalProperty.getTaskPaneVisible());
-		settingPane.visibleProperty().bind(globalProperty.getSettingPaneVisible());
 		myInfoPane.visibleProperty().bind(globalProperty.getMyInfoPaneVisible());
 		statisticPane.visibleProperty().bind(globalProperty.getStatisticPaneVisible());
 		taskHistoryPane.visibleProperty().bind(globalProperty.getTaskHistoryPaneVisible());
@@ -101,21 +95,12 @@ public class MainController implements Initializable {
 		taskShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			if (!globalProperty.getTaskPaneVisible().get()) globalProperty.getSelectedTaskLogId().set("");
 			globalProperty.getTaskPaneVisible().setValue(true);
-			globalProperty.getSettingPaneVisible().setValue(false);
-			globalProperty.getMyInfoPaneVisible().setValue(false);
-			globalProperty.getStatisticPaneVisible().setValue(false);
-			recoverPane();
-		});
-		settingShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
-			globalProperty.getTaskPaneVisible().setValue(false);
-			globalProperty.getSettingPaneVisible().setValue(true);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
 			globalProperty.getStatisticPaneVisible().setValue(false);
 			recoverPane();
 		});
 		myInfoShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
-			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(true);
 			globalProperty.getStatisticPaneVisible().setValue(false);
 			recoverPane();
@@ -123,7 +108,6 @@ public class MainController implements Initializable {
 		});
 		statisticShowButton.addEventHandler(MouseEvent.MOUSE_CLICKED, (Event event) -> {
 			globalProperty.getTaskPaneVisible().setValue(false);
-			globalProperty.getSettingPaneVisible().setValue(false);
 			globalProperty.getMyInfoPaneVisible().setValue(false);
 			globalProperty.getStatisticPaneVisible().setValue(true);
 			globalProperty.getStatisticController().refreshGraphs();

@@ -109,7 +109,7 @@ public class SettingsController implements Initializable {
 	}
 
 	private void initComponents() {
-		settingTabPane.tabMinWidthProperty().bind(settingTabPane.widthProperty().divide(settingTabPane.getTabs().size()).subtract(15));
+		settingTabPane.tabMinWidthProperty().bind(settingTabPane.widthProperty().divide(settingTabPane.getTabs().size()).subtract(5));
 		JFXButton confirmBtn = new JFXButton("确定");
 		confirmBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
 			try {

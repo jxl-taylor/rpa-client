@@ -105,7 +105,6 @@ public class GlobalProperty {
 
 	//右角菜单显示控制
 	private SimpleBooleanProperty taskPaneVisible = new SimpleBooleanProperty(true);
-	private SimpleBooleanProperty settingPaneVisible = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty myInfoPaneVisible = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty statisticPaneVisible = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty taskHistoryPaneVisible = new SimpleBooleanProperty(false);

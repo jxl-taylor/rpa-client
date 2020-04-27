@@ -89,9 +89,7 @@ public class ToolbarController implements Initializable {
 
 	@FXML
 	private void loadSettings(ActionEvent event) {
-		globalProperty.getTaskPaneVisible().setValue(false);
-		globalProperty.getSettingPaneVisible().setValue(true);
-		globalProperty.getMyInfoPaneVisible().setValue(false);
+		AssistantUtil.loadWindow(getClass().getClassLoader().getResource("assistant/ui/settings/settings.fxml"), "设置", null);
 	}
 
 }
