@@ -126,69 +126,20 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="500.0">
                      <children>
-                        <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox spacing="20.0" alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <JFXTextField fx:id="dbPath" labelFloat="true" promptText="数据库">
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
                                  </VBox.margin>
                               </JFXTextField>
-                              <HBox alignment="CENTER" prefHeight="43.0" prefWidth="512.0" spacing="25.0">
-                                 <children>
-
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </HBox>
+                              <JFXButton onAction="#handleDatabaseExportAction" prefWidth="100" text="导出数据库" />
+                              <JFXSpinner fx:id="progressSpinner" layoutX="268.0" layoutY="207.0" visible="false" />
                            </children>
                            <padding>
                               <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                            </padding>
                         </VBox>
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-            <Tab closable="false" styleClass="tab-main" text="预警">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="500.0">
-                     <children>
-                        <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <JFXTextField fx:id="miniteErrorLimit" labelFloat="true" promptText="每分钟错误数阈值">
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <JFXTextField fx:id="runningLimit" labelFloat="true" promptText="运行中任务数阈值">
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="25.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <HBox alignment="CENTER" prefHeight="43.0" prefWidth="512.0" spacing="25.0">
-                                 <children>
-                                    <JFXButton onAction="#handleSaveAlertAction" prefHeight="43.0" prefWidth="183.0" text="保存" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                           </padding>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-            <Tab closable="false" styleClass="tab-main" text="导出">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="1000.0">
-                     <children>
-                        <JFXButton layoutX="200.0" layoutY="129.0" onAction="#handleDatabaseExportAction" prefHeight="60.0" prefWidth="185.0" text="导出数据库" />
-                        <JFXSpinner fx:id="progressSpinner" layoutX="268.0" layoutY="207.0" visible="false" />
                      </children>
                   </AnchorPane>
                </content>

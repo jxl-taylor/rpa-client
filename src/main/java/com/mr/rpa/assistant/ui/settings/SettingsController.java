@@ -70,10 +70,10 @@ public class SettingsController implements Initializable {
 	private JFXTextField connectStatus;
 	@FXML
 	private JFXTextField dbPath;
-	@FXML
-	private JFXTextField miniteErrorLimit;
-	@FXML
-	private JFXTextField runningLimit;
+//	@FXML
+//	private JFXTextField miniteErrorLimit;
+//	@FXML
+//	private JFXTextField runningLimit;
 	@FXML
 	private JFXSpinner progressSpinner;
 	@FXML
@@ -267,13 +267,13 @@ public class SettingsController implements Initializable {
 		initData();
 	}
 
-	@FXML
-	private void handleSaveAlertAction(ActionEvent event) {
-		sysConfig.setMiniteErrorLimit(Integer.parseInt(miniteErrorLimit.getText()));
-		sysConfig.setRunningLimit(Integer.parseInt(runningLimit.getText()));
-		sysConfigService.update();
-		AlertMaker.showSimpleAlert("保存", "预警配置修改成功");
-	}
+//	@FXML
+//	private void handleSaveAlertAction(ActionEvent event) {
+//		sysConfig.setMiniteErrorLimit(Integer.parseInt(miniteErrorLimit.getText()));
+//		sysConfig.setRunningLimit(Integer.parseInt(runningLimit.getText()));
+//		sysConfigService.update();
+//		AlertMaker.showSimpleAlert("保存", "预警配置修改成功");
+//	}
 
 
 	@FXML
@@ -307,8 +307,8 @@ public class SettingsController implements Initializable {
 		dbPath.setText(sysConfig.getDbPath());
 		dbPath.setEditable(false);
 
-		miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
-		runningLimit.setText(sysConfig.getRunningLimit().toString());
+//		miniteErrorLimit.setText(sysConfig.getMiniteErrorLimit().toString());
+//		runningLimit.setText(sysConfig.getRunningLimit().toString());
 	}
 
 	private void initMailSetting() {

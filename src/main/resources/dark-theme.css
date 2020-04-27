@@ -24,8 +24,8 @@
     -fx-text-fill: -fx-primarytext;
     -fx-background-color: -fx-primary;
     -fx-border-color: -fx-secondary;
-    -fx-border-radius: 3px;
-    -fx-background-radius: 3px;
+    -fx-border-radius: 1px;
+    -fx-background-radius: 1px;
     -fx-font-size: 10pt;
 }
 
