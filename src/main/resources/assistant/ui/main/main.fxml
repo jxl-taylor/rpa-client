@@ -101,7 +101,7 @@
                      </StackPane>
                   </children>
                </VBox>
-               <JFXDrawer fx:id="drawer" defaultDrawerSize="150.0" resizableOnDrag="true" resizeContent="true"  maxWidth="100" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="30.0" />
+               <JFXDrawer fx:id="drawer" defaultDrawerSize="100.0" resizableOnDrag="true" resizeContent="true"  maxWidth="100" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="30.0" />
                <JFXHamburger fx:id="hamburger" styleClass="jfx-hamburger-icon" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="5.0"/>
             </AnchorPane>
          </children>

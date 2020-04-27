@@ -4,53 +4,53 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="toolVBox" prefHeight="445.0" prefWidth="154.0" stylesheets="@/dark-theme.css"
+<VBox fx:id="toolVBox" prefHeight="445.0" prefWidth="100.0" stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mr.rpa.assistant.ui.main.toolbar.ToolbarController">
     <children>
         <JFXButton fx:id="registerBtn" contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadRegister"
-                   prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="用户注册" textAlignment="CENTER">
+                   prefHeight="400.0" prefWidth="100.0" styleClass="toolbar-button" text="用户注册" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="USER_PLUS" size="25"/>
+                <FontAwesomeIconView glyphName="USER_PLUS" size="17"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadAddTask"
-                   prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="添加BOT" textAlignment="CENTER">
+                   prefHeight="400.0" prefWidth="100.0" styleClass="toolbar-button" text="添加BOT" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="TASKS" size="25"/>
+                <FontAwesomeIconView glyphName="TASKS" size="17"/>
             </graphic>
         </JFXButton>
         <JFXButton fx:id="setBtn" contentDisplay="TOP" layoutX="10.0" layoutY="223.0" mnemonicParsing="false" onAction="#loadSettings"
-                   prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="设置" textAlignment="CENTER">
+                   prefHeight="400.0" prefWidth="100.0" styleClass="toolbar-button" text="设置" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="COG" size="25"/>
+                <FontAwesomeIconView glyphName="COG" size="17"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="81.0" mnemonicParsing="false" onAction="#LoadAboutUs"
-                   prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button" text="关于我们" textAlignment="CENTER">
+                   prefHeight="400.0" prefWidth="100.0" styleClass="toolbar-button" text="关于我们" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="CHILD" size="25"/>
+                <FontAwesomeIconView glyphName="CHILD" size="17"/>
             </graphic>
         </JFXButton>
         <JFXButton fx:id="updateBtn" contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
-                   onAction="#loadUpdate" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
+                   onAction="#loadUpdate" prefHeight="400.0" prefWidth="100.0" styleClass="toolbar-button"
                    text="更新" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="GLOBE" size="25"/>
+                <FontAwesomeIconView glyphName="GLOBE" size="17"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
                    onAction="#loadBotMarket" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
                    text="BOT市场" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="SHOPPING_BASKET" size="25"/>
+                <FontAwesomeIconView glyphName="SHOPPING_BASKET" size="17"/>
             </graphic>
         </JFXButton>
         <JFXButton contentDisplay="TOP" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
-                   onAction="#exit" prefHeight="400.0" prefWidth="160.0" styleClass="toolbar-button"
+                   onAction="#exit" prefHeight="400.0" prefWidth="100.0" styleClass="toolbar-button"
                    text="退出/注销" textAlignment="CENTER">
             <graphic>
-                <FontAwesomeIconView glyphName="WINDOW_CLOSE" size="25"/>
+                <FontAwesomeIconView glyphName="WINDOW_CLOSE" size="17"/>
             </graphic>
         </JFXButton>
     </children>
