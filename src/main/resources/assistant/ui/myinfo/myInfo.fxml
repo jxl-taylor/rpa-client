@@ -68,14 +68,26 @@
 
       <HBox fx:id="userQuery" alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
          <children>
-            <JFXTextField fx:id="usernameQuery" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadUsers" prefHeight="32.0" prefWidth="274.0" promptText="用户名"/>
-            <JFXTextField fx:id="nickQuery" labelFloat="true" maxWidth="274.0" minWidth="274.0" onAction="#loadUsers" prefHeight="32.0" prefWidth="274.0" promptText="昵称"/>
-            <JFXButton onAction="#loadUsers" prefHeight="32.0" prefWidth="90.0" text="查询" />
-            <JFXButton onAction="#clearSearch" prefHeight="32.0" prefWidth="90.0" text="清空" />
-            <JFXButton onAction="#loadAddUser" prefHeight="32.0" prefWidth="90.0" text="新建用户"/>
+            <JFXTextField fx:id="usernameQuery" labelFloat="true" maxWidth="224.0" minWidth="224.0" onAction="#loadUsers" promptText="用户名"/>
+            <VBox alignment="CENTER_LEFT" prefWidth="500.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="0">
+                     <children>
+                        <JFXTextField fx:id="nickQuery" labelFloat="true" maxWidth="224.0" minWidth="224.0" onAction="#loadUsers" promptText="昵称"/>
+                        <JFXButton onAction="#loadUsers" text="查询" />
+                        <JFXButton onAction="#clearSearch" text="清空" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <JFXButton onAction="#loadAddUser" text="＋新建用户"/>
+               </children>
+            </VBox>
          </children>
          <VBox.margin>
-            <Insets bottom="5.0" left="40.0" right="5.0" top="45.0" />
+            <Insets bottom="25.0" left="40.0" right="25.0" top="45.0" />
          </VBox.margin>
       </HBox>
 
