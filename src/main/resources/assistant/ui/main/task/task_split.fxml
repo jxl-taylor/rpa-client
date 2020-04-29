@@ -14,7 +14,7 @@
            xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mr.rpa.assistant.ui.main.task.TaskBeanController">
     <items>
-        <BorderPane layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0">
+        <BorderPane fx:id="taskListPane" layoutX="251.0" layoutY="71.0" prefHeight="412.0" prefWidth="557.0">
             <top>
                 <HBox alignment="TOP_LEFT" spacing="5" BorderPane.alignment="CENTER">
                     <children>
@@ -27,16 +27,16 @@
                             <children>
                                 <HBox alignment="CENTER_RIGHT" spacing="0">
                                     <children>
-                                        <JFXTextField fx:id="taskName" labelFloat="true" maxWidth="224.0" minWidth="224.0" onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="274.0" promptText="BOT名称"/>
-                                        <JFXButton onAction="#loadTaskInfo" prefHeight="32.0" prefWidth="50.0" text="查询" />
-                                        <JFXButton onAction="#clearSearch" prefHeight="32.0" prefWidth="50.0" text="清空" />
+                                        <JFXTextField fx:id="taskName" labelFloat="true" maxWidth="224.0" minWidth="224.0" onAction="#loadTaskInfo" prefHeight="30.0" prefWidth="274.0" promptText="BOT名称"/>
+                                        <JFXButton onAction="#loadTaskInfo" text="查询" />
+                                        <JFXButton onAction="#clearSearch" text="清空" />
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
                         <VBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                             <children>
-                                <JFXButton onAction="#loadAddTask" prefHeight="32.0" prefWidth="90.0" text="＋新建任务"/>
+                                <JFXButton onAction="#loadAddTask" text="＋新建任务"/>
                             </children>
                         </VBox>
                     </children>
@@ -52,7 +52,7 @@
                 </HBox>
             </bottom>
             <center>
-                <HBox fx:id="taskDataContainer" alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
+                <HBox alignment="CENTER" prefHeight="10000.0" prefWidth="10000.0" BorderPane.alignment="CENTER">
                     <children>
                         <VBox alignment="TOP_CENTER">
                             <children>
@@ -68,20 +68,27 @@
         </BorderPane>
         <AnchorPane>
             <children>
-                <SplitPane dividerPositions="0.6" minHeight="80" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <items>
-                        <AnchorPane>
+                <VBox fx:id="historyContainer" spacing="5" alignment="TOP_CENTER" HBox.hgrow="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <HBox alignment="TOP_LEFT" prefWidth="100.0" spacing="15">
+                            <JFXButton prefWidth="100.0" text="历史执行" onAction="#showHistory" />
+                            <JFXButton prefWidth="100.0" text="查看日志" onAction="#showLog" />
+                            <VBox.margin>
+                                <Insets bottom="0.0" left="5.0" right="5.0" top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <AnchorPane fx:id="historyPane" VBox.vgrow="ALWAYS">
                             <children>
                                 <fx:include source="/assistant/ui/main/log/history.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <AnchorPane>
+                        <AnchorPane fx:id="logPane" VBox.vgrow="ALWAYS">
                             <children>
                                 <fx:include source="/assistant/ui/main/log/small_log.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                    </items>
-                </SplitPane>
+                    </children>
+                </VBox>
             </children>
         </AnchorPane>
     </items>

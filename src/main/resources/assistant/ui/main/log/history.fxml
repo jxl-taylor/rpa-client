@@ -5,33 +5,28 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<VBox fx:id="historyBox" stylesheets="@/dark-theme.css"
+<VBox stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.mr.rpa.assistant.ui.main.log.TaskHistoryController">
+      fx:controller="com.mr.rpa.assistant.ui.main.log.TaskHistoryController"
+      maxHeight="195">
     <children>
-        <HBox VBox.vgrow="ALWAYS" alignment="CENTER"  style="-fx-background-color: derive(#2A2E37, 10%)" stylesheets="@/dark-theme.css">
+        <HBox alignment="TOP_LEFT" spacing="20">
             <children>
-                <Label fx:id="historyLabel" prefWidth="100.0" text="历史执行"></Label>
-            </children>
-        </HBox>
-
-        <HBox fx:id="logfilterBox" alignment="TOP_LEFT" spacing="20">
-            <children>
-                <ChoiceBox fx:id="logStatusChoice" maxWidth="274.0" minWidth="150.0" prefHeight="32.0" prefWidth="150.0" />
-                <JFXButton prefHeight="32.0" prefWidth="90.0" text="查询" onAction="#loadTaskLog" />
-                <ChoiceBox fx:id="maxRowChoice" maxWidth="274.0" minWidth="150.0" prefHeight="32.0" prefWidth="150.0" />
+                <ChoiceBox fx:id="logStatusChoice" maxWidth="274.0" minWidth="150.0" prefHeight="32.0"
+                           prefWidth="150.0"/>
+                <JFXButton prefHeight="32.0" prefWidth="90.0" text="查询" onAction="#loadTaskLog"/>
+                <ChoiceBox fx:id="maxRowChoice" maxWidth="274.0" minWidth="150.0" prefHeight="32.0" prefWidth="150.0"/>
             </children>
             <VBox.margin>
                 <Insets top="5.0" left="5.0" bottom="5.0"/>
             </VBox.margin>
         </HBox>
 
-        <HBox alignment="CENTER">
+        <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
             <children>
                 <VBox alignment="TOP_CENTER">
                     <children>
-                        <fx:include source="/assistant/ui/main/log/task_log_list.fxml" />
+                        <fx:include source="/assistant/ui/main/log/task_log_list.fxml"/>
                     </children>
                 </VBox>
             </children>

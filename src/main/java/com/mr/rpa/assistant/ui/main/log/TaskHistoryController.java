@@ -6,11 +6,9 @@ import com.mr.rpa.assistant.ui.settings.GlobalProperty;
 import com.mr.rpa.assistant.ui.settings.ServiceFactory;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import lombok.AllArgsConstructor;
 import java.net.URL;
 import java.util.List;
@@ -20,9 +18,6 @@ import java.util.ResourceBundle;
  * Created by feng on 2020/2/9 0009
  */
 public class TaskHistoryController implements Initializable {
-
-	@FXML
-	private Label historyLabel;
 
 	@FXML
 	private ChoiceBox<Status> logStatusChoice;
@@ -38,6 +33,7 @@ public class TaskHistoryController implements Initializable {
 
 	private TaskLogService taskLogService = ServiceFactory.getService(TaskLogService.class);
 
+	private GlobalProperty globalProperty = GlobalProperty.getInstance();
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		logStatusChoice.setItems(FXCollections.observableArrayList(
@@ -72,20 +68,21 @@ public class TaskHistoryController implements Initializable {
 					loadTaskLog(null);
 				});
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
-		historyLabel.setOnMouseClicked((Event event) -> {
-			boolean visible = globalProperty.getTaskHistoryPaneVisible().get();
-			globalProperty.getTaskHistoryPaneVisible().set(!visible);
-			globalProperty.getTaskLogPaneVisible().set(false);
-			globalProperty.getTaskPaneVisible().set(visible);
-			if (!visible) {
-				globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
-				globalProperty.getLogAreaMinHeight().set(globalProperty.MAX_LOG_HEIGHT);
-			} else {
-				globalProperty.getTaskBeanController().refreshSplit();
-			}
-		});
 		controllers.add(this);
 		globalProperty.setTaskHistoryController(this);
+	}
+
+	public void maximizeHistory(){
+		boolean visible = globalProperty.getTaskHistoryPaneVisible().get();
+		globalProperty.getTaskHistoryPaneVisible().set(!visible);
+		globalProperty.getTaskLogPaneVisible().set(false);
+		globalProperty.getTaskPaneVisible().set(visible);
+		if (!visible) {
+			globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
+			globalProperty.getLogAreaMinHeight().set(globalProperty.MAX_LOG_HEIGHT);
+		} else {
+			globalProperty.getTaskBeanController().refreshSplit();
+		}
 	}
 
 	private void setLogStatusChoice() {

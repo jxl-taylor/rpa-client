@@ -18,12 +18,6 @@ import java.util.ResourceBundle;
  */
 public class SmallTaskLogController implements Initializable, ILogShow {
 
-//	@FXML
-//	private JFXButton logButton;
-
-	@FXML
-	private Label logLabel;
-
 	@FXML
 	private JFXTextArea logTextArea;
 
@@ -36,16 +30,16 @@ public class SmallTaskLogController implements Initializable, ILogShow {
 	public void initialize(URL location, ResourceBundle resources) {
 		GlobalProperty globalProperty = GlobalProperty.getInstance();
 		globalProperty.setLogTextArea(logTextArea);
-		logLabel.setOnMouseClicked((Event event) -> {
-			globalProperty.getTaskLogPaneVisible().set(true);
-			globalProperty.getTaskHistoryPaneVisible().set(false);
-			globalProperty.getTaskPaneVisible().set(false);
-			globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
-			globalProperty.getTaskBeanController().refreshSplit();
-		});
-
 		globalProperty.getLogShows().add(this);
 		logTextArea.textProperty().bind(globalProperty.getAllLog());
+	}
+
+	private void maximizeLog(){
+		globalProperty.getTaskLogPaneVisible().set(true);
+		globalProperty.getTaskHistoryPaneVisible().set(false);
+		globalProperty.getTaskPaneVisible().set(false);
+		globalProperty.getLogListHeight().set(globalProperty.MAX_LOG_LIST_HEIGHT);
+		globalProperty.getTaskBeanController().refreshSplit();
 	}
 
 	@FXML

@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.HBox?>
-<?import com.jfoenix.controls.JFXButton?>
-
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ContextMenu?>
 <?import java.lang.String?>
-<?import javafx.scene.control.Label?>
 <VBox fx:id="rootPane" stylesheets="@/dark-theme.css"
       xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.mr.rpa.assistant.ui.main.log.SmallTaskLogController">
+      fx:controller="com.mr.rpa.assistant.ui.main.log.SmallTaskLogController"
+      maxHeight="225">
     <children>
-
-        <HBox VBox.vgrow="ALWAYS" alignment="CENTER" style="-fx-background-color: derive(#2A2E37, 10%)" stylesheets="@/dark-theme.css">
-            <children>
-<!--                <JFXButton fx:id="logButton" prefWidth="100.0" styleClass="top-menu-button" text="日志查看"/>-->
-                <Label fx:id="logLabel" prefWidth="100.0" text="日志查看"></Label>
-            </children>
-        </HBox>
 
         <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
             <children>

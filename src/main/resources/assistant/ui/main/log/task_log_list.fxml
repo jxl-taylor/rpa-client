@@ -11,7 +11,7 @@
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mr.rpa.assistant.ui.main.log.TaskLogListController">
     <AnchorPane id="AnchorPane" fx:id="contentPane" stylesheets="@/dark-theme.css">
         <children>
-            <TableView fx:id="tableView" layoutX="14.0" layoutY="14.0" maxHeight="150.0" prefWidth="10000.0"
+            <TableView fx:id="tableView" layoutX="14.0" layoutY="14.0" prefWidth="10000.0"
                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                        AnchorPane.topAnchor="0.0">
                 <columns>

@@ -123,11 +123,12 @@ public class MainController implements Initializable {
 	}
 
 
-	private void initDrawer() {
+	public void initDrawer() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("assistant/ui/main/toolbar/toolbar.fxml"));
 			VBox toolbar = loader.load();
 			drawer.setSidePane(toolbar);
+			drawer.toBack();
 		} catch (IOException ex) {
 			LOGGER.error(ex);
 		}
