@@ -19,7 +19,7 @@
         <codec.version>1.13</codec.version>
         <csv.version>1.7</csv.version>
         <commons.lang3.version>3.9</commons.lang3.version>
-        <commons.io.version>2.6</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <hutool.version>5.1.4</hutool.version>
         <derby.version>10.14.2.0</derby.version>
         <fontawesomefx.commons.version>8.15</fontawesomefx.commons.version>
